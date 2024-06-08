@@ -1,0 +1,4 @@
+AT_SETUP([aether-execution])
+AT_CHECK_UNQUOTED(["${abs_top_builddir}"/cli/aether], , [Hello World
+])
+AT_CLEANUP
