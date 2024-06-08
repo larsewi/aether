@@ -116,3 +116,7 @@ aether
 atlocal
 atconfig
 libtool
+tests/package.m4
+tests/testsuite
+testsuite.log
+
