@@ -11,4 +11,12 @@
  */
 bool StringEqual(const char *str_1, const char *str_2);
 
+/**
+ * @brief Produce string according to format.
+ * @param format Format string.
+ * @param ... arguments to be converted.
+ * @return 
+ */
+char *StringFormat(const char *format, ...);
+
 #endif // _AETHER_STRING_LIB_H
