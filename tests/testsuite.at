@@ -1,1 +1,2 @@
 m4_include([aether.at])
+m4_include([string_lib.at])
