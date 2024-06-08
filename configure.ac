@@ -42,6 +42,5 @@ AC_CONFIG_FILES([Makefile
                  parser/Makefile
                  interpreter/Makefile
                  utils/Makefile
-                 tests/Makefile
-                 tests/atlocal])
+                 tests/Makefile])
 AC_OUTPUT

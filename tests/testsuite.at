@@ -1,2 +1,22 @@
-m4_include([aether.at])
-m4_include([string_lib.at])
+AT_INIT
+AT_COLOR_TESTS
+
+m4_define([FIND_AETHER], [[set -x
+if test "x${AUTOTEST_PATH}" == "x${at_testdir}"; then
+    aether="${abs_top_builddir}/cli/aether"
+    compare="$(dirname ${aether})/.libs/lt-aether"
+else
+    LD_LIBRARY_PATH="${AUTOTEST_PATH}/../lib" export LD_LIBRARY_PATH
+    aether="${AUTOTEST_PATH}/aether"
+    compare="$(aether)"
+fi]])
+
+AT_SETUP([aether-execution])
+FIND_AETHER
+AT_CHECK_UNQUOTED(["${abs_top_builddir}"/cli/aether], , [Hello World
+])
+AT_CLEANUP
+
+AT_SETUP([string_lib])
+AT_CHECK(["${abs_top_builddir}"/utils/test_string_lib])
+AT_CLEANUP

@@ -1,3 +1,0 @@
-AT_SETUP([string_lib])
-AT_CHECK(["${abs_top_builddir}"/utils/test_string_lib])
-AT_CLEANUP

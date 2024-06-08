@@ -1,18 +1,14 @@
-EXTRA_DIST = local.at testsuite.at $(TESTSUITE) atconfig package.m4 \
-    aether.at \
-    string_lib.at
+EXTRA_DIST = testsuite.at $(TESTSUITE) atconfig package.m4
 
 TESTSUITE = $(srcdir)/testsuite
-TESTSOURCES = $(srcdir)/local.at $(srcdir)/testsuite.at \
-    $(srcdir)/aether.at \
-    $(srcdir)/string_lib.at
+TESTSOURCES = $(srcdir)/testsuite.at
 AUTOM4TE = $(SHELL) $(top_srcdir)/missing --run autom4te
 AUTOTEST = $(AUTOM4TE) --language=autotest
 
-check-local: atconfig atlocal $(TESTSUITE)
+check-local: atconfig $(TESTSUITE)
 	$(SHELL) '$(TESTSUITE)' $(TESTSUITEFLAGS)
 
-installcheck-local: atconfig atlocal $(TESTSUITE)
+installcheck-local: atconfig $(TESTSUITE)
 	$(SHELL) '$(TESTSUITE)' AUTOTEST_PATH='$(DESTDIR)$(bindir)' $(TESTSUITEFLAGS)
 
 clean-local:
