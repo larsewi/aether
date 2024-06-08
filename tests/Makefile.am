@@ -1,3 +1,7 @@
+EXTRA_DIST = local.at testsuite.at $(TESTSUITE) atconfig package.m4 \
+    aether.at \
+    string_lib.at
+
 TESTSUITE = $(srcdir)/testsuite
 TESTSOURCES = $(srcdir)/local.at $(srcdir)/testsuite.at \
     $(srcdir)/aether.at \
