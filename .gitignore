@@ -21,6 +21,7 @@
 *.a
 *.la
 *.lo
+*.lai
 
 # Shared objects (inc. Windows DLLs)
 *.dll
@@ -72,11 +73,14 @@ autom4te.cache
 /compile
 /config.cache
 /config.guess
+/config.h
 /config.h.in
+/config.h.in~
 /config.log
 /config.status
 /config.sub
 /configure
+/configure~
 /configure.scan
 /depcomp
 /install-sh
@@ -104,3 +108,11 @@ m4/lt~obsolete.m4
 # can automatically generate from config.status script
 # (which is called by configure script))
 Makefile
+
+parser.c
+parser.h
+lexer.c
+aether
+atlocal
+atconfig
+libtool
