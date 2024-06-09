@@ -25,6 +25,25 @@ aether home page: <AT_PACKAGE_URL>
 ])
 AT_CLEANUP
 
+AT_SETUP([logger.c:LOG_DEBUG])
+AT_CHECK(["${abs_top_builddir}"/utils/test_logger LOG_DEBUG], , [[DEBUG [test_logger.c:7]: bar
+]])
+AT_CLEANUP
+
+AT_SETUP([logger.c:LOG_WARNING])
+AT_CHECK(["${abs_top_builddir}"/utils/test_logger LOG_WARNING], , [WARNING: foo
+])
+AT_CLEANUP
+
+AT_SETUP([logger.c:LOG_ERROR])
+AT_CHECK(["${abs_top_builddir}"/utils/test_logger LOG_ERROR], , , [ERROR: foo
+])
+AT_CLEANUP
+
+AT_SETUP([logger.c:LOG_CRITICAL])
+AT_CHECK(["${abs_top_builddir}"/utils/test_logger LOG_CRITICAL], 134, , ignore)
+AT_CLEANUP
+
 AT_SETUP([string_lib.c:StringEqual])
 AT_CHECK(["${abs_top_builddir}"/utils/test_string_lib StringEqual])
 AT_CLEANUP

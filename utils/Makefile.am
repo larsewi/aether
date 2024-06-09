@@ -6,7 +6,10 @@ libutils_la_SOURCES = \
     logger.h logger.c \
     buffer.h buffer.c
 
-check_PROGRAMS = test_string_lib test_buffer
+check_PROGRAMS = test_logger test_string_lib test_buffer
+
+test_logger_LDADD = libutils.la
+test_logger_SOURCES = test_logger.c
 
 test_string_lib_LDADD = libutils.la
 test_string_lib_SOURCES = test_string_lib.c

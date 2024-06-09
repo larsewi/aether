@@ -40,7 +40,8 @@ enum LoggerLogLevel {
  *          program.
  */
 #define LOG_CRITICAL(...)                                                      \
-  LoggerLogMessage(LOGGER_MESSAGE_TYPE_ERROR, __FILE__, __LINE__, __VA_ARGS__)
+  LoggerLogMessage(LOGGER_MESSAGE_TYPE_CRITICAL, __FILE__, __LINE__,           \
+                   __VA_ARGS__)
 
 /**
  * @brief Enable debug log messages.
