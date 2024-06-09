@@ -15,7 +15,7 @@ bool StringEqual(const char *str_1, const char *str_2);
  * @brief Produce string according to format.
  * @param format Format string.
  * @param ... arguments to be converted.
- * @return 
+ * @return
  */
 char *StringFormat(const char *format, ...);
 

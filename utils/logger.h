@@ -4,10 +4,10 @@
 #include <stdbool.h>
 
 enum LoggerLogLevel {
-    LOGGER_MESSAGE_TYPE_DEBUG,
-    LOGGER_MESSAGE_TYPE_WARNING,
-    LOGGER_MESSAGE_TYPE_ERROR,
-    LOGGER_MESSAGE_TYPE_CRITICAL,
+  LOGGER_MESSAGE_TYPE_DEBUG,
+  LOGGER_MESSAGE_TYPE_WARNING,
+  LOGGER_MESSAGE_TYPE_ERROR,
+  LOGGER_MESSAGE_TYPE_CRITICAL,
 };
 
 /**
@@ -16,21 +16,21 @@ enum LoggerLogLevel {
  *       is enabled through LoggerSetDebug(). These are messages are intended
  *       to aid developers in debugging the software.
  */
-#define LOG_DEBUG(...) \
+#define LOG_DEBUG(...)                                                         \
   LoggerLogMessage(LOGGER_MESSAGE_TYPE_DEBUG, __FILE__, __LINE__, __VA_ARGS__)
 
 /**
  * @brief Log a warning message using a format string and arguments.
  * @note These messages are intended to warn the user against common mistakes.
  */
-#define LOG_WARNING(...) \
+#define LOG_WARNING(...)                                                       \
   LoggerLogMessage(LOGGER_MESSAGE_TYPE_WARNING, NULL, NULL, __VA_ARGS__)
 
 /**
  * @brief Log a debug message using a format string and arguments.
  * @note These messages are intended to inform about recoverable errors.
  */
-#define LOG_ERROR(...) \
+#define LOG_ERROR(...)                                                         \
   LoggerLogMessage(LOGGER_MESSAGE_TYPE_ERROR, NULL, NULL, __VA_ARGS__)
 
 /**
@@ -39,7 +39,7 @@ enum LoggerLogLevel {
  * @warning Any call to LOG_CRITICAL(...) will print the message and abort the
  *          program.
  */
-#define LOG_CRITICAL(...) \
+#define LOG_CRITICAL(...)                                                      \
   LoggerLogMessage(LOGGER_MESSAGE_TYPE_ERROR, NULL, NULL, __VA_ARGS__)
 
 /**
@@ -64,6 +64,7 @@ void LoggerSetDebug(bool enable);
  * @warning Don't use this function directly, use macros LOG_DEBUG(...),
  *          LOG_WARNING(...), LOG_ERROR(...), LOG_CRITICAL(...) instead.
  */
-void LoggerLogMessage(enum LoggerLogLevel level, const char *file, const char *line, const char *format, ...);
+void LoggerLogMessage(enum LoggerLogLevel level, const char *file,
+                      const char *line, const char *format, ...);
 
 #endif // _AETHER_LOGGER_H
