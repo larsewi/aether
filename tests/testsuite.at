@@ -32,3 +32,43 @@ AT_CLEANUP
 AT_SETUP([string_lib.c:StringFormat])
 AT_CHECK(["${abs_top_builddir}"/utils/test_string_lib StringFormat])
 AT_CLEANUP
+
+AT_SETUP([buffer.c:BufferCreate])
+AT_CHECK(["${abs_top_builddir}"/utils/test_buffer BufferCreate])
+AT_CLEANUP
+
+AT_SETUP([buffer.c:BufferData])
+AT_CHECK(["${abs_top_builddir}"/utils/test_buffer BufferData])
+AT_CLEANUP
+
+AT_SETUP([buffer.c:BufferLength])
+AT_CHECK(["${abs_top_builddir}"/utils/test_buffer BufferLength])
+AT_CLEANUP
+
+AT_SETUP([buffer.c:BufferAppend])
+AT_CHECK(["${abs_top_builddir}"/utils/test_buffer BufferAppend])
+AT_CLEANUP
+
+AT_SETUP([buffer.c:BufferPrint])
+AT_CHECK(["${abs_top_builddir}"/utils/test_buffer BufferPrint])
+AT_CLEANUP
+
+AT_SETUP([buffer.c:BufferPrintFormat])
+AT_CHECK(["${abs_top_builddir}"/utils/test_buffer BufferPrintFormat])
+AT_CLEANUP
+
+AT_SETUP([buffer.c:BufferToString])
+AT_CHECK(["${abs_top_builddir}"/utils/test_buffer BufferToString])
+AT_CLEANUP
+
+AT_SETUP([buffer.c:BufferFromString])
+AT_CHECK(["${abs_top_builddir}"/utils/test_buffer BufferFromString])
+AT_CLEANUP
+
+AT_SETUP([buffer.c:BufferReadFile])
+AT_CHECK(["${abs_top_builddir}"/utils/test_buffer BufferReadFile])
+AT_CLEANUP
+
+AT_SETUP([buffer.c:BufferDestroy])
+AT_CHECK(["${abs_top_builddir}"/utils/test_buffer BufferDestroy])
+AT_CLEANUP

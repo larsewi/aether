@@ -27,6 +27,9 @@ AM_PROG_AR
 
 LT_INIT
 
+AC_DEFINE([BUFFER_SIZE], 1024,
+          [Default initial buffer size allocated by aether])
+
 # Checks for libraries.
 
 # Checks for header files.

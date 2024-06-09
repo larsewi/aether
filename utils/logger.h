@@ -24,14 +24,14 @@ enum LoggerLogLevel {
  * @note These messages are intended to warn the user against common mistakes.
  */
 #define LOG_WARNING(...)                                                       \
-  LoggerLogMessage(LOGGER_MESSAGE_TYPE_WARNING, NULL, NULL, __VA_ARGS__)
+  LoggerLogMessage(LOGGER_MESSAGE_TYPE_WARNING, __FILE__, __LINE__, __VA_ARGS__)
 
 /**
  * @brief Log a debug message using a format string and arguments.
  * @note These messages are intended to inform about recoverable errors.
  */
 #define LOG_ERROR(...)                                                         \
-  LoggerLogMessage(LOGGER_MESSAGE_TYPE_ERROR, NULL, NULL, __VA_ARGS__)
+  LoggerLogMessage(LOGGER_MESSAGE_TYPE_ERROR, __FILE__, __LINE__, __VA_ARGS__)
 
 /**
  * @brief Log a debug message using a format string and arguments.
@@ -40,7 +40,7 @@ enum LoggerLogLevel {
  *          program.
  */
 #define LOG_CRITICAL(...)                                                      \
-  LoggerLogMessage(LOGGER_MESSAGE_TYPE_ERROR, NULL, NULL, __VA_ARGS__)
+  LoggerLogMessage(LOGGER_MESSAGE_TYPE_ERROR, __FILE__, __LINE__, __VA_ARGS__)
 
 /**
  * @brief Enable debug log messages.
@@ -65,6 +65,6 @@ void LoggerSetDebug(bool enable);
  *          LOG_WARNING(...), LOG_ERROR(...), LOG_CRITICAL(...) instead.
  */
 void LoggerLogMessage(enum LoggerLogLevel level, const char *file,
-                      const char *line, const char *format, ...);
+                      const int line, const char *format, ...);
 
 #endif // _AETHER_LOGGER_H
