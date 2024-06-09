@@ -6,7 +6,7 @@ AC_INIT([aether],
         [0.0.1],
         [https://github.com/larsewi/aether/issues],
         [aether],
-        [https://github.com/larsewi/leech])
+        [https://github.com/larsewi/aether])
 AC_CONFIG_SRCDIR([utils/string_lib.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
