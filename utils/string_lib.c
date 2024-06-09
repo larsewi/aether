@@ -33,7 +33,7 @@ char *StringFormat(const char *const format, ...) {
   const int ret = vsnprintf(str, (size_t)length + 1, format, ap);
   va_end(ap);
   if (ret != length) {
-    LOG_CRITICAL("vsnprintf(3): Bad return value (%d != %d)", ret, length);
+    LOG_CRITICAL("vsnprintf(3): Unexpected return value (%d != %d)", ret, length);
   }
 
   return str;
