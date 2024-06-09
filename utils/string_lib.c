@@ -1,5 +1,7 @@
 #include "string_lib.h"
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 #include <string.h>
 #include <stdarg.h>
@@ -13,7 +15,7 @@ bool StringEqual(const char *const str_1, const char *const str_2) {
     return strcmp(str_1, str_2) == 0;
 }
 
-char *LCH_StringFormat(const char *const format, ...) {
+char *StringFormat(const char *const format, ...) {
   assert(format != NULL);
 
   va_list ap;

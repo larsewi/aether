@@ -119,5 +119,5 @@ libtool
 tests/package.m4
 tests/testsuite
 testsuite.log
-utils/test_string_lib
+test_string_lib
 

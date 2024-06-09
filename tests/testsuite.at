@@ -17,6 +17,10 @@ AT_CHECK_UNQUOTED(["${abs_top_builddir}"/cli/aether], , [Hello World
 ])
 AT_CLEANUP
 
-AT_SETUP([string_lib])
-AT_CHECK(["${abs_top_builddir}"/utils/test_string_lib])
+AT_SETUP([string_lib.c:StringEqual])
+AT_CHECK(["${abs_top_builddir}"/utils/test_string_lib StringEqual])
+AT_CLEANUP
+
+AT_SETUP([string_lib.c:StringFormat])
+AT_CHECK(["${abs_top_builddir}"/utils/test_string_lib StringFormat])
 AT_CLEANUP

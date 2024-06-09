@@ -1,21 +1,40 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+
 #include "string_lib.c"
 
-int main(void) {
+bool TestStringEqual(void) {
     if (StringEqual("foo", "bar")) {
-        return 1;
+        return false;
     }
 
     if (StringEqual("bar", "foo")) {
-        return 1;
+        return false;
     }
 
     if (!StringEqual("foo", "foo")) {
-        return 1;
+        return false;
     }
 
     if (!StringEqual("bar", "bar")) {
-        return 1;
+        return false;
     }
 
-    return 0;
+    return true;
+}
+
+bool TestStringFormat(void) {
+    char *str = StringFormat("%s %s\n", "Hello", "World");
+    bool success = StringEqual(str, "Hello World\n");
+    free(str);
+    return success;
+}
+
+int main(int argc, char *argv[]) {
+    if ((argc <= 2) && (
+        (strcmp(argv[1], "StringEqual") == 0 && TestStringEqual()) ||
+        (strcmp(argv[1], "StringFormat") == 0 && TestStringFormat()))) {
+        return 0;
+    }
 }
