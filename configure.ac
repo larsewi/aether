@@ -27,8 +27,10 @@ AM_PROG_AR
 
 LT_INIT
 
-AC_DEFINE([BUFFER_SIZE], 1024,
-          [Default initial buffer size allocated by aether])
+AC_DEFINE([DEFAULT_BUFFER_CAPACITY], 1024,
+          [Default initial buffer capacity allocated by aether])
+AC_DEFINE([DEFAULT_LIST_CAPACITY], 256,
+          [Default initial list capacity allocated by aether])
 
 # Checks for libraries.
 

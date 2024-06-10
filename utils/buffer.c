@@ -23,7 +23,8 @@ static void EnsureCapacity(Buffer *const buf, const size_t needed) {
   assert(buf != NULL);
 
   while ((buf->capacity - buf->length) <= needed) {
-    size_t new_capacity = (buf->capacity > 0) ? buf->capacity * 2 : BUFFER_SIZE;
+    size_t new_capacity =
+        (buf->capacity > 0) ? buf->capacity * 2 : DEFAULT_BUFFER_CAPACITY;
     char *new_buffer = (char *)realloc(buf->buffer, new_capacity);
     if (new_buffer == NULL) {
       LOG_CRITICAL("realloc(3): Failed to allocate memory: %s",
@@ -40,7 +41,7 @@ Buffer *BufferCreate(void) {
     LOG_CRITICAL("malloc(3): Failed to allocate memory: %s", strerror(errno));
   }
 
-  buf->capacity = BUFFER_SIZE;
+  buf->capacity = DEFAULT_BUFFER_CAPACITY;
   buf->length = 0;
   buf->buffer = (char *)malloc(buf->capacity);
   if (buf->buffer == NULL) {
@@ -138,8 +139,8 @@ bool BufferReadFile(Buffer *const buf, const char *const filename) {
 
   ssize_t n_read = 0;
   do {
-    EnsureCapacity(buf, BUFFER_SIZE);
-    n_read = read(fd, buf->buffer + buf->length, BUFFER_SIZE);
+    EnsureCapacity(buf, DEFAULT_BUFFER_CAPACITY);
+    n_read = read(fd, buf->buffer + buf->length, DEFAULT_BUFFER_CAPACITY);
     if (n_read < 0) {
       LOG_ERROR("Failed to read file '%s': %s", filename, strerror(errno));
       close(fd);

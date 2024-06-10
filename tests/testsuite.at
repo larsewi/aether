@@ -91,3 +91,35 @@ AT_CLEANUP
 AT_SETUP([buffer.c:BufferDestroy])
 AT_CHECK(["${abs_top_builddir}"/utils/test_buffer BufferDestroy])
 AT_CLEANUP
+
+AT_SETUP([list.c:ListCreate])
+AT_CHECK(["${abs_top_builddir}"/utils/test_list ListCreate])
+AT_CLEANUP
+
+AT_SETUP([list.c:ListDestroy])
+AT_CHECK(["${abs_top_builddir}"/utils/test_list ListDestroy])
+AT_CLEANUP
+
+AT_SETUP([list.c:ListLength])
+AT_CHECK(["${abs_top_builddir}"/utils/test_list ListLength])
+AT_CLEANUP
+
+AT_SETUP([list.c:ListAppend])
+AT_CHECK(["${abs_top_builddir}"/utils/test_list ListAppend])
+AT_CLEANUP
+
+AT_SETUP([list.c:ListGet])
+AT_CHECK(["${abs_top_builddir}"/utils/test_list ListGet])
+AT_CLEANUP
+
+AT_SETUP([list.c:ListSet])
+AT_CHECK(["${abs_top_builddir}"/utils/test_list ListSet])
+AT_CLEANUP
+
+AT_SETUP([list.c:ListRemove])
+AT_CHECK(["${abs_top_builddir}"/utils/test_list ListRemove])
+AT_CLEANUP
+
+AT_SETUP([list.c:ListInsert])
+AT_CHECK(["${abs_top_builddir}"/utils/test_list ListInsert])
+AT_CLEANUP

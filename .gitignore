@@ -120,4 +120,4 @@ tests/package.m4
 tests/testsuite
 testsuite.log
 test_*
-
+.vscode/*

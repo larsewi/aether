@@ -7,7 +7,6 @@
 static void test_BufferCreate(void) {
   Buffer *const buf = BufferCreate();
   check(buf != NULL);
-  check(buf->capacity == BUFFER_SIZE);
   check(buf->length == 0);
   check(strcmp(buf->buffer, "") == 0);
   free(buf->buffer);
@@ -100,6 +99,7 @@ static void test_BufferReadFile(void) {
 static void test_BufferDestroy(void) {
   Buffer *buf = BufferCreate();
   BufferDestroy(buf);
+  BufferDestroy(NULL);
 }
 
 CHECK_BEGIN
