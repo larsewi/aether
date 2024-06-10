@@ -1,40 +1,24 @@
+#include "../tests/check.h"
+#include "string_lib.c"
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "string_lib.c"
-
-bool TestStringEqual(void) {
-  if (StringEqual("foo", "bar")) {
-    return false;
-  }
-
-  if (StringEqual("bar", "foo")) {
-    return false;
-  }
-
-  if (!StringEqual("foo", "foo")) {
-    return false;
-  }
-
-  if (!StringEqual("bar", "bar")) {
-    return false;
-  }
-
-  return true;
+static void test_StringEqual(void) {
+  check(!StringEqual("foo", "bar"));
+  check(!StringEqual("bar", "foo"));
+  check(StringEqual("foo", "foo"));
+  check(StringEqual("bar", "bar"));
 }
 
-bool TestStringFormat(void) {
+static void test_StringFormat(void) {
   char *str = StringFormat("%s %s\n", "Hello", "World");
-  bool success = StringEqual(str, "Hello World\n");
+  check(strcmp(str, "Hello World\n") == 0);
   free(str);
-  return success;
 }
 
-int main(int argc, char *argv[]) {
-  if ((argc <= 2) &&
-      ((strcmp(argv[1], "StringEqual") == 0 && TestStringEqual()) ||
-       (strcmp(argv[1], "StringFormat") == 0 && TestStringFormat()))) {
-    return 0;
-  }
-}
+CHECK_BEGIN
+CHECK_ADD("StringEqual", test_StringEqual)
+CHECK_ADD("StringFormat", test_StringFormat)
+CHECK_END

@@ -102,27 +102,15 @@ static void test_BufferDestroy(void) {
   BufferDestroy(buf);
 }
 
-int main(int argc, char *argv[]) {
-  Test tests[] = {
-      {"BufferCreate", test_BufferCreate},
-      {"BufferData", test_BufferData},
-      {"BufferLength", test_BufferLength},
-      {"BufferAppend", test_BufferAppend},
-      {"BufferPrint", test_BufferPrint},
-      {"BufferPrintFormat", test_BufferPrintFormat},
-      {"BufferToString", test_BufferToString},
-      {"BufferFromString", test_BufferFromString},
-      {"BufferReadFile", test_BufferReadFile},
-      {"BufferDestroy", test_BufferDestroy},
-      {NULL, NULL},
-  };
-
-  for (size_t i = 0; argc >= 2 && tests[i].name != NULL; i++) {
-    if (strcmp(tests[i].name, argv[1]) == 0) {
-      tests[i].func();
-      return EXIT_SUCCESS;
-    }
-  }
-
-  return EXIT_FAILURE;
-}
+CHECK_BEGIN
+CHECK_ADD("BufferCreate", test_BufferCreate)
+CHECK_ADD("BufferData", test_BufferData)
+CHECK_ADD("BufferLength", test_BufferLength)
+CHECK_ADD("BufferAppend", test_BufferAppend)
+CHECK_ADD("BufferPrint", test_BufferPrint)
+CHECK_ADD("BufferPrintFormat", test_BufferPrintFormat)
+CHECK_ADD("BufferToString", test_BufferToString)
+CHECK_ADD("BufferFromString", test_BufferFromString)
+CHECK_ADD("BufferReadFile", test_BufferReadFile)
+CHECK_ADD("BufferDestroy", test_BufferDestroy)
+CHECK_END
