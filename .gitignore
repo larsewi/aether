@@ -119,5 +119,11 @@ libtool
 tests/package.m4
 tests/testsuite
 testsuite.log
-test_*
 .vscode/*
+
+# Test binaries
+test_logger
+test_string_lib
+test_buffer
+test_list
+test_dict

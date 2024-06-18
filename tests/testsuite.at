@@ -11,20 +11,6 @@ else
     compare="$(aether)"
 fi]])
 
-AT_SETUP([aether --help])
-FIND_AETHER
-AT_CHECK_UNQUOTED(["${abs_top_builddir}"/cli/aether --help], , [AT_PACKAGE_STRING
-
-Options:
-  --filename input file
-  --debug    enable debug logging
-  --help     print help message
-
-Report bugs to: <AT_PACKAGE_BUGREPORT>
-aether home page: <AT_PACKAGE_URL>
-])
-AT_CLEANUP
-
 AT_SETUP([logger.c:LOG_DEBUG])
 AT_CHECK(["${abs_top_builddir}"/utils/test_logger LOG_DEBUG], , [[DEBUG [test_logger.c:7]: bar
 ]])
@@ -126,4 +112,50 @@ AT_CLEANUP
 
 AT_SETUP([list.c:ListInsert])
 AT_CHECK(["${abs_top_builddir}"/utils/test_list ListInsert])
+AT_CLEANUP
+
+AT_SETUP([dict.c:DictCreate])
+AT_CHECK(["${abs_top_builddir}"/utils/test_dict DictCreate])
+AT_CLEANUP
+
+AT_SETUP([dict.c:DictDestroy])
+AT_CHECK(["${abs_top_builddir}"/utils/test_dict DictDestroy])
+AT_CLEANUP
+
+AT_SETUP([dict.c:DictLength])
+AT_CHECK(["${abs_top_builddir}"/utils/test_dict DictLength])
+AT_CLEANUP
+
+AT_SETUP([dict.c:DictSet])
+AT_CHECK(["${abs_top_builddir}"/utils/test_dict DictSet])
+AT_CLEANUP
+
+AT_SETUP([dict.c:DictHasKey])
+AT_CHECK(["${abs_top_builddir}"/utils/test_dict DictHasKey])
+AT_CLEANUP
+
+AT_SETUP([dict.c:DictGetKeys])
+AT_CHECK(["${abs_top_builddir}"/utils/test_dict DictGetKeys])
+AT_CLEANUP
+
+AT_SETUP([dict.c:DictGet])
+AT_CHECK(["${abs_top_builddir}"/utils/test_dict DictGet])
+AT_CLEANUP
+
+AT_SETUP([dict.c:DictRemove])
+AT_CHECK(["${abs_top_builddir}"/utils/test_dict DictRemove])
+AT_CLEANUP
+
+AT_SETUP([aether --help])
+FIND_AETHER
+AT_CHECK_UNQUOTED(["${abs_top_builddir}"/cli/aether --help], , [AT_PACKAGE_STRING
+
+Options:
+  --filename input file
+  --debug    enable debug logging
+  --help     print help message
+
+Report bugs to: <AT_PACKAGE_BUGREPORT>
+aether home page: <AT_PACKAGE_URL>
+])
 AT_CLEANUP
