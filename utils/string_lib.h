@@ -19,4 +19,12 @@ bool StringEqual(const char *str_1, const char *str_2);
  */
 char *StringFormat(const char *format, ...);
 
+/**
+ * @brief Duplicate a string.
+ * @param str The string.
+ * @return The duplicate.
+ * @note Caller takes ownership of returned value.
+ */
+char *StringDuplicate(const char *const str);
+
 #endif // _AETHER_STRING_LIB_H

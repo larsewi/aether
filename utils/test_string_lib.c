@@ -18,7 +18,16 @@ static void test_StringFormat(void) {
   free(str);
 }
 
+static void test_StringDuplicate(void) {
+  const char *const str = "Hello World";
+  char *duplicate = StringDuplicate(str);
+  check(duplicate != str);
+  check(strcmp(duplicate, str) == 0);
+  free(duplicate);
+}
+
 CHECK_BEGIN
 CHECK_ADD("StringEqual", test_StringEqual)
 CHECK_ADD("StringFormat", test_StringFormat)
+CHECK_ADD("StringDuplicate", test_StringDuplicate)
 CHECK_END

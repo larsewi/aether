@@ -52,6 +52,10 @@ AT_SETUP([string_lib.c:StringFormat])
 AT_CHECK(["${abs_top_builddir}"/utils/test_string_lib StringFormat])
 AT_CLEANUP
 
+AT_SETUP([string_lib.c:StringDuplicate])
+AT_CHECK(["${abs_top_builddir}"/utils/test_string_lib StringDuplicate])
+AT_CLEANUP
+
 AT_SETUP([buffer.c:BufferCreate])
 AT_CHECK(["${abs_top_builddir}"/utils/test_buffer BufferCreate])
 AT_CLEANUP

@@ -39,3 +39,14 @@ char *StringFormat(const char *const format, ...) {
 
   return str;
 }
+
+char *StringDuplicate(const char *const str) {
+  assert(str != NULL);
+
+  char *duplicate = strdup(str);
+  if (duplicate == NULL) {
+    LOG_CRITICAL("strdup(3): Failed to duplicate string: %s", strerror(errno));
+  }
+
+  return duplicate;
+}
