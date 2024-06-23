@@ -94,7 +94,7 @@ none
 
 \|\| {
     P.col += yyleng;
-    return AND_OPERATOR;
+    return OR_OPERATOR;
 }
 
 && {

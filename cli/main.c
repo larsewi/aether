@@ -8,28 +8,33 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../parser/parser.h"
 #include "../parser/parser_state.h"
+
+#include "../parser/parser.h"
 #include "../utils/logger.h"
 
 extern FILE *yyin;
 ParserState PARSER_STATE = {.line = 1, .col = 1};
 
 static const struct option long_options[] = {
-    {"filename", required_argument, 0, 'f'},
     {"debug", no_argument, 0, 'd'},
     {"help", no_argument, 0, 'h'},
     {0, 0, 0, 0},
 };
 
 static const char *const descriptions[] = {
-    "input file",
     "enable debug logging",
     "print help message",
 };
 
 static void PrintHelp(void) {
   printf("%s\n\n", PACKAGE_STRING);
+
+  printf("Usage: %s", PACKAGE_NAME);
+  for (int i = 0; long_options[i].val != 0; i++) {
+    printf(" [--%s]", long_options[i].name);
+  }
+  printf(" SOURCE\n\n");
 
   size_t longest = 0;
   for (int i = 0; long_options[i].val != 0; i++) {
@@ -39,7 +44,7 @@ static void PrintHelp(void) {
     }
   }
 
-  char format[512];
+  char format[64];
   int ret = snprintf(format, sizeof(format), "  --%%-%zus %%s\n", longest);
   assert(ret >= 0 && (size_t)ret < sizeof(format));
 
@@ -53,29 +58,29 @@ static void PrintHelp(void) {
 }
 
 int main(int argc, char *argv[]) {
-  const char *filename = NULL;
-
   int c;
-  while ((c = getopt_long(argc, argv, "f:dh", long_options, NULL)) != -1) {
+  while ((c = getopt_long(argc, argv, "dh", long_options, NULL)) != -1) {
     switch (c) {
-    case 'f':
-      filename = optarg;
-      break;
-
     case 'd':
       LoggerSetDebug(true);
       break;
 
     case 'h':
       PrintHelp();
-      return 0;
+      return EXIT_SUCCESS;
 
     default:
-      LOG_ERROR("Bad argument ...");
+      LOG_ERROR("Bad option ...");
       PrintHelp();
-      return 1;
+      return EXIT_FAILURE;
     }
   }
+
+  if (optind >= argc) {
+    LOG_ERROR("Missing argument SOURCE ...");
+    return EXIT_FAILURE;
+  }
+  const char *filename = argv[optind++];
 
   yyin = fopen(filename, "r");
   if (yyin == NULL) {

@@ -72,7 +72,7 @@ factor_operator : '*'
                 | '%'
                 ;
 
-atom : FLOAT_LITERAL {  }
+atom : FLOAT_LITERAL
      | INTEGER_LITERAL
      | STRING_LITERAL
      ;
