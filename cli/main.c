@@ -1,13 +1,19 @@
 #include "config.h"
 
 #include <assert.h>
+#include <errno.h>
 #include <getopt.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "../parser/parser.h"
+#include "../parser/parser_state.h"
 #include "../utils/logger.h"
+
+extern FILE *yyin;
+ParserState PARSER_STATE = {.line = 1, .col = 1};
 
 static const struct option long_options[] = {
     {"filename", required_argument, 0, 'f'},
@@ -71,8 +77,23 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  (void)filename;
+  yyin = fopen(filename, "r");
+  if (yyin == NULL) {
+    LOG_ERROR("Failed to open file '%s': %s", filename, strerror(errno));
+    return EXIT_FAILURE;
+  }
 
-  printf("Hello World\n");
-  return 0;
+  while (!feof(yyin)) {
+    yyparse();
+
+    if (ferror(yyin)) {
+      LOG_ERROR("Failed to parse file '%s': %s", strerror(errno));
+      fclose(yyin);
+      return EXIT_FAILURE;
+    }
+  }
+
+  fclose(yyin);
+
+  return EXIT_SUCCESS;
 }

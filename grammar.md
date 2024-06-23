@@ -463,7 +463,7 @@ graph LR;
 ### none_literal
 ```mermaid
 graph LR;
-    start(( )) --> none_literal(None) --> stop(( ))
+    start(( )) --> none_literal(none) --> stop(( ))
 ```
 
 ## Identifier

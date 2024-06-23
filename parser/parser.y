@@ -1,37 +1,81 @@
 %{
+#include "parser_state.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../utils/logger.h"
+
 extern int yylex();
 void yyerror(char *msg);
+
 %}
 
 %union {
-  double f;
+  Atom *atom;
 }
 
-%token <f> NUM
-%type <f> E T F
+%token <atom> FLOAT_LITERAL STRING_LITERAL INTEGER_LITERAL
+%token EQ_OPERATOR LE_OPERATOR GE_OPERATOR NE_OPERATOR
+%token AND_OPERATOR OR_OPERATOR
 
 %%
 
-S : E          { printf("%f\n", $1); }
-  ;
+prog : /* empty */
+     | expr
+     ;
 
-E : E '+' T    { $$ = $1 + $3; }
-  | E '-' T    { $$ = $1 - $3; }
-  | T
-  ;
+expr : and OR_OPERATOR expr
+     | and
+     ;
 
-T : T '*' F    { $$ = $1 * $3; }
-  | T '/' F    { $$ = $1 / $3; }
-  | F
-  ;
+and : not AND_OPERATOR and
+    | not
+    ;
 
-F : '(' E ')'  { $$ =  $2; }
-  | '-' F      { $$ = -$2; }
-  | NUM
-  ;
+not : '!' comparison
+    | comparison
+    ;
+
+comparison : term comp_operator comparison
+           | term
+           ;
+
+comp_operator : '<'
+              | '>'
+              | EQ_OPERATOR
+              | LE_OPERATOR
+              | GE_OPERATOR
+              | NE_OPERATOR
+              ;
+
+term : factor term_operator term
+     | factor
+     ;
+
+term_operator : '+'
+              | '-'
+              ;
+
+factor : factor_prefix atom factor_operator
+       | atom factor_operator factor
+       | atom factor_operator
+       | atom
+       ;
+
+factor_prefix : '+'
+              | '-'
+              ;
+
+factor_operator : '*'
+                | '/'
+                | '%'
+                ;
+
+atom : FLOAT_LITERAL {  }
+     | INTEGER_LITERAL
+     | STRING_LITERAL
+     ;
 
 %%
 

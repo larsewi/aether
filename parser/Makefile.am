@@ -6,5 +6,5 @@ lib_LTLIBRARIES = libparser.la
 
 libparser_la_LIBADD = $(top_builddir)/utils/libutils.la
 
-libparser_la_SOURCES = lexer.l parser.y
+libparser_la_SOURCES = lexer.l parser.y parser.h
 
