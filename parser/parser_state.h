@@ -25,12 +25,25 @@ typedef struct {
   int line;
   int col;
   AtomType type;
-  union literal {
+  union {
     uint64_t integer_literal;
     double float_literal;
     char *string_literal;
   } literal;
 } Atom;
+
+/****************************************************************************/
+
+typedef enum {
+  FACTOR_PREFIX_TYPE_PLUS,
+  FACTOR_PREFIX_TYPE_MINUS,
+} FactorPrefixType;
+
+typedef struct {
+  int line;
+  int col;
+  FactorPrefixType type;
+} FactorPrefix;
 
 /****************************************************************************/
 
