@@ -4,7 +4,6 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include <logger.h>
@@ -44,6 +43,17 @@ char *StringDuplicate(const char *const str) {
   assert(str != NULL);
 
   char *duplicate = strdup(str);
+  if (duplicate == NULL) {
+    LOG_CRITICAL("strdup(3): Failed to duplicate string: %s", strerror(errno));
+  }
+
+  return duplicate;
+}
+
+char *StringDuplicateN(const char *const str, const size_t num) {
+  assert(str != NULL);
+
+  char *duplicate = strndup(str, num);
   if (duplicate == NULL) {
     LOG_CRITICAL("strdup(3): Failed to duplicate string: %s", strerror(errno));
   }

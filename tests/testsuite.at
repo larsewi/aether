@@ -42,6 +42,10 @@ AT_SETUP([string_lib.c:StringDuplicate])
 AT_CHECK(["${abs_top_builddir}"/utils/test_string_lib StringDuplicate])
 AT_CLEANUP
 
+AT_SETUP([string_lib.c:StringDuplicateN])
+AT_CHECK(["${abs_top_builddir}"/utils/test_string_lib StringDuplicateN])
+AT_CLEANUP
+
 AT_SETUP([buffer.c:BufferCreate])
 AT_CHECK(["${abs_top_builddir}"/utils/test_buffer BufferCreate])
 AT_CLEANUP
@@ -150,10 +154,11 @@ AT_SETUP([aether --help])
 FIND_AETHER
 AT_CHECK_UNQUOTED(["${abs_top_builddir}"/cli/aether --help], , [AT_PACKAGE_STRING
 
+Usage: aether [[--debug]] [[--help]] SOURCE
+
 Options:
-  --filename input file
-  --debug    enable debug logging
-  --help     print help message
+  --debug enable debug logging
+  --help  print help message
 
 Report bugs to: <AT_PACKAGE_BUGREPORT>
 aether home page: <AT_PACKAGE_URL>

@@ -26,8 +26,22 @@ static void test_StringDuplicate(void) {
   free(duplicate);
 }
 
+static void test_StringDuplicateN(void) {
+  const char *const str = "Hello World";
+  char *duplicate = StringDuplicateN(str, 5);
+  check(duplicate != str);
+  check(strcmp(duplicate, "Hello") == 0);
+  free(duplicate);
+
+  duplicate = StringDuplicateN(str, 32);
+  check(duplicate != str);
+  check(strcmp(duplicate, str) == 0);
+  free(duplicate);
+}
+
 CHECK_BEGIN
 CHECK_ADD("StringEqual", test_StringEqual)
 CHECK_ADD("StringFormat", test_StringFormat)
 CHECK_ADD("StringDuplicate", test_StringDuplicate)
+CHECK_ADD("StringDuplicateN", test_StringDuplicateN)
 CHECK_END

@@ -14,7 +14,7 @@
 #include "../utils/logger.h"
 
 extern FILE *yyin;
-ParserState PARSER_STATE = {.line = 1, .col = 1};
+ParserState PARSER_STATE = {.line = 1, .column = 1};
 
 static const struct option long_options[] = {
     {"debug", no_argument, 0, 'd'},

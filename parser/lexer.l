@@ -14,99 +14,141 @@
 #define P PARSER_STATE
 %}
 
+%option nounput
+%option noinput
+
 %%
 [ \t]+ {
-    P.col += yyleng;
+  // Ignore spaces
+  P.column += yyleng;
 }
 
 \n {
-    P.line += 1;
+  // Ignore newlines
+  P.line += 1;
 }
 
 #[^\n]* {
-    P.line += 1;
+  // Ignore comments
+  P.line += 1;
 }
 
 [_a-zA-Z][_a-zA-Z0-9]* {
-    LOG_DEBUG("Found token '%s': Ln %d, Col %d", yytext, P.line, P.col);
-    P.col += yyleng;
-    return IDENTIFIER;
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  Identifier *id = xmalloc(sizeof(Identifier));
+  id->line = P.line;
+  id->column = P.column;
+  id->value = StringDuplicate(yytext);
+  yylval.identifier = id;
+  P.column = yyleng;
+  return IDENTIFIER;
 }
 
 none {
-    LOG_DEBUG("Found token '%s': Ln %d, Col %d", yytext, P.line, P.col);
-    P.col += yyleng;
-    return NONE_LITERAL;
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  NoneLiteral *literal = xmalloc(sizeof(NoneLiteral));
+  literal->line = P.line;
+  literal->column = P.column;
+  yylval.none_literal = literal;
+  P.column = yyleng;
+  return NONE_LITERAL;
 }
 
 (true|false) {
-    LOG_DEBUG("Found token '%s': Ln %d, Col %d", yytext, P.line, P.col);
-    P.col += yyleng;
-    return BOOLEAN_LITERAL;
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  BooleanLiteral *literal = xmalloc(sizeof(BooleanLiteral));
+  literal->line = P.line;
+  literal->column = P.column;
+  literal->value = StringEqual(yytext, "true");
+  yylval.boolean_literal = literal;
+  P.column = yyleng;
+  return BOOLEAN_LITERAL;
 }
 
 \"(\\.|[^"\\])*\" {
-    LOG_DEBUG("Found token '%s': Ln %d, Col %d", yytext, P.line, P.col);
-    P.col += yyleng;
-    return STRING_LITERAL;
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  StringLiteral *literal = xmalloc(sizeof(StringLiteral));
+  literal->line = P.line;
+  literal->column = P.column;
+  assert(yyleng >= 2);
+  literal->value = StringDuplicateN(yytext + 1, (size_t)(yyleng - 2));
+  yylval.string_literal = literal;
+  P.column = yyleng;
+  return STRING_LITERAL;
 }
 
 (0|[1-9][0-9]*)\.[0-9]* {
-    LOG_DEBUG("Found token '%s': Ln %d, Col %d", yytext, P.line, P.col);
-    P.col += yyleng;
-    return FLOAT_LITERAL;
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  FloatLiteral *literal = xmalloc(sizeof(FloatLiteral));
+  literal->line = P.line;
+  literal->column = P.column;
+  int ret = sscanf(yytext, "%lf", &literal->value);
+  if (ret != 1) {
+    LOG_CRITICAL("sscanf(3): Failed to scan float from string '%s': %s", yytext, strerror(errno));
+  }
+  yylval.float_literal = literal;
+  P.column += yyleng;
+  return FLOAT_LITERAL;
 }
 
 (0|[1-9][0-9]*) {
-    LOG_DEBUG("Found token '%s': Ln %d, Col %d", yytext, P.line, P.col);
-    P.col += yyleng;
-    return INTEGER_LITERAL;
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  IntegerLiteral *literal = xmalloc(sizeof(IntegerLiteral));
+  literal->line = P.line;
+  literal->column = P.column;
+  int ret = sscanf(yytext, "%llu", &literal->value);
+  if (ret != 1) {
+    LOG_CRITICAL("sscanf(3): Failed to scan float from string '%s': %s", yytext, ret, strerror(errno));
+  }
+  yylval.integer_literal = literal;
+  P.column += yyleng;
+  return INTEGER_LITERAL;
 }
 
 \|\| {
-    LOG_DEBUG("Found token '%s': Ln %d, Col %d", yytext, P.line, P.col);
-    P.col += yyleng;
-    return OR_OPER;
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  P.column += yyleng;
+  return OR_OPER;
 }
 
 && {
-    LOG_DEBUG("Found token '%s': Ln %d, Col %d", yytext, P.line, P.col);
-    P.col += yyleng;
-    return AND_OPER;
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  P.column += yyleng;
+  return AND_OPER;
 }
 
 == {
-    LOG_DEBUG("Found token '%s': Ln %d, Col %d", yytext, P.line, P.col);
-    P.col += yyleng;
-    return EQ_OPER;
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  P.column += yyleng;
+  return EQ_OPER;
 }
 
 \<= {
-    LOG_DEBUG("Found token '%s': Ln %d, Col %d", yytext, P.line, P.col);
-    P.col += yyleng;
-    return LE_OPER;
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  P.column += yyleng;
+  return LE_OPER;
 }
 
 >= {
-    LOG_DEBUG("Found token '%s': Ln %d, Col %d", yytext, P.line, P.col);
-    P.col += yyleng;
-    return GE_OPER;
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  P.column += yyleng;
+  return GE_OPER;
 }
 
 != {
-    LOG_DEBUG("Found token '%s': Ln %d, Col %d", yytext, P.line, P.col);
-    P.col += yyleng;
-    return NE_OPER;
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  P.column += yyleng;
+  return NE_OPER;
 }
 
 . {
-    LOG_DEBUG("Found token '%s': Ln %d, Col %d", yytext, P.line, P.col);
-    P.col += yyleng;
-    return yytext[0];
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  P.column += yyleng;
+  return yytext[0];
 }
 
 %%
 
 int yywrap() {
-    return true;
+  return true;
 }

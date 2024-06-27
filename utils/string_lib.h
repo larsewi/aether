@@ -2,6 +2,7 @@
 #define _AETHER_STRING_LIB_H
 
 #include <stdbool.h>
+#include <stdlib.h>
 
 /**
  * @brief Check if two strings are equal.
@@ -25,6 +26,14 @@ char *StringFormat(const char *format, ...);
  * @return The duplicate.
  * @note Caller takes ownership of returned value.
  */
-char *StringDuplicate(const char *const str);
+char *StringDuplicate(const char *str);
+
+/**
+ * @brief Duplicate a string.
+ * @param str The string.
+ * @return The duplicate.
+ * @note Caller takes ownership of returned value.
+ */
+char *StringDuplicateN(const char *str, size_t num);
 
 #endif // _AETHER_STRING_LIB_H
