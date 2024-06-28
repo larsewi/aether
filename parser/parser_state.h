@@ -53,266 +53,266 @@ typedef enum {
   SYMBOL_TYPE_INNER_EXPR,
 } SymbolType;
 
-typedef struct Expr Expr;
-typedef struct LP1 LP1;
-typedef struct Or Or;
-typedef struct LP2 LP2;
-typedef struct And And;
-typedef struct LP3 LP3;
-typedef struct Not Not;
-typedef struct Comp Comp;
-typedef struct LessThan LessThan;
-typedef struct GreaterThan GreaterThan;
-typedef struct Equal Equal;
-typedef struct LessEqual LessEqual;
-typedef struct GreaterEqual GreaterEqual;
-typedef struct NotEqual NotEqual;
-typedef struct Term Term;
-typedef struct Add Add;
-typedef struct Subtract Subtract;
-typedef struct Factor Factor;
-typedef struct Multiply Multiply;
-typedef struct Divide Divide;
-typedef struct Modulo Modulo;
-typedef struct Unary Unary;
-typedef struct Minus Minus;
-typedef struct Primary Primary;
-typedef struct Fncall Fncall;
-typedef struct Arguments Arguments;
-typedef struct Subscription Subscription;
-typedef struct Slice Slice;
-typedef struct Atom Atom;
-typedef struct Identifier Identifier;
-typedef struct IntegerLiteral IntegerLiteral;
-typedef struct FloatLiteral FloatLiteral;
-typedef struct StringLiteral StringLiteral;
-typedef struct BooleanLiteral BooleanLiteral;
-typedef struct NoneLiteral NoneLiteral;
+typedef struct SymbolExpr SymbolExpr;
+typedef struct SymbolLP1 SymbolLP1;
+typedef struct SymbolOr SymbolOr;
+typedef struct SymbolLP2 SymbolLP2;
+typedef struct SymbolAnd SymbolAnd;
+typedef struct SymbolLP3 SymbolLP3;
+typedef struct SymbolNot SymbolNot;
+typedef struct SymbolComp SymbolComp;
+typedef struct SymbolLessThan SymbolLessThan;
+typedef struct SymbolGreaterThan SymbolGreaterThan;
+typedef struct SymbolEqual SymbolEqual;
+typedef struct SymbolLessEqual SymbolLessEqual;
+typedef struct SymbolGreaterEqual SymbolGreaterEqual;
+typedef struct SymbolNotEqual SymbolNotEqual;
+typedef struct SymbolTerm SymbolTerm;
+typedef struct SymbolAdd SymbolAdd;
+typedef struct SymbolSubtract SymbolSubtract;
+typedef struct SymbolFactor SymbolFactor;
+typedef struct SymbolMultiply SymbolMultiply;
+typedef struct SymbolDivide SymbolDivide;
+typedef struct SymbolModulo SymbolModulo;
+typedef struct SymbolUnary SymbolUnary;
+typedef struct SymbolMinus SymbolMinus;
+typedef struct SymbolPrimary SymbolPrimary;
+typedef struct SymbolFncall SymbolFncall;
+typedef struct SymbolArguments SymbolArguments;
+typedef struct SymbolSubscription SymbolSubscription;
+typedef struct SymbolSlice SymbolSlice;
+typedef struct SymbolAtom SymbolAtom;
+typedef struct SymbolIdentifier SymbolIdentifier;
+typedef struct SymbolIntegerLiteral SymbolIntegerLiteral;
+typedef struct SymbolFloatLiteral SymbolFloatLiteral;
+typedef struct SymbolStringLiteral SymbolStringLiteral;
+typedef struct SymbolBooleanLiteral SymbolBooleanLiteral;
+typedef struct SymbolNoneLiteral SymbolNoneLiteral;
 
 /****************************************************************************/
 
-struct Expr {
+struct SymbolExpr {
   SymbolType type;
   void *value;
 };
 
 /****************************************************************************/
 
-struct LP1 {
+struct SymbolLP1 {
   SymbolType type;
   void *symbol;
 };
 
 /****************************************************************************/
 
-struct Or {
+struct SymbolOr {
   SymbolType type;
-  LP1 *lp1;
-  LP2 *lp2;
+  SymbolLP1 *lp1;
+  SymbolLP2 *lp2;
 };
 
 /****************************************************************************/
 
-struct LP2 {
-  SymbolType type;
-  void *symbol;
-};
-
-/****************************************************************************/
-
-struct And {
-  SymbolType type;
-  LP2 *lp2;
-  LP3 *lp3;
-};
-
-/****************************************************************************/
-
-struct LP3 {
+struct SymbolLP2 {
   SymbolType type;
   void *symbol;
 };
 
 /****************************************************************************/
 
-struct Not {
+struct SymbolAnd {
   SymbolType type;
-  LP3 *lp3;
+  SymbolLP2 *lp2;
+  SymbolLP3 *lp3;
 };
 
 /****************************************************************************/
 
-struct Comp {
-  SymbolType type;
-  void *symbol;
-};
-
-/****************************************************************************/
-
-struct LessThan {
-  SymbolType type;
-  Comp *comp;
-  Term *term;
-};
-
-/****************************************************************************/
-
-struct GreaterThan {
-  SymbolType type;
-  Comp *comp;
-  Term *term;
-};
-
-/****************************************************************************/
-
-struct Equal {
-  SymbolType type;
-  Comp *comp;
-  Term *term;
-};
-
-/****************************************************************************/
-
-struct LessEqual {
-  SymbolType type;
-  Comp *comp;
-  Term *term;
-};
-
-/****************************************************************************/
-
-struct GreaterEqual {
-  SymbolType type;
-  Comp *comp;
-  Term *term;
-};
-
-/****************************************************************************/
-
-struct NotEqual {
-  SymbolType type;
-  Comp *comp;
-  Term *term;
-};
-
-/****************************************************************************/
-
-struct Term {
+struct SymbolLP3 {
   SymbolType type;
   void *symbol;
 };
 
 /****************************************************************************/
 
-struct Add {
+struct SymbolNot {
   SymbolType type;
-  Term *term;
-  Factor *factor;
+  SymbolLP3 *lp3;
 };
 
 /****************************************************************************/
 
-struct Subtract {
-  SymbolType type;
-  Term *term;
-  Factor *factor;
-};
-
-/****************************************************************************/
-
-struct Factor {
+struct SymbolComp {
   SymbolType type;
   void *symbol;
 };
 
 /****************************************************************************/
 
-struct Multiply {
+struct SymbolLessThan {
   SymbolType type;
-  Factor *factor;
-  Unary *unary;
+  SymbolComp *comp;
+  SymbolTerm *term;
 };
 
 /****************************************************************************/
 
-struct Divide {
+struct SymbolGreaterThan {
   SymbolType type;
-  Factor *factor;
-  Unary *unary;
+  SymbolComp *comp;
+  SymbolTerm *term;
 };
 
 /****************************************************************************/
 
-struct Modulo {
+struct SymbolEqual {
   SymbolType type;
-  Factor *factor;
-  Unary *unary;
+  SymbolComp *comp;
+  SymbolTerm *term;
 };
 
 /****************************************************************************/
 
-struct Unary {
+struct SymbolLessEqual {
   SymbolType type;
-  void *symbol;
+  SymbolComp *comp;
+  SymbolTerm *term;
 };
 
 /****************************************************************************/
 
-struct Minus {
+struct SymbolGreaterEqual {
   SymbolType type;
-  Unary *unary;
+  SymbolComp *comp;
+  SymbolTerm *term;
 };
 
 /****************************************************************************/
 
-struct Primary {
+struct SymbolNotEqual {
   SymbolType type;
-  void *symbol;
+  SymbolComp *comp;
+  SymbolTerm *term;
 };
 
 /****************************************************************************/
 
-struct Fncall {
-  SymbolType type;
-  Primary *primary;
-  Arguments *arguments;
-};
-
-/****************************************************************************/
-
-struct Arguments {
-  SymbolType type;
-  struct Arguments *arguments;
-  Expr *expr;
-};
-
-/****************************************************************************/
-
-struct Subscription {
-  SymbolType type;
-  Primary *primary;
-  Expr *expr;
-};
-
-/****************************************************************************/
-
-struct Slice {
-  SymbolType type;
-  Primary *primary;
-  Expr *left_expr;
-  Expr *right_expr;
-};
-
-/****************************************************************************/
-
-struct Atom {
+struct SymbolTerm {
   SymbolType type;
   void *symbol;
 };
 
 /****************************************************************************/
 
-struct Identifier {
+struct SymbolAdd {
+  SymbolType type;
+  SymbolTerm *term;
+  SymbolFactor *factor;
+};
+
+/****************************************************************************/
+
+struct SymbolSubtract {
+  SymbolType type;
+  SymbolTerm *term;
+  SymbolFactor *factor;
+};
+
+/****************************************************************************/
+
+struct SymbolFactor {
+  SymbolType type;
+  void *symbol;
+};
+
+/****************************************************************************/
+
+struct SymbolMultiply {
+  SymbolType type;
+  SymbolFactor *factor;
+  SymbolUnary *unary;
+};
+
+/****************************************************************************/
+
+struct SymbolDivide {
+  SymbolType type;
+  SymbolFactor *factor;
+  SymbolUnary *unary;
+};
+
+/****************************************************************************/
+
+struct SymbolModulo {
+  SymbolType type;
+  SymbolFactor *factor;
+  SymbolUnary *unary;
+};
+
+/****************************************************************************/
+
+struct SymbolUnary {
+  SymbolType type;
+  void *symbol;
+};
+
+/****************************************************************************/
+
+struct SymbolMinus {
+  SymbolType type;
+  SymbolUnary *unary;
+};
+
+/****************************************************************************/
+
+struct SymbolPrimary {
+  SymbolType type;
+  void *symbol;
+};
+
+/****************************************************************************/
+
+struct SymbolFncall {
+  SymbolType type;
+  SymbolPrimary *primary;
+  SymbolArguments *arguments;
+};
+
+/****************************************************************************/
+
+struct SymbolArguments {
+  SymbolType type;
+  struct SymbolArguments *arguments;
+  SymbolExpr *expr;
+};
+
+/****************************************************************************/
+
+struct SymbolSubscription {
+  SymbolType type;
+  SymbolPrimary *primary;
+  SymbolExpr *expr;
+};
+
+/****************************************************************************/
+
+struct SymbolSlice {
+  SymbolType type;
+  SymbolPrimary *primary;
+  SymbolExpr *left_expr;
+  SymbolExpr *right_expr;
+};
+
+/****************************************************************************/
+
+struct SymbolAtom {
+  SymbolType type;
+  void *symbol;
+};
+
+/****************************************************************************/
+
+struct SymbolIdentifier {
   SymbolType type;
   int line;
   int column;
@@ -321,7 +321,7 @@ struct Identifier {
 
 /****************************************************************************/
 
-struct IntegerLiteral {
+struct SymbolIntegerLiteral {
   SymbolType type;
   int line;
   int column;
@@ -330,7 +330,7 @@ struct IntegerLiteral {
 
 /****************************************************************************/
 
-struct FloatLiteral {
+struct SymbolFloatLiteral {
   SymbolType type;
   int line;
   int column;
@@ -339,7 +339,7 @@ struct FloatLiteral {
 
 /****************************************************************************/
 
-struct StringLiteral {
+struct SymbolStringLiteral {
   SymbolType type;
   int line;
   int column;
@@ -348,7 +348,7 @@ struct StringLiteral {
 
 /****************************************************************************/
 
-struct BooleanLiteral {
+struct SymbolBooleanLiteral {
   SymbolType type;
   int line;
   int column;
@@ -357,7 +357,7 @@ struct BooleanLiteral {
 
 /****************************************************************************/
 
-struct NoneLiteral {
+struct SymbolNoneLiteral {
   SymbolType type;
   int line;
   int column;

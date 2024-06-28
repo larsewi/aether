@@ -14,12 +14,12 @@ void yyerror(char *msg);
 %}
 
 %union {
-  Identifier *identifier;
-  IntegerLiteral *integer_literal;
-  FloatLiteral *float_literal;
-  StringLiteral *string_literal;
-  BooleanLiteral *boolean_literal;
-  NoneLiteral *none_literal;
+  SymbolIdentifier *identifier;
+  SymbolIntegerLiteral *integer_literal;
+  SymbolFloatLiteral *float_literal;
+  SymbolStringLiteral *string_literal;
+  SymbolBooleanLiteral *boolean_literal;
+  SymbolNoneLiteral *none_literal;
 }
 
 %token <identifier> IDENTIFIER
@@ -32,35 +32,35 @@ void yyerror(char *msg);
 %token AND_OPER OR_OPER
 
 %union {
-  Expr *expr;
-  LP3 *lp3;
-  Or *or;
-  LP2 *lp2;
-  And *and;
-  LP1 *lp1;
-  Not *not;
-  Comp *comp;
-  LessThan *less_than;
-  GreaterThan *greater_than;
-  Equal *equal;
-  LessEqual *less_equal;
-  GreaterEqual *greater_equal;
-  NotEqual *not_equal;
-  Term *term;
-  Add *add;
-  Subtract *subtract;
-  Factor *factor;
-  Multiply *multiply;
-  Divide *divide;
-  Modulo *modulo;
-  Unary *unary;
-  Minus *minus;
-  Primary *primary;
-  Fncall *fncall;
-  Arguments *arguments;
-  Subscription *subscription;
-  Slice *slice;
-  Atom *atom;
+  SymbolExpr *expr;
+  SymbolLP3 *lp3;
+  SymbolOr *or;
+  SymbolLP2 *lp2;
+  SymbolAnd *and;
+  SymbolLP1 *lp1;
+  SymbolNot *not;
+  SymbolComp *comp;
+  SymbolLessThan *less_than;
+  SymbolGreaterThan *greater_than;
+  SymbolEqual *equal;
+  SymbolLessEqual *less_equal;
+  SymbolGreaterEqual *greater_equal;
+  SymbolNotEqual *not_equal;
+  SymbolTerm *term;
+  SymbolAdd *add;
+  SymbolSubtract *subtract;
+  SymbolFactor *factor;
+  SymbolMultiply *multiply;
+  SymbolDivide *divide;
+  SymbolModulo *modulo;
+  SymbolUnary *unary;
+  SymbolMinus *minus;
+  SymbolPrimary *primary;
+  SymbolFncall *fncall;
+  SymbolArguments *arguments;
+  SymbolSubscription *subscription;
+  SymbolSlice *slice;
+  SymbolAtom *atom;
 }
 
 %type <expr> inner_expr expr;
@@ -107,7 +107,7 @@ start
 expr
 : lp1 {
   LOG_DEBUG("expr : lp1");
-  $$ = xmalloc(sizeof(Expr));
+  $$ = xmalloc(sizeof(SymbolExpr));
   $$->type = SYMBOL_TYPE_EXPR;
   $$->value = $1;
 }
@@ -116,13 +116,13 @@ expr
 lp1
 : lp2 {
   LOG_DEBUG("lp1 : lp2");
-  $$ = xmalloc(sizeof(LP1));
+  $$ = xmalloc(sizeof(SymbolLP1));
   $$->type = SYMBOL_TYPE_LP1;
   $$->symbol = $1;
 }
 | or {
   LOG_DEBUG("lp1 : or");
-  $$ = xmalloc(sizeof(LP1));
+  $$ = xmalloc(sizeof(SymbolLP1));
   $$->type = SYMBOL_TYPE_LP1;
   $$->symbol = $1;
 }
@@ -131,7 +131,7 @@ lp1
 or
 : lp1 OR_OPER lp2 {
   LOG_DEBUG("or : lp1 OR_OPER lp2");
-  $$ = xmalloc(sizeof(Or));
+  $$ = xmalloc(sizeof(SymbolOr));
   $$->type = SYMBOL_TYPE_OR;
   $$->lp1 = $1;
   $$->lp2 = $3;
@@ -141,13 +141,13 @@ or
 lp2
 : lp3 {
   LOG_DEBUG("lp2 : lp3");
-  $$ = xmalloc(sizeof(LP2));
+  $$ = xmalloc(sizeof(SymbolLP2));
   $$->type = SYMBOL_TYPE_LP2;
   $$->symbol = $1;
 }
 | and {
   LOG_DEBUG("lp2 : and");
-  $$ = xmalloc(sizeof(LP2));
+  $$ = xmalloc(sizeof(SymbolLP2));
   $$->type = SYMBOL_TYPE_LP2;
   $$->symbol = $1;
 }
@@ -156,7 +156,7 @@ lp2
 and
 : lp2 AND_OPER lp3 {
   LOG_DEBUG("and : lp2 AND_OPER lp3");
-  $$ = xmalloc(sizeof(And));
+  $$ = xmalloc(sizeof(SymbolAnd));
   $$->type = SYMBOL_TYPE_AND;
   $$->lp2 = $1;
   $$->lp3 = $3;
@@ -166,13 +166,13 @@ and
 lp3
 : comp {
   LOG_DEBUG("lp3 : comp");
-  $$ = xmalloc(sizeof(LP3));
+  $$ = xmalloc(sizeof(SymbolLP3));
   $$->type = SYMBOL_TYPE_LP3;
   $$->symbol = $1;
 }
 | not {
   LOG_DEBUG("lp3 : not");
-  $$ = xmalloc(sizeof(LP3));
+  $$ = xmalloc(sizeof(SymbolLP3));
   $$->type = SYMBOL_TYPE_LP3;
   $$->symbol = $1;
 }
@@ -181,7 +181,7 @@ lp3
 not
 : '!' lp3 {
   LOG_DEBUG("not : '!' lp3");
-  $$ = xmalloc(sizeof(Not));
+  $$ = xmalloc(sizeof(SymbolNot));
   $$->type = SYMBOL_TYPE_NOT;
   $$->lp3 = $2;
 }
@@ -190,43 +190,43 @@ not
 comp
 : term {
   LOG_DEBUG("comp : term");
-  $$ = xmalloc(sizeof(Comp));
+  $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
   $$->symbol = $1;
 }
 | less_than {
   LOG_DEBUG("comp : less_than");
-  $$ = xmalloc(sizeof(Comp));
+  $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
   $$->symbol = $1;
 }
 | greater_than {
   LOG_DEBUG("comp : greater_than");
-  $$ = xmalloc(sizeof(Comp));
+  $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
   $$->symbol = $1;
 }
 | equal {
   LOG_DEBUG("comp : equal");
-  $$ = xmalloc(sizeof(Comp));
+  $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
   $$->symbol = $1;
 }
 | less_equal {
   LOG_DEBUG("comp : less_equal");
-  $$ = xmalloc(sizeof(Comp));
+  $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
   $$->symbol = $1;
 }
 | greater_equal {
   LOG_DEBUG("comp : greater_equal");
-  $$ = xmalloc(sizeof(Comp));
+  $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
   $$->symbol = $1;
 }
 | not_equal {
   LOG_DEBUG("comp : not_equal");
-  $$ = xmalloc(sizeof(Comp));
+  $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
   $$->symbol = $1;
 }
@@ -235,7 +235,7 @@ comp
 less_than
 : comp '<' term {
   LOG_DEBUG("less_than : comp '<' term");
-  $$ = xmalloc(sizeof(LessThan));
+  $$ = xmalloc(sizeof(SymbolLessThan));
   $$->type = SYMBOL_TYPE_LESS_THAN;
   $$->comp = $1;
   $$->term = $3;
@@ -245,7 +245,7 @@ less_than
 greater_than
 : comp '>' term {
   LOG_DEBUG("greater_than : comp '>' term");
-  $$ = xmalloc(sizeof(GreaterThan));
+  $$ = xmalloc(sizeof(SymbolGreaterThan));
   $$->type = SYMBOL_TYPE_GREATER_THAN;
   $$->comp = $1;
   $$->term = $3;
@@ -255,7 +255,7 @@ greater_than
 equal
 : comp EQ_OPER term {
   LOG_DEBUG("equal : comp EQ_OPER term");
-  $$ = xmalloc(sizeof(Equal));
+  $$ = xmalloc(sizeof(SymbolEqual));
   $$->type = SYMBOL_TYPE_EQUAL;
   $$->comp = $1;
   $$->term = $3;
@@ -265,7 +265,7 @@ equal
 less_equal
 : comp LE_OPER term {
   LOG_DEBUG("less_equal : comp LE_OPER term");
-  $$ = xmalloc(sizeof(LessEqual));
+  $$ = xmalloc(sizeof(SymbolLessEqual));
   $$->type = SYMBOL_TYPE_LESS_EQUAL;
   $$->comp = $1;
   $$->term = $3;
@@ -275,7 +275,7 @@ less_equal
 greater_equal
 : comp GE_OPER term {
   LOG_DEBUG("greater_equal : comp GE_OPER term");
-  $$ = xmalloc(sizeof(GreaterEqual));
+  $$ = xmalloc(sizeof(SymbolGreaterEqual));
   $$->type = SYMBOL_TYPE_GREATER_EQUAL;
   $$->comp = $1;
   $$->term = $3;
@@ -285,7 +285,7 @@ greater_equal
 not_equal
 : comp NE_OPER term {
   LOG_DEBUG("not_equal : comp NE_OPER term");
-  $$ = xmalloc(sizeof(NotEqual));
+  $$ = xmalloc(sizeof(SymbolNotEqual));
   $$->type = SYMBOL_TYPE_NOT_EQUAL;
   $$->comp = $1;
   $$->term = $3;
@@ -295,19 +295,19 @@ not_equal
 term
 : factor {
   LOG_DEBUG("term : factor");
-  $$ = xmalloc(sizeof(Term));
+  $$ = xmalloc(sizeof(SymbolTerm));
   $$->type = SYMBOL_TYPE_TERM;
   $$->symbol = $1;
 }
 | add {
   LOG_DEBUG("term : add");
-  $$ = xmalloc(sizeof(Term));
+  $$ = xmalloc(sizeof(SymbolTerm));
   $$->type = SYMBOL_TYPE_TERM;
   $$->symbol = $1;
 }
 | subtract {
   LOG_DEBUG("term : subtract");
-  $$ = xmalloc(sizeof(Term));
+  $$ = xmalloc(sizeof(SymbolTerm));
   $$->type = SYMBOL_TYPE_TERM;
   $$->symbol = $1;
 }
@@ -316,7 +316,7 @@ term
 add
 : term '+' factor {
   LOG_DEBUG("add : term '+' factor");
-  $$ = xmalloc(sizeof(Add));
+  $$ = xmalloc(sizeof(SymbolAdd));
   $$->type = SYMBOL_TYPE_ADD;
   $$->term = $1;
   $$->factor = $3;
@@ -326,7 +326,7 @@ add
 subtract
 : term '-' factor {
   LOG_DEBUG("subtract : term '-' factor");
-  $$ = xmalloc(sizeof(Subtract));
+  $$ = xmalloc(sizeof(SymbolSubtract));
   $$->type = SYMBOL_TYPE_SUBTRACT;
   $$->term = $1;
   $$->factor = $3;
@@ -336,25 +336,25 @@ subtract
 factor
 : unary {
   LOG_DEBUG("factor : unary");
-  $$ = xmalloc(sizeof(Factor));
+  $$ = xmalloc(sizeof(SymbolFactor));
   $$->type = SYMBOL_TYPE_FACTOR;
   $$->symbol = $1;
 }
 | multiply {
   LOG_DEBUG("factor : multiply");
-  $$ = xmalloc(sizeof(Factor));
+  $$ = xmalloc(sizeof(SymbolFactor));
   $$->type = SYMBOL_TYPE_FACTOR;
   $$->symbol = $1;
 }
 | divide {
   LOG_DEBUG("factor : divide");
-  $$ = xmalloc(sizeof(Factor));
+  $$ = xmalloc(sizeof(SymbolFactor));
   $$->type = SYMBOL_TYPE_FACTOR;
   $$->symbol = $1;
 }
 | modulo {
   LOG_DEBUG("factor : modulo");
-  $$ = xmalloc(sizeof(Factor));
+  $$ = xmalloc(sizeof(SymbolFactor));
   $$->type = SYMBOL_TYPE_MODULO;
   $$->symbol = $1;
 }
@@ -363,7 +363,7 @@ factor
 multiply
 : factor '*' unary {
   LOG_DEBUG("multiply : factor '*' unary");
-  $$ = xmalloc(sizeof(Factor));
+  $$ = xmalloc(sizeof(SymbolFactor));
   $$->type = SYMBOL_TYPE_MULTIPLY;
   $$->factor = $1;
   $$->unary = $3;
@@ -373,7 +373,7 @@ multiply
 divide
 : factor '/' unary {
   LOG_DEBUG("divide : factor '/' unary");
-  $$ = xmalloc(sizeof(Factor));
+  $$ = xmalloc(sizeof(SymbolFactor));
   $$->type = SYMBOL_TYPE_DIVIDE;
   $$->factor = $1;
   $$->unary = $3;
@@ -383,7 +383,7 @@ divide
 modulo
 : factor '%' unary {
   LOG_DEBUG("divide : factor '%' unary");
-  $$ = xmalloc(sizeof(Factor));
+  $$ = xmalloc(sizeof(SymbolFactor));
   $$->type = SYMBOL_TYPE_MODULO;
   $$->factor = $1;
   $$->unary = $3;
@@ -393,19 +393,19 @@ modulo
 unary
 : primary {
   LOG_DEBUG("primary");
-  $$ = xmalloc(sizeof(Unary));
+  $$ = xmalloc(sizeof(SymbolUnary));
   $$->type = SYMBOL_TYPE_UNARY;
   $$->symbol = $1;
 }
 | '+' unary {
   LOG_DEBUG("unary : '+' unary");
-  $$ = xmalloc(sizeof(Unary));
+  $$ = xmalloc(sizeof(SymbolUnary));
   $$->type = SYMBOL_TYPE_UNARY;
   $$->symbol = $2;
 }
 | minus {
   LOG_DEBUG("unary : minus");
-  $$ = xmalloc(sizeof(Unary));
+  $$ = xmalloc(sizeof(SymbolUnary));
   $$->type = SYMBOL_TYPE_UNARY;
   $$->symbol = $1;
 }
@@ -414,7 +414,7 @@ unary
 minus
 : '-' unary {
   LOG_DEBUG("minus : '-' unary");
-  $$ = xmalloc(sizeof(Minus));
+  $$ = xmalloc(sizeof(SymbolMinus));
   $$->type = SYMBOL_TYPE_MINUS;
   $$->unary = $2;
 }
@@ -423,25 +423,25 @@ minus
 primary
 : atom {
   LOG_DEBUG("atom");
-  $$ = xmalloc(sizeof(Primary));
+  $$ = xmalloc(sizeof(SymbolPrimary));
   $$->type = SYMBOL_TYPE_PRIMARY;
   $$->symbol = $1;
 }
 | fncall {
   LOG_DEBUG("primary : fncall");
-  $$ = xmalloc(sizeof(Primary));
+  $$ = xmalloc(sizeof(SymbolPrimary));
   $$->type = SYMBOL_TYPE_PRIMARY;
   $$->symbol = $1;
 }
 | subscription {
   LOG_DEBUG("primary : subscription");
-  $$ = xmalloc(sizeof(Primary));
+  $$ = xmalloc(sizeof(SymbolPrimary));
   $$->type = SYMBOL_TYPE_PRIMARY;
   $$->symbol = $1;
 }
 | slice {
   LOG_DEBUG("primary : slice");
-  $$ = xmalloc(sizeof(Primary));
+  $$ = xmalloc(sizeof(SymbolPrimary));
   $$->type = SYMBOL_TYPE_PRIMARY;
   $$->symbol = $1;
 }
@@ -450,14 +450,14 @@ primary
 // TODO: Rename to func_call
 fncall : primary '(' ')' {
   LOG_DEBUG("fncall : primary '(' ')'");
-  $$ = xmalloc(sizeof(Fncall));
+  $$ = xmalloc(sizeof(SymbolFncall));
   $$->type = SYMBOL_TYPE_FNCALL;
   $$->primary = $1;
   $$->arguments = NULL;
 }
 | primary '(' arguments ')' {
   LOG_DEBUG("fncall : primary '(' arguments ')'");
-  $$ = xmalloc(sizeof(Fncall));
+  $$ = xmalloc(sizeof(SymbolFncall));
   $$->type = SYMBOL_TYPE_FNCALL;
   $$->primary = $1;
   $$->arguments = $3;
@@ -467,14 +467,14 @@ fncall : primary '(' ')' {
 arguments
 : expr {
   LOG_DEBUG("arglist : expr");
-  $$ = xmalloc(sizeof(Arguments));
+  $$ = xmalloc(sizeof(SymbolArguments));
   $$->type = SYMBOL_TYPE_ARGUMENTS;
   $$->arguments = NULL;
   $$->expr = $1;
 }
 | arguments ',' expr {
   LOG_DEBUG("arglist : arglist ',' expr");
-  $$ = xmalloc(sizeof(Arguments));
+  $$ = xmalloc(sizeof(SymbolArguments));
   $$->type = SYMBOL_TYPE_ARGUMENTS;
   $$->arguments = $1;
   $$->expr = $3;
@@ -484,7 +484,7 @@ arguments
 subscription
 : primary '[' expr ']' {
   LOG_DEBUG("subscription : primary '[' expr ']'");
-  $$ = xmalloc(sizeof(Subscription));
+  $$ = xmalloc(sizeof(SymbolSubscription));
   $$->type = SYMBOL_TYPE_SUBSCRIPTION;
   $$->primary = $1;
   $$->expr = $3;
@@ -494,7 +494,7 @@ subscription
 slice
 : primary '[' expr ':' expr ']' {
   LOG_DEBUG("slice : primary '[' expr ':' expr ']'");
-  $$ = xmalloc(sizeof(Slice));
+  $$ = xmalloc(sizeof(SymbolSlice));
   $$->type = SYMBOL_TYPE_SLICE;
   $$->primary = $1;
   $$->left_expr = $3;
@@ -502,7 +502,7 @@ slice
 }
 | primary '[' expr ':' ']' {
   LOG_DEBUG("slice : primary '[' expr ':' ']'");
-  $$ = xmalloc(sizeof(Slice));
+  $$ = xmalloc(sizeof(SymbolSlice));
   $$->type = SYMBOL_TYPE_SLICE;
   $$->primary = $1;
   $$->left_expr = $3;
@@ -510,7 +510,7 @@ slice
 }
 | primary '[' ':' expr ']' {
   LOG_DEBUG("slice : primary '[' ':' expr ']'");
-  $$ = xmalloc(sizeof(Slice));
+  $$ = xmalloc(sizeof(SymbolSlice));
   $$->type = SYMBOL_TYPE_SLICE;
   $$->primary = $1;
   $$->left_expr = NULL;
@@ -518,7 +518,7 @@ slice
 }
 | primary '[' ':' ']' {
   LOG_DEBUG("slice : primary '[' ':' ']'");
-  $$ = xmalloc(sizeof(Slice));
+  $$ = xmalloc(sizeof(SymbolSlice));
   $$->type = SYMBOL_TYPE_SLICE;
   $$->primary = $1;
   $$->left_expr = NULL;
@@ -529,7 +529,7 @@ slice
 inner_expr
 : '(' expr ')' {
   LOG_DEBUG("inner_expr : '(' expr ')'");
-  $$ = xmalloc(sizeof(Expr));
+  $$ = xmalloc(sizeof(SymbolExpr));
   $$->type = SYMBOL_TYPE_EXPR;
   $$->value = $2;
 }
@@ -538,37 +538,37 @@ inner_expr
 atom
 : IDENTIFIER {
   LOG_DEBUG("atom : IDENTIFIER");
-  $$ = xmalloc(sizeof(Atom));
+  $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_IDENTIFIER;
   $$->symbol = $1;
 }
 | INTEGER_LITERAL {
   LOG_DEBUG("atom : INTEGER_LITERAL");
-  $$ = xmalloc(sizeof(Atom));
+  $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_INTEGER_LITERAL;
   $$->symbol = $1;
 }
 | FLOAT_LITERAL {
   LOG_DEBUG("atom : FLOAT_LITERAL");
-  $$ = xmalloc(sizeof(Atom));
+  $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_FLOAT_LITERAL;
   $$->symbol = $1;
 }
 | STRING_LITERAL {
   LOG_DEBUG("atom : STRING_LITERAL");
-  $$ = xmalloc(sizeof(Atom));
+  $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_STRING_LITERAL;
   $$->symbol = $1;
 }
 | BOOLEAN_LITERAL {
   LOG_DEBUG("atom : BOOLEAN_LITERAL");
-  $$ = xmalloc(sizeof(Atom));
+  $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_BOOLEAN_LITERAL;
   $$->symbol = $1;
 }
 | NONE_LITERAL {
   LOG_DEBUG("atom : NONE_LITERAL");
-  $$ = xmalloc(sizeof(Atom));
+  $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_NONE_LITERAL;
   $$->symbol = $1;
 }
