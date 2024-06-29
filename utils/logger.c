@@ -28,17 +28,17 @@ void LoggerLogMessage(enum LoggerLogLevel level, const char *file,
   switch (level) {
   case LOGGER_MESSAGE_TYPE_DEBUG:
     if (LOGGER_LOG_DEBUG) {
-      fprintf(stdout, "DEBUG [%s:%d]: %s\n", file, line, message);
+      fprintf(stdout, "[DEBUG][%s:%d]: %s\n", file, line, message);
     }
     break;
   case LOGGER_MESSAGE_TYPE_WARNING:
-    fprintf(stdout, "WARNING: %s\n", message);
+    fprintf(stdout, "[WARNING]: %s\n", message);
     break;
   case LOGGER_MESSAGE_TYPE_ERROR:
-    fprintf(stderr, "ERROR: %s\n", message);
+    fprintf(stderr, "[ERROR]: %s\n", message);
     break;
   case LOGGER_MESSAGE_TYPE_CRITICAL:
-    fprintf(stderr, "CRITICAL [%s:%d]: %s\n", file, line, message);
+    fprintf(stderr, "[CRITICAL][%s:%d]: %s: ", file, line, message);
     abort(); // It is not safe to proceed
   }
 }

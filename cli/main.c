@@ -8,21 +8,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../parser/parser_state.h"
+#include "../parser/syntax.h"
 
-#include "../parser/parser.h"
 #include "../utils/logger.h"
 
-extern FILE *yyin;
-ParserState PARSER_STATE = {.line = 1, .column = 1};
-
-static const struct option long_options[] = {
-    {"debug", no_argument, 0, 'd'},
-    {"help", no_argument, 0, 'h'},
-    {0, 0, 0, 0},
+static const struct option LONG_OPTIONS[] = {
+    {"syntax", no_argument, NULL, 's'},
+    {"debug", no_argument, NULL, 'd'},
+    {"help", no_argument, NULL, 'h'},
+    {NULL, 0, NULL, 0},
 };
 
-static const char *const descriptions[] = {
+static const char *const DESCRIPTIONS[] = {
+    "print syntax tree",
     "enable debug logging",
     "print help message",
 };
@@ -30,27 +28,23 @@ static const char *const descriptions[] = {
 static void PrintHelp(void) {
   printf("%s\n\n", PACKAGE_STRING);
 
-  printf("Usage: %s", PACKAGE_NAME);
-  for (int i = 0; long_options[i].val != 0; i++) {
-    printf(" [--%s]", long_options[i].name);
-  }
-  printf(" SOURCE\n\n");
+  printf("Usage: %s [OPTIONS] SOURCE\n\n", PACKAGE_NAME);
 
   size_t longest = 0;
-  for (int i = 0; long_options[i].val != 0; i++) {
-    const size_t length = strlen(long_options[i].name);
+  for (int i = 0; LONG_OPTIONS[i].val != 0; i++) {
+    const size_t length = strlen(LONG_OPTIONS[i].name);
     if (length > longest) {
       longest = length;
     }
   }
 
   char format[64];
-  int ret = snprintf(format, sizeof(format), "  --%%-%zus %%s\n", longest);
+  int ret = snprintf(format, sizeof(format), "  --%%-%zus    %%s\n", longest);
   assert(ret >= 0 && (size_t)ret < sizeof(format));
 
-  printf("Options:\n");
-  for (int i = 0; long_options[i].val != 0; i++) {
-    printf(format, long_options[i].name, descriptions[i]);
+  printf("OPTIONS:\n");
+  for (int i = 0; LONG_OPTIONS[i].val != 0; i++) {
+    printf(format, LONG_OPTIONS[i].name, DESCRIPTIONS[i]);
   }
 
   printf("\nReport bugs to: <%s>\n", PACKAGE_BUGREPORT);
@@ -58,9 +52,15 @@ static void PrintHelp(void) {
 }
 
 int main(int argc, char *argv[]) {
+  bool print_syntax_tree = false;
+
   int c;
-  while ((c = getopt_long(argc, argv, "dh", long_options, NULL)) != -1) {
+  while ((c = getopt_long(argc, argv, "sdht", LONG_OPTIONS, NULL)) != -1) {
     switch (c) {
+    case 's':
+      print_syntax_tree = true;
+      break;
+
     case 'd':
       LoggerSetDebug(true);
       break;
@@ -69,10 +69,12 @@ int main(int argc, char *argv[]) {
       PrintHelp();
       return EXIT_SUCCESS;
 
-    default:
-      LOG_ERROR("Bad option ...");
-      PrintHelp();
+    case '?':
+      // Error already printed by getopt_long(3)
       return EXIT_FAILURE;
+
+    default:
+      LOG_CRITICAL("Unhandled option '%c'", c);
     }
   }
 
@@ -82,23 +84,13 @@ int main(int argc, char *argv[]) {
   }
   const char *filename = argv[optind++];
 
-  yyin = fopen(filename, "r");
-  if (yyin == NULL) {
-    LOG_ERROR("Failed to open file '%s': %s", filename, strerror(errno));
+  if (!ParseFile(filename)) {
     return EXIT_FAILURE;
   }
 
-  while (!feof(yyin)) {
-    yyparse();
-
-    if (ferror(yyin)) {
-      LOG_ERROR("Failed to parse file '%s': %s", strerror(errno));
-      fclose(yyin);
-      return EXIT_FAILURE;
-    }
+  if (print_syntax_tree) {
+    PrintSyntaxTree();
   }
-
-  fclose(yyin);
 
   return EXIT_SUCCESS;
 }

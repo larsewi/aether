@@ -1,5 +1,5 @@
-#ifndef _AETHER_PARSER_SATE
-#define _AETHER_PARSER_SATE
+#ifndef _AETHER_SYNTAX_H
+#define _AETHER_SYNTAX_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -9,6 +9,7 @@
 
 /****************************************************************************/
 
+typedef struct ParserState ParserState;
 typedef struct SymbolExpr SymbolExpr;
 typedef struct SymbolOr SymbolOr;
 typedef struct SymbolCond SymbolCond;
@@ -84,11 +85,12 @@ typedef enum {
 
 /****************************************************************************/
 
-typedef struct {
+struct ParserState {
+  char *filename;
   int line;
   int column;
   SymbolExpr *expr;
-} ParserState;
+};
 
 /****************************************************************************/
 
@@ -354,4 +356,7 @@ struct SymbolNoneLiteral {
 
 extern ParserState PARSER_STATE;
 
-#endif // _AETHER_PARSER_SATE
+bool ParseFile(const char *filename);
+void PrintSyntaxTree(void);
+
+#endif // _AETHER_SYNTAX_H

@@ -1,5 +1,5 @@
 %{
-#include "parser_state.h"
+#include "syntax.h"
 
 #include <stdio.h>
 #include <stdlib.h>

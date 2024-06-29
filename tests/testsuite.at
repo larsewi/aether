@@ -12,17 +12,17 @@ else
 fi]])
 
 AT_SETUP([logger.c:LOG_DEBUG])
-AT_CHECK(["${abs_top_builddir}"/utils/test_logger LOG_DEBUG], , [[DEBUG [test_logger.c:7]: bar
-]])
+AT_CHECK(["${abs_top_builddir}"/utils/test_logger LOG_DEBUG], , [[[DEBUG]][[test_logger.c:7]]: bar
+])
 AT_CLEANUP
 
 AT_SETUP([logger.c:LOG_WARNING])
-AT_CHECK(["${abs_top_builddir}"/utils/test_logger LOG_WARNING], , [WARNING: foo
+AT_CHECK(["${abs_top_builddir}"/utils/test_logger LOG_WARNING], , [[[WARNING]]: foo
 ])
 AT_CLEANUP
 
 AT_SETUP([logger.c:LOG_ERROR])
-AT_CHECK(["${abs_top_builddir}"/utils/test_logger LOG_ERROR], , , [ERROR: foo
+AT_CHECK(["${abs_top_builddir}"/utils/test_logger LOG_ERROR], , , [[[ERROR]]: foo
 ])
 AT_CLEANUP
 
@@ -154,11 +154,12 @@ AT_SETUP([aether --help])
 FIND_AETHER
 AT_CHECK_UNQUOTED(["${abs_top_builddir}"/cli/aether --help], , [AT_PACKAGE_STRING
 
-Usage: aether [[--debug]] [[--help]] SOURCE
+Usage: aether [[OPTIONS]] SOURCE
 
-Options:
-  --debug enable debug logging
-  --help  print help message
+OPTIONS:
+  --syntax    print syntax tree
+  --debug     enable debug logging
+  --help      print help message
 
 Report bugs to: <AT_PACKAGE_BUGREPORT>
 aether home page: <AT_PACKAGE_URL>
