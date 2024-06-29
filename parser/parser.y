@@ -33,12 +33,9 @@ void yyerror(char *msg);
 
 %union {
   SymbolExpr *expr;
-  SymbolLP3 *lp3;
   SymbolOr *or;
-  SymbolLP2 *lp2;
+  SymbolCond *cond;
   SymbolAnd *and;
-  SymbolLP1 *lp1;
-  SymbolNot *not;
   SymbolComp *comp;
   SymbolLessThan *less_than;
   SymbolGreaterThan *greater_than;
@@ -55,6 +52,7 @@ void yyerror(char *msg);
   SymbolModulo *modulo;
   SymbolUnary *unary;
   SymbolMinus *minus;
+  SymbolNegate *negate;
   SymbolPrimary *primary;
   SymbolFncall *fncall;
   SymbolArguments *arguments;
@@ -64,12 +62,9 @@ void yyerror(char *msg);
 }
 
 %type <expr> inner_expr expr;
-%type <lp1> lp1;
 %type <or> or;
-%type <lp2> lp2;
+%type <cond> cond;
 %type <and> and;
-%type <lp3> lp3;
-%type <not> not;
 %type <comp> comp;
 %type <less_than> less_than;
 %type <greater_than> greater_than;
@@ -86,6 +81,7 @@ void yyerror(char *msg);
 %type <modulo> modulo;
 %type <unary> unary;
 %type <minus> minus;
+%type <negate> negate;
 %type <primary> primary;
 %type <fncall> fncall;
 %type <arguments> arguments;
@@ -98,92 +94,61 @@ void yyerror(char *msg);
 start
 : /* empty */ {
   LOG_DEBUG("start : %%empty");
+  P.expr = NULL;
 }
 | expr {
   LOG_DEBUG("start : expr");
+  P.expr = $1;
 }
 ;
 
 expr
-: lp1 {
-  LOG_DEBUG("expr : lp1");
+: cond {
+  LOG_DEBUG("expr : cond");
   $$ = xmalloc(sizeof(SymbolExpr));
   $$->type = SYMBOL_TYPE_EXPR;
-  $$->value = $1;
-}
-;
-
-lp1
-: lp2 {
-  LOG_DEBUG("lp1 : lp2");
-  $$ = xmalloc(sizeof(SymbolLP1));
-  $$->type = SYMBOL_TYPE_LP1;
   $$->symbol = $1;
 }
 | or {
-  LOG_DEBUG("lp1 : or");
-  $$ = xmalloc(sizeof(SymbolLP1));
-  $$->type = SYMBOL_TYPE_LP1;
+  LOG_DEBUG("expr : or");
+  $$ = xmalloc(sizeof(SymbolExpr));
+  $$->type = SYMBOL_TYPE_EXPR;
   $$->symbol = $1;
 }
 ;
 
 or
-: lp1 OR_OPER lp2 {
-  LOG_DEBUG("or : lp1 OR_OPER lp2");
+: expr OR_OPER cond {
+  LOG_DEBUG("or : expr OR_OPER cond");
   $$ = xmalloc(sizeof(SymbolOr));
   $$->type = SYMBOL_TYPE_OR;
-  $$->lp1 = $1;
-  $$->lp2 = $3;
+  $$->expr = $1;
+  $$->cond = $3;
 }
 ;
 
-lp2
-: lp3 {
-  LOG_DEBUG("lp2 : lp3");
-  $$ = xmalloc(sizeof(SymbolLP2));
-  $$->type = SYMBOL_TYPE_LP2;
+cond
+: comp {
+  LOG_DEBUG("cond : comp");
+  $$ = xmalloc(sizeof(SymbolCond));
+  $$->type = SYMBOL_TYPE_COND;
   $$->symbol = $1;
 }
 | and {
-  LOG_DEBUG("lp2 : and");
-  $$ = xmalloc(sizeof(SymbolLP2));
-  $$->type = SYMBOL_TYPE_LP2;
+  LOG_DEBUG("cond : and");
+  $$ = xmalloc(sizeof(SymbolCond));
+  $$->type = SYMBOL_TYPE_COND;
   $$->symbol = $1;
 }
 ;
 
 and
-: lp2 AND_OPER lp3 {
-  LOG_DEBUG("and : lp2 AND_OPER lp3");
+: cond AND_OPER comp {
+  LOG_DEBUG("and : cond AND_OPER comp");
   $$ = xmalloc(sizeof(SymbolAnd));
   $$->type = SYMBOL_TYPE_AND;
-  $$->lp2 = $1;
-  $$->lp3 = $3;
-}
-;
-
-lp3
-: comp {
-  LOG_DEBUG("lp3 : comp");
-  $$ = xmalloc(sizeof(SymbolLP3));
-  $$->type = SYMBOL_TYPE_LP3;
-  $$->symbol = $1;
-}
-| not {
-  LOG_DEBUG("lp3 : not");
-  $$ = xmalloc(sizeof(SymbolLP3));
-  $$->type = SYMBOL_TYPE_LP3;
-  $$->symbol = $1;
-}
-;
-
-not
-: '!' lp3 {
-  LOG_DEBUG("not : '!' lp3");
-  $$ = xmalloc(sizeof(SymbolNot));
-  $$->type = SYMBOL_TYPE_NOT;
-  $$->lp3 = $2;
+  $$->cond = $1;
+  $$->comp = $3;
 }
 ;
 
@@ -409,6 +374,12 @@ unary
   $$->type = SYMBOL_TYPE_UNARY;
   $$->symbol = $1;
 }
+| negate {
+  LOG_DEBUG("unary : negate");
+  $$ = xmalloc(sizeof(SymbolUnary));
+  $$->type = SYMBOL_TYPE_UNARY;
+  $$->symbol = $1;
+}
 ;
 
 minus
@@ -416,6 +387,15 @@ minus
   LOG_DEBUG("minus : '-' unary");
   $$ = xmalloc(sizeof(SymbolMinus));
   $$->type = SYMBOL_TYPE_MINUS;
+  $$->unary = $2;
+}
+;
+
+negate
+: '!' unary {
+  LOG_DEBUG("negate : '!' unary");
+  $$ = xmalloc(sizeof(SymbolNegate));
+  $$->type = SYMBOL_TYPE_NEGATE;
   $$->unary = $2;
 }
 ;
@@ -531,7 +511,7 @@ inner_expr
   LOG_DEBUG("inner_expr : '(' expr ')'");
   $$ = xmalloc(sizeof(SymbolExpr));
   $$->type = SYMBOL_TYPE_EXPR;
-  $$->value = $2;
+  $$->symbol = $2;
 }
 ;
 
