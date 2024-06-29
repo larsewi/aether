@@ -9,7 +9,6 @@
 #include <string.h>
 
 #include "../parser/syntax.h"
-
 #include "../utils/logger.h"
 
 static const struct option LONG_OPTIONS[] = {
@@ -88,9 +87,7 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  if (print_syntax_tree) {
-    PrintSyntaxTree();
-  }
+  WalkSyntaxTree(print_syntax_tree);
 
   return EXIT_SUCCESS;
 }

@@ -364,9 +364,8 @@ unary
 }
 | '+' unary {
   LOG_DEBUG("unary : '+' unary");
-  $$ = xmalloc(sizeof(SymbolUnary));
-  $$->type = SYMBOL_TYPE_UNARY;
-  $$->symbol = $2;
+  // Ignore '+' token
+  $$ = $2;
 }
 | minus {
   LOG_DEBUG("unary : minus");
@@ -402,7 +401,7 @@ negate
 
 primary
 : atom {
-  LOG_DEBUG("atom");
+  LOG_DEBUG("primary : atom");
   $$ = xmalloc(sizeof(SymbolPrimary));
   $$->type = SYMBOL_TYPE_PRIMARY;
   $$->symbol = $1;
@@ -509,9 +508,7 @@ slice
 inner_expr
 : '(' expr ')' {
   LOG_DEBUG("inner_expr : '(' expr ')'");
-  $$ = xmalloc(sizeof(SymbolExpr));
-  $$->type = SYMBOL_TYPE_EXPR;
-  $$->symbol = $2;
+  $$ = $2;
 }
 ;
 
@@ -519,41 +516,43 @@ atom
 : IDENTIFIER {
   LOG_DEBUG("atom : IDENTIFIER");
   $$ = xmalloc(sizeof(SymbolAtom));
-  $$->type = SYMBOL_TYPE_IDENTIFIER;
+  $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = $1;
 }
 | INTEGER_LITERAL {
   LOG_DEBUG("atom : INTEGER_LITERAL");
   $$ = xmalloc(sizeof(SymbolAtom));
-  $$->type = SYMBOL_TYPE_INTEGER_LITERAL;
+  $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = $1;
 }
 | FLOAT_LITERAL {
   LOG_DEBUG("atom : FLOAT_LITERAL");
   $$ = xmalloc(sizeof(SymbolAtom));
-  $$->type = SYMBOL_TYPE_FLOAT_LITERAL;
+  $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = $1;
 }
 | STRING_LITERAL {
   LOG_DEBUG("atom : STRING_LITERAL");
   $$ = xmalloc(sizeof(SymbolAtom));
-  $$->type = SYMBOL_TYPE_STRING_LITERAL;
+  $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = $1;
 }
 | BOOLEAN_LITERAL {
   LOG_DEBUG("atom : BOOLEAN_LITERAL");
   $$ = xmalloc(sizeof(SymbolAtom));
-  $$->type = SYMBOL_TYPE_BOOLEAN_LITERAL;
+  $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = $1;
 }
 | NONE_LITERAL {
   LOG_DEBUG("atom : NONE_LITERAL");
   $$ = xmalloc(sizeof(SymbolAtom));
-  $$->type = SYMBOL_TYPE_NONE_LITERAL;
+  $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = $1;
 }
 | inner_expr {
   LOG_DEBUG("atom : inner_expr");
+  $$ = xmalloc(sizeof(SymbolAtom));
+  $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = $1;
 }
 ;

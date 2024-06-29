@@ -26,81 +26,89 @@
 \n {
   // Ignore newlines
   P.line += 1;
+  P.column = 1;
 }
 
 #[^\n]* {
   // Ignore comments
   P.line += 1;
+  P.column = 1;
 }
 
 [_a-zA-Z][_a-zA-Z0-9]* {
   LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  SymbolIdentifier *id = xmalloc(sizeof(SymbolIdentifier));
-  id->line = P.line;
-  id->column = P.column;
-  id->value = StringDuplicate(yytext);
-  yylval.identifier = id;
+  SymbolIdentifier *identifier = xmalloc(sizeof(SymbolIdentifier));
+  identifier->type = SYMBOL_TYPE_IDENTIFIER;
+  identifier->line = P.line;
+  identifier->column = P.column;
+  identifier->value = StringDuplicate(yytext);
+  yylval.identifier = identifier;
   P.column = yyleng;
   return IDENTIFIER;
 }
 
 none {
   LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  SymbolNoneLiteral *literal = xmalloc(sizeof(SymbolNoneLiteral));
-  literal->line = P.line;
-  literal->column = P.column;
-  yylval.none_literal = literal;
+  SymbolNoneLiteral *none_literal = xmalloc(sizeof(SymbolNoneLiteral));
+  none_literal->type = SYMBOL_TYPE_NONE_LITERAL;
+  none_literal->line = P.line;
+  none_literal->column = P.column;
+  yylval.none_literal = none_literal;
   P.column = yyleng;
   return NONE_LITERAL;
 }
 
 (true|false) {
   LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  SymbolBooleanLiteral *literal = xmalloc(sizeof(SymbolBooleanLiteral));
-  literal->line = P.line;
-  literal->column = P.column;
-  literal->value = StringEqual(yytext, "true");
-  yylval.boolean_literal = literal;
+  SymbolBooleanLiteral *boolean_literal = xmalloc(sizeof(SymbolBooleanLiteral));
+  boolean_literal->type = SYMBOL_TYPE_BOOLEAN_LITERAL;
+  boolean_literal->line = P.line;
+  boolean_literal->column = P.column;
+  boolean_literal->value = StringEqual(yytext, "true");
+  yylval.boolean_literal = boolean_literal;
   P.column = yyleng;
   return BOOLEAN_LITERAL;
 }
 
 \"(\\.|[^"\\])*\" {
   LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  SymbolStringLiteral *literal = xmalloc(sizeof(SymbolStringLiteral));
-  literal->line = P.line;
-  literal->column = P.column;
+  SymbolStringLiteral *string_literal = xmalloc(sizeof(SymbolStringLiteral));
+  string_literal->type = SYMBOL_TYPE_STRING_LITERAL;
+  string_literal->line = P.line;
+  string_literal->column = P.column;
   assert(yyleng >= 2);
-  literal->value = StringDuplicateN(yytext + 1, (size_t)(yyleng - 2));
-  yylval.string_literal = literal;
+  string_literal->value = StringDuplicateN(yytext + 1, (size_t)(yyleng - 2));
+  yylval.string_literal = string_literal;
   P.column = yyleng;
   return STRING_LITERAL;
 }
 
 (0|[1-9][0-9]*)\.[0-9]* {
   LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  SymbolFloatLiteral *literal = xmalloc(sizeof(SymbolFloatLiteral));
-  literal->line = P.line;
-  literal->column = P.column;
-  int ret = sscanf(yytext, "%lf", &literal->value);
+  SymbolFloatLiteral *float_literal = xmalloc(sizeof(SymbolFloatLiteral));
+  float_literal->type = SYMBOL_TYPE_FLOAT_LITERAL;
+  float_literal->line = P.line;
+  float_literal->column = P.column;
+  int ret = sscanf(yytext, "%lf", &float_literal->value);
   if (ret != 1) {
     LOG_CRITICAL("sscanf(3): Failed to scan float from string '%s': %s", yytext, strerror(errno));
   }
-  yylval.float_literal = literal;
+  yylval.float_literal = float_literal;
   P.column += yyleng;
   return FLOAT_LITERAL;
 }
 
 (0|[1-9][0-9]*) {
   LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  SymbolIntegerLiteral *literal = xmalloc(sizeof(SymbolIntegerLiteral));
-  literal->line = P.line;
-  literal->column = P.column;
-  int ret = sscanf(yytext, "%llu", &literal->value);
+  SymbolIntegerLiteral *integer_literal = xmalloc(sizeof(SymbolIntegerLiteral));
+  integer_literal->type = SYMBOL_TYPE_INTEGER_LITERAL;
+  integer_literal->line = P.line;
+  integer_literal->column = P.column;
+  int ret = sscanf(yytext, "%llu", &integer_literal->value);
   if (ret != 1) {
     LOG_CRITICAL("sscanf(3): Failed to scan float from string '%s': %s", yytext, ret, strerror(errno));
   }
-  yylval.integer_literal = literal;
+  yylval.integer_literal = integer_literal;
   P.column += yyleng;
   return INTEGER_LITERAL;
 }

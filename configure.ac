@@ -37,6 +37,8 @@ AC_DEFINE([DEFAULT_DICT_MAX_LOAD_FACTOR], 0.75f,
           [Default dictionary max load factor used by aether (i.e., when do we expand the internal buffer)])
 AC_DEFINE([DEFAULT_DICT_MIN_LOAD_FACTOR], 0.5f,
           [Default dictionary min load factor used by aether (i.e., when do we remove invalidated entries)])
+AC_DEFINE([DEFAULT_SYNTAX_TREE_INDENT], 2,
+          [Default syntax tree indent used by aether])
 
 # Checks for libraries.
 

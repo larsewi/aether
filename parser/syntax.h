@@ -10,6 +10,7 @@
 /****************************************************************************/
 
 typedef struct ParserState ParserState;
+typedef struct Symbol Symbol;
 typedef struct SymbolExpr SymbolExpr;
 typedef struct SymbolOr SymbolOr;
 typedef struct SymbolCond SymbolCond;
@@ -47,7 +48,7 @@ typedef struct SymbolNoneLiteral SymbolNoneLiteral;
 /****************************************************************************/
 
 typedef enum {
-  SYMBOL_TYPE_EXPR,
+  SYMBOL_TYPE_EXPR = 0,
   SYMBOL_TYPE_OR,
   SYMBOL_TYPE_COND,
   SYMBOL_TYPE_AND,
@@ -86,10 +87,16 @@ typedef enum {
 /****************************************************************************/
 
 struct ParserState {
-  char *filename;
+  const char *filename;
   int line;
   int column;
   SymbolExpr *expr;
+};
+
+/****************************************************************************/
+
+struct Symbol {
+  SymbolType type;
 };
 
 /****************************************************************************/
@@ -357,6 +364,6 @@ struct SymbolNoneLiteral {
 extern ParserState PARSER_STATE;
 
 bool ParseFile(const char *filename);
-void PrintSyntaxTree(void);
+void WalkSyntaxTree(bool print_tree);
 
 #endif // _AETHER_SYNTAX_H
