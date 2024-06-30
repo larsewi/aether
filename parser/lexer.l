@@ -43,7 +43,7 @@
   identifier->column = P.column;
   identifier->value = StringDuplicate(yytext);
   yylval.identifier = identifier;
-  P.column = yyleng;
+  P.column += yyleng;
   return IDENTIFIER;
 }
 
@@ -54,7 +54,7 @@ none {
   none_literal->line = P.line;
   none_literal->column = P.column;
   yylval.none_literal = none_literal;
-  P.column = yyleng;
+  P.column += yyleng;
   return NONE_LITERAL;
 }
 
@@ -66,7 +66,7 @@ none {
   boolean_literal->column = P.column;
   boolean_literal->value = StringEqual(yytext, "true");
   yylval.boolean_literal = boolean_literal;
-  P.column = yyleng;
+  P.column += yyleng;
   return BOOLEAN_LITERAL;
 }
 
@@ -79,7 +79,7 @@ none {
   assert(yyleng >= 2);
   string_literal->value = StringDuplicateN(yytext + 1, (size_t)(yyleng - 2));
   yylval.string_literal = string_literal;
-  P.column = yyleng;
+  P.column += yyleng;
   return STRING_LITERAL;
 }
 
