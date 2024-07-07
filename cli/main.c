@@ -9,10 +9,12 @@
 #include <string.h>
 
 #include "../interpreter/interpreter.h"
+#include "../parser/parser.h"
 #include "../parser/syntax.h"
 #include "../utils/logger.h"
 
 extern ParserState PARSER_STATE;
+extern bool ParseFile(const char *filename);
 
 static const struct option LONG_OPTIONS[] = {
     {"syntax", no_argument, NULL, 's'},

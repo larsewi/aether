@@ -12,6 +12,8 @@
 #include "../utils/string_lib.h"
 
 #define P PARSER_STATE
+
+extern ParserState PARSER_STATE;
 %}
 
 %option nounput

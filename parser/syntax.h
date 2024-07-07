@@ -359,10 +359,4 @@ struct SymbolNoneLiteral {
   int column;
 };
 
-/****************************************************************************/
-
-extern ParserState PARSER_STATE;
-
-bool ParseFile(const char *filename);
-
 #endif // _AETHER_SYNTAX_H
