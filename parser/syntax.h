@@ -364,6 +364,5 @@ struct SymbolNoneLiteral {
 extern ParserState PARSER_STATE;
 
 bool ParseFile(const char *filename);
-void WalkSyntaxTree(bool print_tree);
 
 #endif // _AETHER_SYNTAX_H

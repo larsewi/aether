@@ -8,8 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../interpreter/interpreter.h"
 #include "../parser/syntax.h"
 #include "../utils/logger.h"
+
+extern ParserState PARSER_STATE;
 
 static const struct option LONG_OPTIONS[] = {
     {"syntax", no_argument, NULL, 's'},
@@ -87,7 +90,7 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  WalkSyntaxTree(print_syntax_tree);
+  WalkSyntaxTree(PARSER_STATE.expr, print_syntax_tree);
 
   return EXIT_SUCCESS;
 }
