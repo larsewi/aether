@@ -13,6 +13,8 @@ static void WalkSymbolFactor(SymbolFactor *factor, bool print_tree, int indent);
 static void WalkSymbolUnary(SymbolUnary *unary, bool print_tree, int indent);
 static void WalkSymbolPrimary(SymbolPrimary *primary, bool print_tree,
                               int indent);
+static void WalkSymbolKeyValuePairs(SymbolKeyValuePairs *key_value_pairs,
+                                    bool print_tree, int indent);
 
 /****************************************************************************/
 
@@ -121,6 +123,50 @@ static void WalkSymbolNoneLiteral(SymbolNoneLiteral *const none_literal,
 
 /****************************************************************************/
 
+static void WalkSymbolDictDisplay(SymbolDictDisplay *const dict_display,
+                                  const bool print_tree, const int indent) {
+  if (print_tree) {
+    printf("%*s<dict_display>\n", indent, "");
+  }
+
+  WalkSymbolKeyValuePairs(dict_display->key_value_pairs, print_tree,
+                          indent + DEFAULT_SYNTAX_TREE_INDENT);
+
+  free(dict_display);
+
+  if (print_tree) {
+    printf("%*s<dict_display>\n", indent, "");
+  }
+}
+
+/****************************************************************************/
+
+static void WalkSymbolKeyValuePairs(SymbolKeyValuePairs *const key_value_pairs,
+                                    const bool print_tree, const int indent) {
+  if (print_tree) {
+    printf("%*s<key_value_pairs>\n", indent, "");
+  }
+
+  if (key_value_pairs->key_value_pairs != NULL) {
+    WalkSymbolKeyValuePairs(key_value_pairs->key_value_pairs, print_tree,
+                            indent + DEFAULT_SYNTAX_TREE_INDENT);
+  }
+
+  WalkSymbolStringLiteral(key_value_pairs->string_literal, print_tree,
+                          indent + DEFAULT_SYNTAX_TREE_INDENT);
+
+  WalkSymbolExpr(key_value_pairs->expr, print_tree,
+                 indent + DEFAULT_SYNTAX_TREE_INDENT);
+
+  free(key_value_pairs);
+
+  if (print_tree) {
+    printf("%*s<key_value_pairs>\n", indent, "");
+  }
+}
+
+/****************************************************************************/
+
 static void WalkSymbolAtom(SymbolAtom *const atom, const bool print_tree,
                            const int indent) {
   if (print_tree) {
@@ -150,6 +196,10 @@ static void WalkSymbolAtom(SymbolAtom *const atom, const bool print_tree,
     break;
   case SYMBOL_TYPE_NONE_LITERAL:
     WalkSymbolNoneLiteral((SymbolNoneLiteral *)atom->symbol, print_tree,
+                          indent + DEFAULT_SYNTAX_TREE_INDENT);
+    break;
+  case SYMBOL_TYPE_DICT_DISPLAY:
+    WalkSymbolDictDisplay((SymbolDictDisplay *)atom->symbol, print_tree,
                           indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_EXPR:

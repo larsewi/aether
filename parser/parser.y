@@ -61,6 +61,8 @@ ParserState PARSER_STATE = {0};
   SymbolNegate *negate;
   SymbolPrimary *primary;
   SymbolFncall *fncall;
+  SymbolDictDisplay *dict_display;
+  SymbolKeyValuePairs *key_value_pairs;
   SymbolArguments *arguments;
   SymbolSubscription *subscription;
   SymbolSlice *slice;
@@ -91,6 +93,8 @@ ParserState PARSER_STATE = {0};
 %type <primary> primary;
 %type <fncall> fncall;
 %type <arguments> arguments;
+%type <dict_display> dict_display;
+%type <key_value_pairs> key_value_pairs;
 %type <subscription> subscription;
 %type <slice> slice;
 %type <atom> atom;
@@ -432,7 +436,6 @@ primary
 }
 ;
 
-// TODO: Rename to func_call
 fncall : primary '(' ')' {
   LOG_DEBUG("fncall : primary '(' ')'");
   $$ = xmalloc(sizeof(SymbolFncall));
@@ -449,16 +452,56 @@ fncall : primary '(' ')' {
 }
 ;
 
+dict_display
+: '{' '}' {
+  LOG_DEBUG("dict_display : '{' '}'");
+  $$ = xmalloc(sizeof(SymbolDictDisplay));
+  $$->type = SYMBOL_TYPE_DICT_DISPLAY;
+  $$->key_value_pairs = NULL;
+}
+| '{' key_value_pairs '}' {
+  LOG_DEBUG("dict_display : '{' key_value_pairs '}'");
+  $$ = xmalloc(sizeof(SymbolDictDisplay));
+  $$->type = SYMBOL_TYPE_DICT_DISPLAY;
+  $$->key_value_pairs = $2;
+}
+| '{' key_value_pairs ',' '}' {
+  LOG_DEBUG("dict_display : '{' key_value_pairs ',' '}'");
+  $$ = xmalloc(sizeof(SymbolDictDisplay));
+  $$->type = SYMBOL_TYPE_DICT_DISPLAY;
+  $$->key_value_pairs = $2;
+}
+;
+
+key_value_pairs
+: STRING_LITERAL ':' expr {
+  LOG_DEBUG("key_value_pairs : STRING_LITERAL ':' expr");
+  $$ = xmalloc(sizeof(SymbolKeyValuePairs));
+  $$->type = SYMBOL_TYPE_KEY_VALUE_PAIRS;
+  $$->key_value_pairs = NULL;
+  $$->string_literal = $1;
+  $$->expr = $3;
+}
+| key_value_pairs ',' STRING_LITERAL ':' expr {
+  LOG_DEBUG("key_value_pairs : key_value_pairs ',' STRING_LITERAL ':' expr");
+  $$ = xmalloc(sizeof(SymbolKeyValuePairs));
+  $$->type = SYMBOL_TYPE_KEY_VALUE_PAIRS;
+  $$->key_value_pairs = $1;
+  $$->string_literal = $3;
+  $$->expr = $5;
+}
+;
+
 arguments
 : expr {
-  LOG_DEBUG("arglist : expr");
+  LOG_DEBUG("arguments : expr");
   $$ = xmalloc(sizeof(SymbolArguments));
   $$->type = SYMBOL_TYPE_ARGUMENTS;
   $$->arguments = NULL;
   $$->expr = $1;
 }
 | arguments ',' expr {
-  LOG_DEBUG("arglist : arglist ',' expr");
+  LOG_DEBUG("arguments : arguments ',' expr");
   $$ = xmalloc(sizeof(SymbolArguments));
   $$->type = SYMBOL_TYPE_ARGUMENTS;
   $$->arguments = $1;
@@ -551,6 +594,12 @@ atom
 }
 | NONE_LITERAL {
   LOG_DEBUG("atom : NONE_LITERAL");
+  $$ = xmalloc(sizeof(SymbolAtom));
+  $$->type = SYMBOL_TYPE_ATOM;
+  $$->symbol = (Symbol *)$1;
+}
+| dict_display {
+  LOG_DEBUG("atom : dict_display");
   $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = (Symbol *)$1;
