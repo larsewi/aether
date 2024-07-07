@@ -107,13 +107,13 @@ expr
   LOG_DEBUG("expr : cond");
   $$ = xmalloc(sizeof(SymbolExpr));
   $$->type = SYMBOL_TYPE_EXPR;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | or {
   LOG_DEBUG("expr : or");
   $$ = xmalloc(sizeof(SymbolExpr));
   $$->type = SYMBOL_TYPE_EXPR;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 ;
 
@@ -132,13 +132,13 @@ cond
   LOG_DEBUG("cond : comp");
   $$ = xmalloc(sizeof(SymbolCond));
   $$->type = SYMBOL_TYPE_COND;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | and {
   LOG_DEBUG("cond : and");
   $$ = xmalloc(sizeof(SymbolCond));
   $$->type = SYMBOL_TYPE_COND;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 ;
 
@@ -157,43 +157,43 @@ comp
   LOG_DEBUG("comp : term");
   $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | less_than {
   LOG_DEBUG("comp : less_than");
   $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | greater_than {
   LOG_DEBUG("comp : greater_than");
   $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | equal {
   LOG_DEBUG("comp : equal");
   $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | less_equal {
   LOG_DEBUG("comp : less_equal");
   $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | greater_equal {
   LOG_DEBUG("comp : greater_equal");
   $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | not_equal {
   LOG_DEBUG("comp : not_equal");
   $$ = xmalloc(sizeof(SymbolComp));
   $$->type = SYMBOL_TYPE_COMP;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 ;
 
@@ -262,19 +262,19 @@ term
   LOG_DEBUG("term : factor");
   $$ = xmalloc(sizeof(SymbolTerm));
   $$->type = SYMBOL_TYPE_TERM;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | add {
   LOG_DEBUG("term : add");
   $$ = xmalloc(sizeof(SymbolTerm));
   $$->type = SYMBOL_TYPE_TERM;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | subtract {
   LOG_DEBUG("term : subtract");
   $$ = xmalloc(sizeof(SymbolTerm));
   $$->type = SYMBOL_TYPE_TERM;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 ;
 
@@ -303,25 +303,25 @@ factor
   LOG_DEBUG("factor : unary");
   $$ = xmalloc(sizeof(SymbolFactor));
   $$->type = SYMBOL_TYPE_FACTOR;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | multiply {
   LOG_DEBUG("factor : multiply");
   $$ = xmalloc(sizeof(SymbolFactor));
   $$->type = SYMBOL_TYPE_FACTOR;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | divide {
   LOG_DEBUG("factor : divide");
   $$ = xmalloc(sizeof(SymbolFactor));
   $$->type = SYMBOL_TYPE_FACTOR;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | modulo {
   LOG_DEBUG("factor : modulo");
   $$ = xmalloc(sizeof(SymbolFactor));
   $$->type = SYMBOL_TYPE_MODULO;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 ;
 
@@ -360,7 +360,7 @@ unary
   LOG_DEBUG("primary");
   $$ = xmalloc(sizeof(SymbolUnary));
   $$->type = SYMBOL_TYPE_UNARY;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | '+' unary {
   LOG_DEBUG("unary : '+' unary");
@@ -371,13 +371,13 @@ unary
   LOG_DEBUG("unary : minus");
   $$ = xmalloc(sizeof(SymbolUnary));
   $$->type = SYMBOL_TYPE_UNARY;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | negate {
   LOG_DEBUG("unary : negate");
   $$ = xmalloc(sizeof(SymbolUnary));
   $$->type = SYMBOL_TYPE_UNARY;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 ;
 
@@ -404,25 +404,25 @@ primary
   LOG_DEBUG("primary : atom");
   $$ = xmalloc(sizeof(SymbolPrimary));
   $$->type = SYMBOL_TYPE_PRIMARY;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | fncall {
   LOG_DEBUG("primary : fncall");
   $$ = xmalloc(sizeof(SymbolPrimary));
   $$->type = SYMBOL_TYPE_PRIMARY;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | subscription {
   LOG_DEBUG("primary : subscription");
   $$ = xmalloc(sizeof(SymbolPrimary));
   $$->type = SYMBOL_TYPE_PRIMARY;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | slice {
   LOG_DEBUG("primary : slice");
   $$ = xmalloc(sizeof(SymbolPrimary));
   $$->type = SYMBOL_TYPE_PRIMARY;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 ;
 
@@ -517,43 +517,43 @@ atom
   LOG_DEBUG("atom : IDENTIFIER");
   $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_ATOM;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | INTEGER_LITERAL {
   LOG_DEBUG("atom : INTEGER_LITERAL");
   $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_ATOM;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | FLOAT_LITERAL {
   LOG_DEBUG("atom : FLOAT_LITERAL");
   $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_ATOM;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | STRING_LITERAL {
   LOG_DEBUG("atom : STRING_LITERAL");
   $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_ATOM;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | BOOLEAN_LITERAL {
   LOG_DEBUG("atom : BOOLEAN_LITERAL");
   $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_ATOM;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | NONE_LITERAL {
   LOG_DEBUG("atom : NONE_LITERAL");
   $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_ATOM;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 | inner_expr {
   LOG_DEBUG("atom : inner_expr");
   $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_ATOM;
-  $$->symbol = $1;
+  $$->symbol = (Symbol *)$1;
 }
 ;
 

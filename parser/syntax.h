@@ -86,6 +86,12 @@ typedef enum {
 
 /****************************************************************************/
 
+struct Symbol {
+  SymbolType type;
+};
+
+/****************************************************************************/
+
 struct ParserState {
   const char *filename;
   int line;
@@ -95,15 +101,9 @@ struct ParserState {
 
 /****************************************************************************/
 
-struct Symbol {
-  SymbolType type;
-};
-
-/****************************************************************************/
-
 struct SymbolExpr {
   SymbolType type;
-  void *symbol;
+  Symbol *symbol;
 };
 
 /****************************************************************************/
@@ -118,7 +118,7 @@ struct SymbolOr {
 
 struct SymbolCond {
   SymbolType type;
-  void *symbol;
+  Symbol *symbol;
 };
 
 /****************************************************************************/
@@ -133,7 +133,7 @@ struct SymbolAnd {
 
 struct SymbolComp {
   SymbolType type;
-  void *symbol;
+  Symbol *symbol;
 };
 
 /****************************************************************************/
@@ -188,7 +188,7 @@ struct SymbolNotEqual {
 
 struct SymbolTerm {
   SymbolType type;
-  void *symbol;
+  Symbol *symbol;
 };
 
 /****************************************************************************/
@@ -211,7 +211,7 @@ struct SymbolSubtract {
 
 struct SymbolFactor {
   SymbolType type;
-  void *symbol;
+  Symbol *symbol;
 };
 
 /****************************************************************************/
@@ -242,7 +242,7 @@ struct SymbolModulo {
 
 struct SymbolUnary {
   SymbolType type;
-  void *symbol;
+  Symbol *symbol;
 };
 
 /****************************************************************************/
@@ -263,7 +263,7 @@ struct SymbolNegate {
 
 struct SymbolPrimary {
   SymbolType type;
-  void *symbol;
+  Symbol *symbol;
 };
 
 /****************************************************************************/
@@ -303,7 +303,7 @@ struct SymbolSlice {
 
 struct SymbolAtom {
   SymbolType type;
-  void *symbol;
+  Symbol *symbol;
 };
 
 /****************************************************************************/
