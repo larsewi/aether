@@ -63,6 +63,8 @@ ParserState PARSER_STATE = {0};
   SymbolFncall *fncall;
   SymbolDictDisplay *dict_display;
   SymbolKeyValuePairs *key_value_pairs;
+  SymbolListDisplay *list_display;
+  SymbolListElements *list_elements;
   SymbolArguments *arguments;
   SymbolSubscription *subscription;
   SymbolSlice *slice;
@@ -95,6 +97,8 @@ ParserState PARSER_STATE = {0};
 %type <arguments> arguments;
 %type <dict_display> dict_display;
 %type <key_value_pairs> key_value_pairs;
+%type <list_display> list_display;
+%type <list_elements> list_elements;
 %type <subscription> subscription;
 %type <slice> slice;
 %type <atom> atom;
@@ -492,6 +496,44 @@ key_value_pairs
 }
 ;
 
+list_display
+: '[' ']' {
+  LOG_DEBUG("list_display : '[' ']'");
+  $$ = xmalloc(sizeof(SymbolListDisplay));
+  $$->type = SYMBOL_TYPE_LIST_DISPLAY;
+  $$->list_elements = NULL;
+}
+| '[' list_elements ']' {
+  LOG_DEBUG("list_display : '[' list_elements ']'");
+  $$ = xmalloc(sizeof(SymbolListDisplay));
+  $$->type = SYMBOL_TYPE_LIST_DISPLAY;
+  $$->list_elements = $2;
+}
+| '[' list_elements ',' ']' {
+  LOG_DEBUG("list_display : '[' list_elements ',' ']'");
+  $$ = xmalloc(sizeof(SymbolListDisplay));
+  $$->type = SYMBOL_TYPE_LIST_DISPLAY;
+  $$->list_elements = $2;
+}
+;
+
+list_elements
+: expr {
+  LOG_DEBUG("list_elements : expr");
+  $$ = xmalloc(sizeof(SymbolListElements));
+  $$->type = SYMBOL_TYPE_LIST_ELEMENTS;
+  $$->list_elements = NULL;
+  $$->expr = $1;
+}
+| list_elements ',' expr {
+  LOG_DEBUG("list_elements : list_elements ',' expr");
+  $$ = xmalloc(sizeof(SymbolListElements));
+  $$->type = SYMBOL_TYPE_LIST_ELEMENTS;
+  $$->list_elements = $1;
+  $$->expr = $3;
+}
+;
+
 arguments
 : expr {
   LOG_DEBUG("arguments : expr");
@@ -600,6 +642,12 @@ atom
 }
 | dict_display {
   LOG_DEBUG("atom : dict_display");
+  $$ = xmalloc(sizeof(SymbolAtom));
+  $$->type = SYMBOL_TYPE_ATOM;
+  $$->symbol = (Symbol *)$1;
+}
+| list_display {
+  LOG_DEBUG("atom : list_display");
   $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = (Symbol *)$1;

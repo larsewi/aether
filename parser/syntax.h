@@ -36,6 +36,8 @@ typedef struct SymbolPrimary SymbolPrimary;
 typedef struct SymbolFncall SymbolFncall;
 typedef struct SymbolDictDisplay SymbolDictDisplay;
 typedef struct SymbolKeyValuePairs SymbolKeyValuePairs;
+typedef struct SymbolListDisplay SymbolListDisplay;
+typedef struct SymbolListElements SymbolListElements;
 typedef struct SymbolArguments SymbolArguments;
 typedef struct SymbolSubscription SymbolSubscription;
 typedef struct SymbolSlice SymbolSlice;
@@ -85,6 +87,8 @@ typedef enum {
   SYMBOL_TYPE_NONE_LITERAL,
   SYMBOL_TYPE_DICT_DISPLAY,
   SYMBOL_TYPE_KEY_VALUE_PAIRS,
+  SYMBOL_TYPE_LIST_DISPLAY,
+  SYMBOL_TYPE_LIST_ELEMENTS,
   SYMBOL_TYPE_INNER_EXPR,
 } SymbolType;
 
@@ -291,6 +295,21 @@ struct SymbolKeyValuePairs {
   SymbolType type;
   SymbolKeyValuePairs *key_value_pairs;
   SymbolStringLiteral *string_literal;
+  SymbolExpr *expr;
+};
+
+/****************************************************************************/
+
+struct SymbolListDisplay {
+  SymbolType type;
+  SymbolListElements *list_elements;
+};
+
+/****************************************************************************/
+
+struct SymbolListElements {
+  SymbolType type;
+  SymbolListElements *list_elements;
   SymbolExpr *expr;
 };
 
