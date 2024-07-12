@@ -115,7 +115,7 @@ ParserState PARSER_STATE = {0};
   SymbolStatement *statement;
   SymbolAssignment *assignment;
   SymbolVariable *variable;
-  SymbolDecl *decl;
+  SymbolDeclaration *declaration;
   SymbolReference *reference;
   SymbolMutable *mutable;
   SymbolDatatype *datatype;
@@ -124,7 +124,7 @@ ParserState PARSER_STATE = {0};
 %type <statement> statement;
 %type <assignment> assignment;
 %type <variable> variable;
-%type <decl> decl;
+%type <declaration> declaration;
 %type <reference> reference;
 %type <mutable> mutable;
 %type <datatype> datatype;
@@ -149,8 +149,8 @@ statement
   $$->type = SYMBOL_TYPE_STATEMENT;
   $$->symbol = (Symbol *)$1;
 }
-| decl ';' {
-  LOG_DEBUG("statement : decl ';'");
+| declaration ';' {
+  LOG_DEBUG("statement : declaration ';'");
   $$ = xmalloc(sizeof(SymbolStatement));
   $$->type = SYMBOL_TYPE_STATEMENT;
   $$->symbol = (Symbol *)$1;
@@ -171,8 +171,8 @@ assignment
   $$->symbol = (Symbol *)$1;
   $$->expression = $3;
 }
-| decl '=' expression {
-  LOG_DEBUG("assignment : decl '=' expression");
+| declaration '=' expression {
+  LOG_DEBUG("assignment : declaration '=' expression");
   $$ = xmalloc(sizeof(SymbolAssignment));
   $$->type = SYMBOL_TYPE_ASSIGNMENT;
   $$->symbol = (Symbol *)$1;
@@ -197,25 +197,25 @@ variable
 }
 ;
 
-decl
+declaration
 : reference IDENTIFIER {
-  LOG_DEBUG("decl : reference IDENTIFIER");
-  $$ = xmalloc(sizeof(SymbolDecl));
-  $$->type = SYMBOL_TYPE_DECL;
+  LOG_DEBUG("declaration : reference IDENTIFIER");
+  $$ = xmalloc(sizeof(SymbolDeclaration));
+  $$->type = SYMBOL_TYPE_DECLARATION;
   $$->identifier = $2;
   $$->symbol = (Symbol *)$1;
 }
 | mutable IDENTIFIER {
-  LOG_DEBUG("decl : mutable IDENTIFIER");
-  $$ = xmalloc(sizeof(SymbolDecl));
-  $$->type = SYMBOL_TYPE_DECL;
+  LOG_DEBUG("declaration : mutable IDENTIFIER");
+  $$ = xmalloc(sizeof(SymbolDeclaration));
+  $$->type = SYMBOL_TYPE_DECLARATION;
   $$->symbol = (Symbol *)$1;
   $$->identifier = $2;
 }
 | datatype IDENTIFIER {
-  LOG_DEBUG("decl : datatype IDENTIFIER");
-  $$ = xmalloc(sizeof(SymbolDecl));
-  $$->type = SYMBOL_TYPE_DECL;
+  LOG_DEBUG("declaration : datatype IDENTIFIER");
+  $$ = xmalloc(sizeof(SymbolDeclaration));
+  $$->type = SYMBOL_TYPE_DECLARATION;
   $$->symbol = (Symbol *)$1;
   $$->identifier = $2;
 }

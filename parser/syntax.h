@@ -14,7 +14,7 @@ typedef struct Symbol Symbol;
 typedef struct SymbolStatement SymbolStatement;
 typedef struct SymbolAssignment SymbolAssignment;
 typedef struct SymbolVariable SymbolVariable;
-typedef struct SymbolDecl SymbolDecl;
+typedef struct SymbolDeclaration SymbolDeclaration;
 typedef struct SymbolReference SymbolReference;
 typedef struct SymbolMutable SymbolMutable;
 typedef struct SymbolDatatype SymbolDatatype;
@@ -67,7 +67,7 @@ typedef enum {
   SYMBOL_TYPE_STATEMENT = 0,
   SYMBOL_TYPE_ASSIGNMENT,
   SYMBOL_TYPE_VARIABLE,
-  SYMBOL_TYPE_DECL,
+  SYMBOL_TYPE_DECLARATION,
   SYMBOL_TYPE_REFERENCE,
   SYMBOL_TYPE_MUTABLE,
   SYMBOL_TYPE_DATATYPE,
@@ -152,7 +152,7 @@ struct SymbolVariable {
 
 /****************************************************************************/
 
-struct SymbolDecl {
+struct SymbolDeclaration {
   SymbolType type;
   Symbol *symbol;
   SymbolIdentifier *identifier;

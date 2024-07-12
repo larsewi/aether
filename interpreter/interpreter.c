@@ -973,36 +973,36 @@ static void WalkSymbolReference(SymbolReference *const reference,
 
 /****************************************************************************/
 
-static void WalkSymbolDecl(SymbolDecl *const decl, const bool print_tree,
-                           const int indent) {
+static void WalkSymbolDeclaration(SymbolDeclaration *const declaration,
+                                  const bool print_tree, const int indent) {
   if (print_tree) {
-    printf("%*s<decl>\n", indent, "");
+    printf("%*s<declaration>\n", indent, "");
   }
 
-  switch (decl->symbol->type) {
+  switch (declaration->symbol->type) {
   case SYMBOL_TYPE_REFERENCE:
-    WalkSymbolReference((SymbolReference *)decl->symbol, print_tree,
+    WalkSymbolReference((SymbolReference *)declaration->symbol, print_tree,
                         indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_MUTABLE:
-    WalkSymbolMutable((SymbolMutable *)decl->symbol, print_tree,
+    WalkSymbolMutable((SymbolMutable *)declaration->symbol, print_tree,
                       indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_DATATYPE:
-    WalkSymbolDatatype((SymbolDatatype *)decl->symbol, print_tree,
+    WalkSymbolDatatype((SymbolDatatype *)declaration->symbol, print_tree,
                        indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   default:
-    LOG_CRITICAL("Unexpected symbol type %d", decl->symbol->type);
+    LOG_CRITICAL("Unexpected symbol type %d", declaration->symbol->type);
   }
 
-  WalkSymbolIdentifier(decl->identifier, print_tree,
+  WalkSymbolIdentifier(declaration->identifier, print_tree,
                        indent + DEFAULT_SYNTAX_TREE_INDENT);
 
-  free(decl);
+  free(declaration);
 
   if (print_tree) {
-    printf("%*s</decl>\n", indent, "");
+    printf("%*s</declaration>\n", indent, "");
   }
 }
 
@@ -1052,9 +1052,9 @@ static void WalkSymbolAssignment(SymbolAssignment *const assignment,
     WalkSymbolVariable((SymbolVariable *)assignment->symbol, print_tree,
                        indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
-  case SYMBOL_TYPE_DECL:
-    WalkSymbolDecl((SymbolDecl *)assignment->symbol, print_tree,
-                   indent + DEFAULT_SYNTAX_TREE_INDENT);
+  case SYMBOL_TYPE_DECLARATION:
+    WalkSymbolDeclaration((SymbolDeclaration *)assignment->symbol, print_tree,
+                          indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   default:
     LOG_CRITICAL("Unexpected symbol type %d", assignment->symbol->type);
@@ -1083,9 +1083,9 @@ static void WalkSymbolStatement(SymbolStatement *const statement,
     WalkSymbolAssignment((SymbolAssignment *)statement->symbol, print_tree,
                          indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
-  case SYMBOL_TYPE_DECL:
-    WalkSymbolDecl((SymbolDecl *)statement->symbol, print_tree,
-                   indent + DEFAULT_SYNTAX_TREE_INDENT);
+  case SYMBOL_TYPE_DECLARATION:
+    WalkSymbolDeclaration((SymbolDeclaration *)statement->symbol, print_tree,
+                          indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_EXPRESSION:
     WalkSymbolExpression((SymbolExpression *)statement->symbol, print_tree,
