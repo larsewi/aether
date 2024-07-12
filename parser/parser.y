@@ -48,7 +48,7 @@ ParserState PARSER_STATE = {0};
   SymbolOr *or;
   SymbolCondition *condition;
   SymbolAnd *and;
-  SymbolComp *comp;
+  SymbolComparrison *comparrison;
   SymbolLessThan *less_than;
   SymbolGreaterThan *greater_than;
   SymbolEqual *equal;
@@ -67,7 +67,7 @@ ParserState PARSER_STATE = {0};
   SymbolNegate *negate;
   SymbolPrimary *primary;
   SymbolFncall *fncall;
-  SymbolDictDisplay *dict_display;
+  SymbolDict *dict;
   SymbolKeyValuePairs *key_value_pairs;
   SymbolListDisplay *list_display;
   SymbolListElements *list_elements;
@@ -81,7 +81,7 @@ ParserState PARSER_STATE = {0};
 %type <or> or;
 %type <condition> condition;
 %type <and> and;
-%type <comp> comp;
+%type <comparrison> comparrison;
 %type <less_than> less_than;
 %type <greater_than> greater_than;
 %type <equal> equal;
@@ -101,7 +101,7 @@ ParserState PARSER_STATE = {0};
 %type <primary> primary;
 %type <fncall> fncall;
 %type <arguments> arguments;
-%type <dict_display> dict_display;
+%type <dict> dict;
 %type <key_value_pairs> key_value_pairs;
 %type <list_display> list_display;
 %type <list_elements> list_elements;
@@ -280,8 +280,8 @@ or
 ;
 
 condition
-: comp {
-  LOG_DEBUG("condition : comp");
+: comparrison {
+  LOG_DEBUG("condition : comparrison");
   $$ = xmalloc(sizeof(SymbolCondition));
   $$->type = SYMBOL_TYPE_CONDITION;
   $$->symbol = (Symbol *)$1;
@@ -295,116 +295,116 @@ condition
 ;
 
 and
-: condition AND_OPER comp {
-  LOG_DEBUG("and : condition AND_OPER comp");
+: condition AND_OPER comparrison {
+  LOG_DEBUG("and : condition AND_OPER comparrison");
   $$ = xmalloc(sizeof(SymbolAnd));
   $$->type = SYMBOL_TYPE_AND;
   $$->condition = $1;
-  $$->comp = $3;
+  $$->comparrison = $3;
 }
 ;
 
-comp
+comparrison
 : term {
-  LOG_DEBUG("comp : term");
-  $$ = xmalloc(sizeof(SymbolComp));
-  $$->type = SYMBOL_TYPE_COMP;
+  LOG_DEBUG("comparrison : term");
+  $$ = xmalloc(sizeof(SymbolComparrison));
+  $$->type = SYMBOL_TYPE_COMPARRISON;
   $$->symbol = (Symbol *)$1;
 }
 | less_than {
-  LOG_DEBUG("comp : less_than");
-  $$ = xmalloc(sizeof(SymbolComp));
-  $$->type = SYMBOL_TYPE_COMP;
+  LOG_DEBUG("comparrison : less_than");
+  $$ = xmalloc(sizeof(SymbolComparrison));
+  $$->type = SYMBOL_TYPE_COMPARRISON;
   $$->symbol = (Symbol *)$1;
 }
 | greater_than {
-  LOG_DEBUG("comp : greater_than");
-  $$ = xmalloc(sizeof(SymbolComp));
-  $$->type = SYMBOL_TYPE_COMP;
+  LOG_DEBUG("comparrison : greater_than");
+  $$ = xmalloc(sizeof(SymbolComparrison));
+  $$->type = SYMBOL_TYPE_COMPARRISON;
   $$->symbol = (Symbol *)$1;
 }
 | equal {
-  LOG_DEBUG("comp : equal");
-  $$ = xmalloc(sizeof(SymbolComp));
-  $$->type = SYMBOL_TYPE_COMP;
+  LOG_DEBUG("comparrison : equal");
+  $$ = xmalloc(sizeof(SymbolComparrison));
+  $$->type = SYMBOL_TYPE_COMPARRISON;
   $$->symbol = (Symbol *)$1;
 }
 | less_equal {
-  LOG_DEBUG("comp : less_equal");
-  $$ = xmalloc(sizeof(SymbolComp));
-  $$->type = SYMBOL_TYPE_COMP;
+  LOG_DEBUG("comparrison : less_equal");
+  $$ = xmalloc(sizeof(SymbolComparrison));
+  $$->type = SYMBOL_TYPE_COMPARRISON;
   $$->symbol = (Symbol *)$1;
 }
 | greater_equal {
-  LOG_DEBUG("comp : greater_equal");
-  $$ = xmalloc(sizeof(SymbolComp));
-  $$->type = SYMBOL_TYPE_COMP;
+  LOG_DEBUG("comparrison : greater_equal");
+  $$ = xmalloc(sizeof(SymbolComparrison));
+  $$->type = SYMBOL_TYPE_COMPARRISON;
   $$->symbol = (Symbol *)$1;
 }
 | not_equal {
-  LOG_DEBUG("comp : not_equal");
-  $$ = xmalloc(sizeof(SymbolComp));
-  $$->type = SYMBOL_TYPE_COMP;
+  LOG_DEBUG("comparrison : not_equal");
+  $$ = xmalloc(sizeof(SymbolComparrison));
+  $$->type = SYMBOL_TYPE_COMPARRISON;
   $$->symbol = (Symbol *)$1;
 }
 ;
 
 less_than
-: comp '<' term {
-  LOG_DEBUG("less_than : comp '<' term");
+: comparrison '<' term {
+  LOG_DEBUG("less_than : comparrison '<' term");
   $$ = xmalloc(sizeof(SymbolLessThan));
   $$->type = SYMBOL_TYPE_LESS_THAN;
-  $$->comp = $1;
+  $$->comparrison = $1;
   $$->term = $3;
 }
 ;
 
 greater_than
-: comp '>' term {
-  LOG_DEBUG("greater_than : comp '>' term");
+: comparrison '>' term {
+  LOG_DEBUG("greater_than : comparrison '>' term");
   $$ = xmalloc(sizeof(SymbolGreaterThan));
   $$->type = SYMBOL_TYPE_GREATER_THAN;
-  $$->comp = $1;
+  $$->comparrison = $1;
   $$->term = $3;
 }
 ;
 
 equal
-: comp EQ_OPER term {
-  LOG_DEBUG("equal : comp EQ_OPER term");
+: comparrison EQ_OPER term {
+  LOG_DEBUG("equal : comparrison EQ_OPER term");
   $$ = xmalloc(sizeof(SymbolEqual));
   $$->type = SYMBOL_TYPE_EQUAL;
-  $$->comp = $1;
+  $$->comparrison = $1;
   $$->term = $3;
 }
 ;
 
 less_equal
-: comp LE_OPER term {
-  LOG_DEBUG("less_equal : comp LE_OPER term");
+: comparrison LE_OPER term {
+  LOG_DEBUG("less_equal : comparrison LE_OPER term");
   $$ = xmalloc(sizeof(SymbolLessEqual));
   $$->type = SYMBOL_TYPE_LESS_EQUAL;
-  $$->comp = $1;
+  $$->comparrison = $1;
   $$->term = $3;
 }
 ;
 
 greater_equal
-: comp GE_OPER term {
-  LOG_DEBUG("greater_equal : comp GE_OPER term");
+: comparrison GE_OPER term {
+  LOG_DEBUG("greater_equal : comparrison GE_OPER term");
   $$ = xmalloc(sizeof(SymbolGreaterEqual));
   $$->type = SYMBOL_TYPE_GREATER_EQUAL;
-  $$->comp = $1;
+  $$->comparrison = $1;
   $$->term = $3;
 }
 ;
 
 not_equal
-: comp NE_OPER term {
-  LOG_DEBUG("not_equal : comp NE_OPER term");
+: comparrison NE_OPER term {
+  LOG_DEBUG("not_equal : comparrison NE_OPER term");
   $$ = xmalloc(sizeof(SymbolNotEqual));
   $$->type = SYMBOL_TYPE_NOT_EQUAL;
-  $$->comp = $1;
+  $$->comparrison = $1;
   $$->term = $3;
 }
 ;
@@ -594,23 +594,23 @@ fncall : primary '(' ')' {
 }
 ;
 
-dict_display
+dict
 : '{' '}' {
-  LOG_DEBUG("dict_display : '{' '}'");
-  $$ = xmalloc(sizeof(SymbolDictDisplay));
-  $$->type = SYMBOL_TYPE_DICT_DISPLAY;
+  LOG_DEBUG("dict : '{' '}'");
+  $$ = xmalloc(sizeof(SymbolDict));
+  $$->type = SYMBOL_TYPE_DICT;
   $$->key_value_pairs = NULL;
 }
 | '{' key_value_pairs '}' {
-  LOG_DEBUG("dict_display : '{' key_value_pairs '}'");
-  $$ = xmalloc(sizeof(SymbolDictDisplay));
-  $$->type = SYMBOL_TYPE_DICT_DISPLAY;
+  LOG_DEBUG("dict : '{' key_value_pairs '}'");
+  $$ = xmalloc(sizeof(SymbolDict));
+  $$->type = SYMBOL_TYPE_DICT;
   $$->key_value_pairs = $2;
 }
 | '{' key_value_pairs ',' '}' {
-  LOG_DEBUG("dict_display : '{' key_value_pairs ',' '}'");
-  $$ = xmalloc(sizeof(SymbolDictDisplay));
-  $$->type = SYMBOL_TYPE_DICT_DISPLAY;
+  LOG_DEBUG("dict : '{' key_value_pairs ',' '}'");
+  $$ = xmalloc(sizeof(SymbolDict));
+  $$->type = SYMBOL_TYPE_DICT;
   $$->key_value_pairs = $2;
 }
 ;
@@ -778,8 +778,8 @@ atom
   $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = (Symbol *)$1;
 }
-| dict_display {
-  LOG_DEBUG("atom : dict_display");
+| dict {
+  LOG_DEBUG("atom : dict");
   $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = (Symbol *)$1;

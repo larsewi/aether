@@ -24,7 +24,7 @@ typedef struct SymbolExpression SymbolExpression;
 typedef struct SymbolOr SymbolOr;
 typedef struct SymbolCondition SymbolCondition;
 typedef struct SymbolAnd SymbolAnd;
-typedef struct SymbolComp SymbolComp;
+typedef struct SymbolComparrison SymbolComparrison;
 typedef struct SymbolLessThan SymbolLessThan;
 typedef struct SymbolGreaterThan SymbolGreaterThan;
 typedef struct SymbolEqual SymbolEqual;
@@ -43,7 +43,7 @@ typedef struct SymbolMinus SymbolMinus;
 typedef struct SymbolNegate SymbolNegate;
 typedef struct SymbolPrimary SymbolPrimary;
 typedef struct SymbolFncall SymbolFncall;
-typedef struct SymbolDictDisplay SymbolDictDisplay;
+typedef struct SymbolDict SymbolDict;
 typedef struct SymbolKeyValuePairs SymbolKeyValuePairs;
 typedef struct SymbolListDisplay SymbolListDisplay;
 typedef struct SymbolListElements SymbolListElements;
@@ -75,7 +75,7 @@ typedef enum {
   SYMBOL_TYPE_OR,
   SYMBOL_TYPE_CONDITION,
   SYMBOL_TYPE_AND,
-  SYMBOL_TYPE_COMP,
+  SYMBOL_TYPE_COMPARRISON,
   SYMBOL_TYPE_LESS_THAN,
   SYMBOL_TYPE_GREATER_THAN,
   SYMBOL_TYPE_EQUAL,
@@ -104,7 +104,7 @@ typedef enum {
   SYMBOL_TYPE_STRING_LITERAL,
   SYMBOL_TYPE_BOOLEAN_LITERAL,
   SYMBOL_TYPE_NONE_LITERAL,
-  SYMBOL_TYPE_DICT_DISPLAY,
+  SYMBOL_TYPE_DICT,
   SYMBOL_TYPE_KEY_VALUE_PAIRS,
   SYMBOL_TYPE_LIST_DISPLAY,
   SYMBOL_TYPE_LIST_ELEMENTS,
@@ -206,12 +206,12 @@ struct SymbolCondition {
 struct SymbolAnd {
   SymbolType type;
   SymbolCondition *condition;
-  SymbolComp *comp;
+  SymbolComparrison *comparrison;
 };
 
 /****************************************************************************/
 
-struct SymbolComp {
+struct SymbolComparrison {
   SymbolType type;
   Symbol *symbol;
 };
@@ -220,7 +220,7 @@ struct SymbolComp {
 
 struct SymbolLessThan {
   SymbolType type;
-  SymbolComp *comp;
+  SymbolComparrison *comparrison;
   SymbolTerm *term;
 };
 
@@ -228,7 +228,7 @@ struct SymbolLessThan {
 
 struct SymbolGreaterThan {
   SymbolType type;
-  SymbolComp *comp;
+  SymbolComparrison *comparrison;
   SymbolTerm *term;
 };
 
@@ -236,7 +236,7 @@ struct SymbolGreaterThan {
 
 struct SymbolEqual {
   SymbolType type;
-  SymbolComp *comp;
+  SymbolComparrison *comparrison;
   SymbolTerm *term;
 };
 
@@ -244,7 +244,7 @@ struct SymbolEqual {
 
 struct SymbolLessEqual {
   SymbolType type;
-  SymbolComp *comp;
+  SymbolComparrison *comparrison;
   SymbolTerm *term;
 };
 
@@ -252,7 +252,7 @@ struct SymbolLessEqual {
 
 struct SymbolGreaterEqual {
   SymbolType type;
-  SymbolComp *comp;
+  SymbolComparrison *comparrison;
   SymbolTerm *term;
 };
 
@@ -260,7 +260,7 @@ struct SymbolGreaterEqual {
 
 struct SymbolNotEqual {
   SymbolType type;
-  SymbolComp *comp;
+  SymbolComparrison *comparrison;
   SymbolTerm *term;
 };
 
@@ -356,7 +356,7 @@ struct SymbolFncall {
 
 /****************************************************************************/
 
-struct SymbolDictDisplay {
+struct SymbolDict {
   SymbolType type;
   SymbolKeyValuePairs *key_value_pairs;
 };

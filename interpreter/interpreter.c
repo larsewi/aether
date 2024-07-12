@@ -9,7 +9,8 @@ static void WalkSymbolExpression(SymbolExpression *expression, bool print_tree,
                                  int indent);
 static void WalkSymbolCondition(SymbolCondition *condition, bool print_tree,
                                 int indent);
-static void WalkSymbolComp(SymbolComp *comp, bool print_tree, int indent);
+static void WalkSymbolComparrison(SymbolComparrison *comparrison,
+                                  bool print_tree, int indent);
 static void WalkSymbolTerm(SymbolTerm *term, bool print_tree, int indent);
 static void WalkSymbolFactor(SymbolFactor *factor, bool print_tree, int indent);
 static void WalkSymbolUnary(SymbolUnary *unary, bool print_tree, int indent);
@@ -127,19 +128,19 @@ static void WalkSymbolNoneLiteral(SymbolNoneLiteral *const none_literal,
 
 /****************************************************************************/
 
-static void WalkSymbolDictDisplay(SymbolDictDisplay *const dict_display,
-                                  const bool print_tree, const int indent) {
+static void WalkSymbolDict(SymbolDict *const dict, const bool print_tree,
+                           const int indent) {
   if (print_tree) {
-    printf("%*s<dict_display>\n", indent, "");
+    printf("%*s<dict>\n", indent, "");
   }
 
-  WalkSymbolKeyValuePairs(dict_display->key_value_pairs, print_tree,
+  WalkSymbolKeyValuePairs(dict->key_value_pairs, print_tree,
                           indent + DEFAULT_SYNTAX_TREE_INDENT);
 
-  free(dict_display);
+  free(dict);
 
   if (print_tree) {
-    printf("%*s<dict_display>\n", indent, "");
+    printf("%*s<dict>\n", indent, "");
   }
 }
 
@@ -243,9 +244,9 @@ static void WalkSymbolAtom(SymbolAtom *const atom, const bool print_tree,
     WalkSymbolNoneLiteral((SymbolNoneLiteral *)atom->symbol, print_tree,
                           indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
-  case SYMBOL_TYPE_DICT_DISPLAY:
-    WalkSymbolDictDisplay((SymbolDictDisplay *)atom->symbol, print_tree,
-                          indent + DEFAULT_SYNTAX_TREE_INDENT);
+  case SYMBOL_TYPE_DICT:
+    WalkSymbolDict((SymbolDict *)atom->symbol, print_tree,
+                   indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_LIST_DISPLAY:
     WalkSymbolListDisplay((SymbolListDisplay *)atom->symbol, print_tree,
@@ -645,8 +646,8 @@ static void WalkSymbolLessThan(SymbolLessThan *const less_than,
     printf("%*s<less_than>\n", indent, "");
   }
 
-  WalkSymbolComp(less_than->comp, print_tree,
-                 indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolComparrison(less_than->comparrison, print_tree,
+                        indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   WalkSymbolTerm(less_than->term, print_tree,
                  indent + DEFAULT_SYNTAX_TREE_INDENT);
@@ -666,8 +667,8 @@ static void WalkSymbolGreaterThan(SymbolGreaterThan *const greater_than,
     printf("%*s<greater_than>\n", indent, "");
   }
 
-  WalkSymbolComp(greater_than->comp, print_tree,
-                 indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolComparrison(greater_than->comparrison, print_tree,
+                        indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   WalkSymbolTerm(greater_than->term, print_tree,
                  indent + DEFAULT_SYNTAX_TREE_INDENT);
@@ -687,7 +688,8 @@ static void WalkSymbolEqual(SymbolEqual *const equal, const int indent,
     printf("%*s<equal>\n", indent, "");
   }
 
-  WalkSymbolComp(equal->comp, print_tree, indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolComparrison(equal->comparrison, print_tree,
+                        indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   WalkSymbolTerm(equal->term, print_tree, indent + DEFAULT_SYNTAX_TREE_INDENT);
 
@@ -706,8 +708,8 @@ static void WalkSymbolLessEqual(SymbolLessEqual *const less_equal,
     printf("%*s<less_equal>\n", indent, "");
   }
 
-  WalkSymbolComp(less_equal->comp, print_tree,
-                 indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolComparrison(less_equal->comparrison, print_tree,
+                        indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   WalkSymbolTerm(less_equal->term, print_tree,
                  indent + DEFAULT_SYNTAX_TREE_INDENT);
@@ -727,8 +729,8 @@ static void WalkSymbolGreaterEqual(SymbolGreaterEqual *const greater_equal,
     printf("%*s<greater_equal>\n", indent, "");
   }
 
-  WalkSymbolComp(greater_equal->comp, print_tree,
-                 indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolComparrison(greater_equal->comparrison, print_tree,
+                        indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   WalkSymbolTerm(greater_equal->term, print_tree,
                  indent + DEFAULT_SYNTAX_TREE_INDENT);
@@ -748,8 +750,8 @@ static void WalkSymbolNotEqual(SymbolNotEqual *const not_equal,
     printf("%*s<not_equal>\n", indent, "");
   }
 
-  WalkSymbolComp(not_equal->comp, print_tree,
-                 indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolComparrison(not_equal->comparrison, print_tree,
+                        indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   WalkSymbolTerm(not_equal->term, print_tree,
                  indent + DEFAULT_SYNTAX_TREE_INDENT);
@@ -763,49 +765,49 @@ static void WalkSymbolNotEqual(SymbolNotEqual *const not_equal,
 
 /****************************************************************************/
 
-static void WalkSymbolComp(SymbolComp *const comp, const bool print_tree,
-                           const int indent) {
+static void WalkSymbolComparrison(SymbolComparrison *const comparrison,
+                                  const bool print_tree, const int indent) {
   if (print_tree) {
-    printf("%*s<comp>\n", indent, "");
+    printf("%*s<comparrison>\n", indent, "");
   }
 
-  switch (comp->symbol->type) {
+  switch (comparrison->symbol->type) {
   case SYMBOL_TYPE_TERM:
-    WalkSymbolTerm((SymbolTerm *)comp->symbol, print_tree,
+    WalkSymbolTerm((SymbolTerm *)comparrison->symbol, print_tree,
                    indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_LESS_THAN:
-    WalkSymbolLessThan((SymbolLessThan *)comp->symbol, print_tree,
+    WalkSymbolLessThan((SymbolLessThan *)comparrison->symbol, print_tree,
                        indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_GREATER_THAN:
-    WalkSymbolGreaterThan((SymbolGreaterThan *)comp->symbol, print_tree,
+    WalkSymbolGreaterThan((SymbolGreaterThan *)comparrison->symbol, print_tree,
                           indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_EQUAL:
-    WalkSymbolEqual((SymbolEqual *)comp->symbol, print_tree,
+    WalkSymbolEqual((SymbolEqual *)comparrison->symbol, print_tree,
                     indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_LESS_EQUAL:
-    WalkSymbolLessEqual((SymbolLessEqual *)comp->symbol, print_tree,
+    WalkSymbolLessEqual((SymbolLessEqual *)comparrison->symbol, print_tree,
                         indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_GREATER_EQUAL:
-    WalkSymbolGreaterEqual((SymbolGreaterEqual *)comp->symbol, print_tree,
-                           indent + DEFAULT_SYNTAX_TREE_INDENT);
+    WalkSymbolGreaterEqual((SymbolGreaterEqual *)comparrison->symbol,
+                           print_tree, indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_NOT_EQUAL:
-    WalkSymbolNotEqual((SymbolNotEqual *)comp->symbol, print_tree,
+    WalkSymbolNotEqual((SymbolNotEqual *)comparrison->symbol, print_tree,
                        indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   default:
-    LOG_CRITICAL("Unexpected symbol type %d", comp->symbol->type);
+    LOG_CRITICAL("Unexpected symbol type %d", comparrison->symbol->type);
   }
 
-  free(comp);
+  free(comparrison);
 
   if (print_tree) {
-    printf("%*s</comp>\n", indent, "");
+    printf("%*s</comparrison>\n", indent, "");
   }
 }
 
@@ -820,7 +822,8 @@ static void WalkSymbolAnd(SymbolAnd *const and, const bool print_tree,
   WalkSymbolCondition(and->condition, print_tree,
                       indent + DEFAULT_SYNTAX_TREE_INDENT);
 
-  WalkSymbolComp(and->comp, print_tree, indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolComparrison(and->comparrison, print_tree,
+                        indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   free(and);
 
@@ -838,9 +841,9 @@ static void WalkSymbolCondition(SymbolCondition *const condition,
   }
 
   switch (condition->symbol->type) {
-  case SYMBOL_TYPE_COMP:
-    WalkSymbolComp((SymbolComp *)condition->symbol, print_tree,
-                   indent + DEFAULT_SYNTAX_TREE_INDENT);
+  case SYMBOL_TYPE_COMPARRISON:
+    WalkSymbolComparrison((SymbolComparrison *)condition->symbol, print_tree,
+                          indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_AND:
     WalkSymbolAnd((SymbolAnd *)condition->symbol, print_tree,
