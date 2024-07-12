@@ -44,7 +44,7 @@ ParserState PARSER_STATE = {0};
 // Expression
 
 %union {
-  SymbolExpr *expr;
+  SymbolExpression *expression;
   SymbolOr *or;
   SymbolCond *cond;
   SymbolAnd *and;
@@ -77,7 +77,7 @@ ParserState PARSER_STATE = {0};
   SymbolAtom *atom;
 }
 
-%type <expr> inner_expr expr;
+%type <expression> inner_expression expression;
 %type <or> or;
 %type <cond> cond;
 %type <and> and;
@@ -155,8 +155,8 @@ stmt
   $$->type = SYMBOL_TYPE_STMT;
   $$->symbol = (Symbol *)$1;
 }
-| expr ';' {
-  LOG_DEBUG("stmt : expr ';'");
+| expression ';' {
+  LOG_DEBUG("stmt : expression ';'");
   $$ = xmalloc(sizeof(SymbolStmt));
   $$->type = SYMBOL_TYPE_STMT;
   $$->symbol = (Symbol *)$1;
@@ -164,19 +164,19 @@ stmt
 ;
 
 assignment
-: variable '=' expr {
-  LOG_DEBUG("assignment : IDENTIFIER '=' expr");
+: variable '=' expression {
+  LOG_DEBUG("assignment : IDENTIFIER '=' expression");
   $$ = xmalloc(sizeof(SymbolAssignment));
   $$->type = SYMBOL_TYPE_ASSIGNMENT;
   $$->symbol = (Symbol *)$1;
-  $$->expr = $3;
+  $$->expression = $3;
 }
-| decl '=' expr {
-  LOG_DEBUG("assignment : decl '=' expr");
+| decl '=' expression {
+  LOG_DEBUG("assignment : decl '=' expression");
   $$ = xmalloc(sizeof(SymbolAssignment));
   $$->type = SYMBOL_TYPE_ASSIGNMENT;
   $$->symbol = (Symbol *)$1;
-  $$->expr = $3;
+  $$->expression = $3;
 }
 ;
 
@@ -186,14 +186,14 @@ variable
   $$ = xmalloc(sizeof(SymbolVariable));
   $$->type = SYMBOL_TYPE_VARIABLE;
   $$->symbol = (Symbol *)$1;
-  $$->expr = NULL;
+  $$->expression = NULL;
 }
-| variable '[' expr ']' {
-  LOG_DEBUG("variable : variable '[' expr ']'");
+| variable '[' expression ']' {
+  LOG_DEBUG("variable : variable '[' expression ']'");
   $$ = xmalloc(sizeof(SymbolVariable));
   $$->type = SYMBOL_TYPE_VARIABLE;
   $$->symbol = (Symbol *)$1;
-  $$->expr = $3;
+  $$->expression = $3;
 }
 ;
 
@@ -254,27 +254,27 @@ datatype
 }
 ;
 
-expr
+expression
 : cond {
-  LOG_DEBUG("expr : cond");
-  $$ = xmalloc(sizeof(SymbolExpr));
-  $$->type = SYMBOL_TYPE_EXPR;
+  LOG_DEBUG("expression : cond");
+  $$ = xmalloc(sizeof(SymbolExpression));
+  $$->type = SYMBOL_TYPE_EXPRESSION;
   $$->symbol = (Symbol *)$1;
 }
 | or {
-  LOG_DEBUG("expr : or");
-  $$ = xmalloc(sizeof(SymbolExpr));
-  $$->type = SYMBOL_TYPE_EXPR;
+  LOG_DEBUG("expression : or");
+  $$ = xmalloc(sizeof(SymbolExpression));
+  $$->type = SYMBOL_TYPE_EXPRESSION;
   $$->symbol = (Symbol *)$1;
 }
 ;
 
 or
-: expr OR_OPER cond {
-  LOG_DEBUG("or : expr OR_OPER cond");
+: expression OR_OPER cond {
+  LOG_DEBUG("or : expression OR_OPER cond");
   $$ = xmalloc(sizeof(SymbolOr));
   $$->type = SYMBOL_TYPE_OR;
-  $$->expr = $1;
+  $$->expression = $1;
   $$->cond = $3;
 }
 ;
@@ -616,21 +616,21 @@ dict_display
 ;
 
 key_value_pairs
-: STRING_LITERAL ':' expr {
-  LOG_DEBUG("key_value_pairs : STRING_LITERAL ':' expr");
+: STRING_LITERAL ':' expression {
+  LOG_DEBUG("key_value_pairs : STRING_LITERAL ':' expression");
   $$ = xmalloc(sizeof(SymbolKeyValuePairs));
   $$->type = SYMBOL_TYPE_KEY_VALUE_PAIRS;
   $$->key_value_pairs = NULL;
   $$->string_literal = $1;
-  $$->expr = $3;
+  $$->expression = $3;
 }
-| key_value_pairs ',' STRING_LITERAL ':' expr {
-  LOG_DEBUG("key_value_pairs : key_value_pairs ',' STRING_LITERAL ':' expr");
+| key_value_pairs ',' STRING_LITERAL ':' expression {
+  LOG_DEBUG("key_value_pairs : key_value_pairs ',' STRING_LITERAL ':' expression");
   $$ = xmalloc(sizeof(SymbolKeyValuePairs));
   $$->type = SYMBOL_TYPE_KEY_VALUE_PAIRS;
   $$->key_value_pairs = $1;
   $$->string_literal = $3;
-  $$->expr = $5;
+  $$->expression = $5;
 }
 ;
 
@@ -656,87 +656,87 @@ list_display
 ;
 
 list_elements
-: expr {
-  LOG_DEBUG("list_elements : expr");
+: expression {
+  LOG_DEBUG("list_elements : expression");
   $$ = xmalloc(sizeof(SymbolListElements));
   $$->type = SYMBOL_TYPE_LIST_ELEMENTS;
   $$->list_elements = NULL;
-  $$->expr = $1;
+  $$->expression = $1;
 }
-| list_elements ',' expr {
-  LOG_DEBUG("list_elements : list_elements ',' expr");
+| list_elements ',' expression {
+  LOG_DEBUG("list_elements : list_elements ',' expression");
   $$ = xmalloc(sizeof(SymbolListElements));
   $$->type = SYMBOL_TYPE_LIST_ELEMENTS;
   $$->list_elements = $1;
-  $$->expr = $3;
+  $$->expression = $3;
 }
 ;
 
 arguments
-: expr {
-  LOG_DEBUG("arguments : expr");
+: expression {
+  LOG_DEBUG("arguments : expression");
   $$ = xmalloc(sizeof(SymbolArguments));
   $$->type = SYMBOL_TYPE_ARGUMENTS;
   $$->arguments = NULL;
-  $$->expr = $1;
+  $$->expression = $1;
 }
-| arguments ',' expr {
-  LOG_DEBUG("arguments : arguments ',' expr");
+| arguments ',' expression {
+  LOG_DEBUG("arguments : arguments ',' expression");
   $$ = xmalloc(sizeof(SymbolArguments));
   $$->type = SYMBOL_TYPE_ARGUMENTS;
   $$->arguments = $1;
-  $$->expr = $3;
+  $$->expression = $3;
 }
 ;
 
 subscription
-: primary '[' expr ']' {
-  LOG_DEBUG("subscription : primary '[' expr ']'");
+: primary '[' expression ']' {
+  LOG_DEBUG("subscription : primary '[' expression ']'");
   $$ = xmalloc(sizeof(SymbolSubscription));
   $$->type = SYMBOL_TYPE_SUBSCRIPTION;
   $$->primary = $1;
-  $$->expr = $3;
+  $$->expression = $3;
 }
 ;
 
 slice
-: primary '[' expr ':' expr ']' {
-  LOG_DEBUG("slice : primary '[' expr ':' expr ']'");
+: primary '[' expression ':' expression ']' {
+  LOG_DEBUG("slice : primary '[' expression ':' expression ']'");
   $$ = xmalloc(sizeof(SymbolSlice));
   $$->type = SYMBOL_TYPE_SLICE;
   $$->primary = $1;
-  $$->left_expr = $3;
-  $$->right_expr = $5;
+  $$->left_expression = $3;
+  $$->right_expression = $5;
 }
-| primary '[' expr ':' ']' {
-  LOG_DEBUG("slice : primary '[' expr ':' ']'");
+| primary '[' expression ':' ']' {
+  LOG_DEBUG("slice : primary '[' expression ':' ']'");
   $$ = xmalloc(sizeof(SymbolSlice));
   $$->type = SYMBOL_TYPE_SLICE;
   $$->primary = $1;
-  $$->left_expr = $3;
-  $$->right_expr = NULL;
+  $$->left_expression = $3;
+  $$->right_expression = NULL;
 }
-| primary '[' ':' expr ']' {
-  LOG_DEBUG("slice : primary '[' ':' expr ']'");
+| primary '[' ':' expression ']' {
+  LOG_DEBUG("slice : primary '[' ':' expression ']'");
   $$ = xmalloc(sizeof(SymbolSlice));
   $$->type = SYMBOL_TYPE_SLICE;
   $$->primary = $1;
-  $$->left_expr = NULL;
-  $$->right_expr = $4;
+  $$->left_expression = NULL;
+  $$->right_expression = $4;
 }
 | primary '[' ':' ']' {
   LOG_DEBUG("slice : primary '[' ':' ']'");
   $$ = xmalloc(sizeof(SymbolSlice));
   $$->type = SYMBOL_TYPE_SLICE;
   $$->primary = $1;
-  $$->left_expr = NULL;
-  $$->right_expr = NULL;
+  $$->left_expression = NULL;
+  $$->right_expression = NULL;
 }
 ;
 
-inner_expr
-: '(' expr ')' {
-  LOG_DEBUG("inner_expr : '(' expr ')'");
+inner_expression
+: '(' expression ')' {
+  LOG_DEBUG("inner_expression : '(' expression ')'");
   $$ = $2;
 }
 ;
@@ -790,8 +790,8 @@ atom
   $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = (Symbol *)$1;
 }
-| inner_expr {
-  LOG_DEBUG("atom : inner_expr");
+| inner_expression {
+  LOG_DEBUG("atom : inner_expression");
   $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = (Symbol *)$1;

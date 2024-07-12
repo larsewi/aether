@@ -20,7 +20,7 @@ typedef struct SymbolMutable SymbolMutable;
 typedef struct SymbolDatatype SymbolDatatype;
 
 // Expressions
-typedef struct SymbolExpr SymbolExpr;
+typedef struct SymbolExpression SymbolExpression;
 typedef struct SymbolOr SymbolOr;
 typedef struct SymbolCond SymbolCond;
 typedef struct SymbolAnd SymbolAnd;
@@ -71,7 +71,7 @@ typedef enum {
   SYMBOL_TYPE_REFERENCE,
   SYMBOL_TYPE_MUTABLE,
   SYMBOL_TYPE_DATATYPE,
-  SYMBOL_TYPE_EXPR,
+  SYMBOL_TYPE_EXPRESSION,
   SYMBOL_TYPE_OR,
   SYMBOL_TYPE_COND,
   SYMBOL_TYPE_AND,
@@ -108,7 +108,7 @@ typedef enum {
   SYMBOL_TYPE_KEY_VALUE_PAIRS,
   SYMBOL_TYPE_LIST_DISPLAY,
   SYMBOL_TYPE_LIST_ELEMENTS,
-  SYMBOL_TYPE_INNER_EXPR,
+  SYMBOL_TYPE_INNER_EXPRESSION,
   SYMBOL_TYPE_MUTABLE_SPECIFIER,
 } SymbolType;
 
@@ -139,7 +139,7 @@ struct SymbolStmt {
 struct SymbolAssignment {
   SymbolType type;
   Symbol *symbol;
-  SymbolExpr *expr;
+  SymbolExpression *expression;
 };
 
 /****************************************************************************/
@@ -147,7 +147,7 @@ struct SymbolAssignment {
 struct SymbolVariable {
   SymbolType type;
   Symbol *symbol;
-  SymbolExpr *expr;
+  SymbolExpression *expression;
 };
 
 /****************************************************************************/
@@ -181,7 +181,7 @@ struct SymbolDatatype {
 
 /****************************************************************************/
 
-struct SymbolExpr {
+struct SymbolExpression {
   SymbolType type;
   Symbol *symbol;
 };
@@ -190,7 +190,7 @@ struct SymbolExpr {
 
 struct SymbolOr {
   SymbolType type;
-  SymbolExpr *expr;
+  SymbolExpression *expression;
   SymbolCond *cond;
 };
 
@@ -367,7 +367,7 @@ struct SymbolKeyValuePairs {
   SymbolType type;
   SymbolKeyValuePairs *key_value_pairs;
   SymbolStringLiteral *string_literal;
-  SymbolExpr *expr;
+  SymbolExpression *expression;
 };
 
 /****************************************************************************/
@@ -382,7 +382,7 @@ struct SymbolListDisplay {
 struct SymbolListElements {
   SymbolType type;
   SymbolListElements *list_elements;
-  SymbolExpr *expr;
+  SymbolExpression *expression;
 };
 
 /****************************************************************************/
@@ -390,7 +390,7 @@ struct SymbolListElements {
 struct SymbolArguments {
   SymbolType type;
   struct SymbolArguments *arguments;
-  SymbolExpr *expr;
+  SymbolExpression *expression;
 };
 
 /****************************************************************************/
@@ -398,7 +398,7 @@ struct SymbolArguments {
 struct SymbolSubscription {
   SymbolType type;
   SymbolPrimary *primary;
-  SymbolExpr *expr;
+  SymbolExpression *expression;
 };
 
 /****************************************************************************/
@@ -406,8 +406,8 @@ struct SymbolSubscription {
 struct SymbolSlice {
   SymbolType type;
   SymbolPrimary *primary;
-  SymbolExpr *left_expr;
-  SymbolExpr *right_expr;
+  SymbolExpression *left_expression;
+  SymbolExpression *right_expression;
 };
 
 /****************************************************************************/

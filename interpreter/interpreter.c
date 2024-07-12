@@ -5,7 +5,8 @@
 
 #include "../utils/logger.h"
 
-static void WalkSymbolExpr(SymbolExpr *expr, bool print_tree, int indent);
+static void WalkSymbolExpression(SymbolExpression *expression, bool print_tree,
+                                 int indent);
 static void WalkSymbolCond(SymbolCond *cond, bool print_tree, int indent);
 static void WalkSymbolComp(SymbolComp *comp, bool print_tree, int indent);
 static void WalkSymbolTerm(SymbolTerm *term, bool print_tree, int indent);
@@ -157,8 +158,8 @@ static void WalkSymbolKeyValuePairs(SymbolKeyValuePairs *const key_value_pairs,
   WalkSymbolStringLiteral(key_value_pairs->string_literal, print_tree,
                           indent + DEFAULT_SYNTAX_TREE_INDENT);
 
-  WalkSymbolExpr(key_value_pairs->expr, print_tree,
-                 indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolExpression(key_value_pairs->expression, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   free(key_value_pairs);
 
@@ -198,8 +199,8 @@ static void WalkSymbolListElements(SymbolListElements *const list_elements,
                            indent + DEFAULT_SYNTAX_TREE_INDENT);
   }
 
-  WalkSymbolExpr(list_elements->expr, print_tree,
-                 indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolExpression(list_elements->expression, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   free(list_elements);
 
@@ -249,9 +250,9 @@ static void WalkSymbolAtom(SymbolAtom *const atom, const bool print_tree,
     WalkSymbolListDisplay((SymbolListDisplay *)atom->symbol, print_tree,
                           indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
-  case SYMBOL_TYPE_EXPR:
-    WalkSymbolExpr((SymbolExpr *)atom->symbol, print_tree,
-                   indent + DEFAULT_SYNTAX_TREE_INDENT);
+  case SYMBOL_TYPE_EXPRESSION:
+    WalkSymbolExpression((SymbolExpression *)atom->symbol, print_tree,
+                         indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   default:
     LOG_CRITICAL("Unexpected symbol type %d", atom->symbol->type);
@@ -277,8 +278,8 @@ static void WalkSymbolArguments(SymbolArguments *const arguments,
                         indent + DEFAULT_SYNTAX_TREE_INDENT);
   }
 
-  WalkSymbolExpr(arguments->expr, print_tree,
-                 indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolExpression(arguments->expression, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   free(arguments);
 
@@ -321,8 +322,8 @@ static void WalkSymbolSubscription(SymbolSubscription *const subscription,
   WalkSymbolPrimary(subscription->primary, print_tree,
                     indent + DEFAULT_SYNTAX_TREE_INDENT);
 
-  WalkSymbolExpr(subscription->expr, print_tree,
-                 indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolExpression(subscription->expression, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   free(subscription);
 
@@ -336,22 +337,22 @@ static void WalkSymbolSubscription(SymbolSubscription *const subscription,
 static void WalkSymbolSlice(SymbolSlice *const slice, const bool print_tree,
                             const int indent) {
   if (print_tree) {
-    printf("%*s<slice left_expr=\"%s\" right_expr=\"%s\">\n", indent, "",
-           (slice->left_expr != NULL) ? "true" : "false",
-           (slice->right_expr != NULL) ? "true" : "false");
+    printf("%*s<slice left_expression=\"%s\" right_expression=\"%s\">\n",
+           indent, "", (slice->left_expression != NULL) ? "true" : "false",
+           (slice->right_expression != NULL) ? "true" : "false");
   }
 
   WalkSymbolPrimary(slice->primary, print_tree,
                     indent + DEFAULT_SYNTAX_TREE_INDENT);
 
-  if (slice->left_expr != NULL) {
-    WalkSymbolExpr(slice->left_expr, print_tree,
-                   indent + DEFAULT_SYNTAX_TREE_INDENT);
+  if (slice->left_expression != NULL) {
+    WalkSymbolExpression(slice->left_expression, print_tree,
+                         indent + DEFAULT_SYNTAX_TREE_INDENT);
   }
 
-  if (slice->right_expr != NULL) {
-    WalkSymbolExpr(slice->right_expr, print_tree,
-                   indent + DEFAULT_SYNTAX_TREE_INDENT);
+  if (slice->right_expression != NULL) {
+    WalkSymbolExpression(slice->right_expression, print_tree,
+                         indent + DEFAULT_SYNTAX_TREE_INDENT);
   }
 
   free(slice);
@@ -862,7 +863,8 @@ static void WalkSymbolOr(SymbolOr *const or, const bool print_tree,
     printf("%*s</or>\n", indent, "");
   }
 
-  WalkSymbolExpr(or->expr, print_tree, indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolExpression(or->expression, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   WalkSymbolCond(or->cond, print_tree, indent + DEFAULT_SYNTAX_TREE_INDENT);
 
@@ -875,29 +877,29 @@ static void WalkSymbolOr(SymbolOr *const or, const bool print_tree,
 
 /****************************************************************************/
 
-static void WalkSymbolExpr(SymbolExpr *const expr, const bool print_tree,
-                           const int indent) {
+static void WalkSymbolExpression(SymbolExpression *const expression,
+                                 const bool print_tree, const int indent) {
   if (print_tree) {
-    printf("%*s<expr>\n", indent, "");
+    printf("%*s<expression>\n", indent, "");
   }
 
-  switch (expr->symbol->type) {
+  switch (expression->symbol->type) {
   case SYMBOL_TYPE_COND:
-    WalkSymbolCond((SymbolCond *)expr->symbol, print_tree,
+    WalkSymbolCond((SymbolCond *)expression->symbol, print_tree,
                    indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_OR:
-    WalkSymbolOr((SymbolOr *)expr->symbol, print_tree,
+    WalkSymbolOr((SymbolOr *)expression->symbol, print_tree,
                  indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   default:
-    LOG_CRITICAL("Unexpected symbol type %d", expr->symbol->type);
+    LOG_CRITICAL("Unexpected symbol type %d", expression->symbol->type);
   }
 
-  free(expr);
+  free(expression);
 
   if (print_tree) {
-    printf("%*s</expr>\n", indent, "");
+    printf("%*s</expression>\n", indent, "");
   }
 }
 
@@ -1021,9 +1023,9 @@ static void WalkSymbolVariable(SymbolVariable *const variable,
     LOG_CRITICAL("Unexpected symbol type %d", variable->symbol->type);
   }
 
-  if (variable->expr != NULL) {
-    WalkSymbolExpr(variable->expr, print_tree,
-                   indent + DEFAULT_SYNTAX_TREE_INDENT);
+  if (variable->expression != NULL) {
+    WalkSymbolExpression(variable->expression, print_tree,
+                         indent + DEFAULT_SYNTAX_TREE_INDENT);
   }
 
   free(variable);
@@ -1054,8 +1056,8 @@ static void WalkSymbolAssignment(SymbolAssignment *const assignment,
     LOG_CRITICAL("Unexpected symbol type %d", assignment->symbol->type);
   }
 
-  WalkSymbolExpr(assignment->expr, print_tree,
-                 indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolExpression(assignment->expression, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   free(assignment);
 
@@ -1081,9 +1083,9 @@ static void WalkSymbolStmt(SymbolStmt *const stmt, const bool print_tree,
     WalkSymbolDecl((SymbolDecl *)stmt->symbol, print_tree,
                    indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
-  case SYMBOL_TYPE_EXPR:
-    WalkSymbolExpr((SymbolExpr *)stmt->symbol, print_tree,
-                   indent + DEFAULT_SYNTAX_TREE_INDENT);
+  case SYMBOL_TYPE_EXPRESSION:
+    WalkSymbolExpression((SymbolExpression *)stmt->symbol, print_tree,
+                         indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   default:
     LOG_CRITICAL("Unexpected symbol type %d", stmt->symbol->type);

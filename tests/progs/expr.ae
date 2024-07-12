@@ -1,1 +1,1 @@
-int &foo;
+foo = 1;
