@@ -68,7 +68,7 @@ ParserState PARSER_STATE = {0};
   SymbolPrimary *primary;
   SymbolFncall *fncall;
   SymbolDict *dict;
-  SymbolPairs *pairs;
+  SymbolEntries *entries;
   SymbolList *list;
   SymbolElements *elements;
   SymbolArguments *arguments;
@@ -102,7 +102,7 @@ ParserState PARSER_STATE = {0};
 %type <fncall> fncall;
 %type <arguments> arguments;
 %type <dict> dict;
-%type <pairs> pairs;
+%type <entries> entries;
 %type <list> list;
 %type <elements> elements;
 %type <subscription> subscription;
@@ -599,36 +599,36 @@ dict
   LOG_DEBUG("dict : '{' '}'");
   $$ = xmalloc(sizeof(SymbolDict));
   $$->type = SYMBOL_TYPE_DICT;
-  $$->pairs = NULL;
+  $$->entries = NULL;
 }
-| '{' pairs '}' {
-  LOG_DEBUG("dict : '{' pairs '}'");
+| '{' entries '}' {
+  LOG_DEBUG("dict : '{' entries '}'");
   $$ = xmalloc(sizeof(SymbolDict));
   $$->type = SYMBOL_TYPE_DICT;
-  $$->pairs = $2;
+  $$->entries = $2;
 }
-| '{' pairs ',' '}' {
-  LOG_DEBUG("dict : '{' pairs ',' '}'");
+| '{' entries ',' '}' {
+  LOG_DEBUG("dict : '{' entries ',' '}'");
   $$ = xmalloc(sizeof(SymbolDict));
   $$->type = SYMBOL_TYPE_DICT;
-  $$->pairs = $2;
+  $$->entries = $2;
 }
 ;
 
-pairs
+entries
 : STRING_LITERAL ':' expression {
-  LOG_DEBUG("pairs : STRING_LITERAL ':' expression");
-  $$ = xmalloc(sizeof(SymbolPairs));
-  $$->type = SYMBOL_TYPE_PAIRS;
-  $$->pairs = NULL;
+  LOG_DEBUG("entries : STRING_LITERAL ':' expression");
+  $$ = xmalloc(sizeof(SymbolEntries));
+  $$->type = SYMBOL_TYPE_ENTRIES;
+  $$->entries = NULL;
   $$->string_literal = $1;
   $$->expression = $3;
 }
-| pairs ',' STRING_LITERAL ':' expression {
-  LOG_DEBUG("pairs : pairs ',' STRING_LITERAL ':' expression");
-  $$ = xmalloc(sizeof(SymbolPairs));
-  $$->type = SYMBOL_TYPE_PAIRS;
-  $$->pairs = $1;
+| entries ',' STRING_LITERAL ':' expression {
+  LOG_DEBUG("entries : entries ',' STRING_LITERAL ':' expression");
+  $$ = xmalloc(sizeof(SymbolEntries));
+  $$->type = SYMBOL_TYPE_ENTRIES;
+  $$->entries = $1;
   $$->string_literal = $3;
   $$->expression = $5;
 }
