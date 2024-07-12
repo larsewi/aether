@@ -24,7 +24,7 @@ typedef struct SymbolExpression SymbolExpression;
 typedef struct SymbolOr SymbolOr;
 typedef struct SymbolCondition SymbolCondition;
 typedef struct SymbolAnd SymbolAnd;
-typedef struct SymbolComparrison SymbolComparrison;
+typedef struct SymbolComparison SymbolComparison;
 typedef struct SymbolLessThan SymbolLessThan;
 typedef struct SymbolGreaterThan SymbolGreaterThan;
 typedef struct SymbolEqual SymbolEqual;
@@ -75,7 +75,7 @@ typedef enum {
   SYMBOL_TYPE_OR,
   SYMBOL_TYPE_CONDITION,
   SYMBOL_TYPE_AND,
-  SYMBOL_TYPE_COMPARRISON,
+  SYMBOL_TYPE_COMPARISON,
   SYMBOL_TYPE_LESS_THAN,
   SYMBOL_TYPE_GREATER_THAN,
   SYMBOL_TYPE_EQUAL,
@@ -206,12 +206,12 @@ struct SymbolCondition {
 struct SymbolAnd {
   SymbolType type;
   SymbolCondition *condition;
-  SymbolComparrison *comparrison;
+  SymbolComparison *comparison;
 };
 
 /****************************************************************************/
 
-struct SymbolComparrison {
+struct SymbolComparison {
   SymbolType type;
   Symbol *symbol;
 };
@@ -220,7 +220,7 @@ struct SymbolComparrison {
 
 struct SymbolLessThan {
   SymbolType type;
-  SymbolComparrison *comparrison;
+  SymbolComparison *comparison;
   SymbolTerm *term;
 };
 
@@ -228,7 +228,7 @@ struct SymbolLessThan {
 
 struct SymbolGreaterThan {
   SymbolType type;
-  SymbolComparrison *comparrison;
+  SymbolComparison *comparison;
   SymbolTerm *term;
 };
 
@@ -236,7 +236,7 @@ struct SymbolGreaterThan {
 
 struct SymbolEqual {
   SymbolType type;
-  SymbolComparrison *comparrison;
+  SymbolComparison *comparison;
   SymbolTerm *term;
 };
 
@@ -244,7 +244,7 @@ struct SymbolEqual {
 
 struct SymbolLessEqual {
   SymbolType type;
-  SymbolComparrison *comparrison;
+  SymbolComparison *comparison;
   SymbolTerm *term;
 };
 
@@ -252,7 +252,7 @@ struct SymbolLessEqual {
 
 struct SymbolGreaterEqual {
   SymbolType type;
-  SymbolComparrison *comparrison;
+  SymbolComparison *comparison;
   SymbolTerm *term;
 };
 
@@ -260,7 +260,7 @@ struct SymbolGreaterEqual {
 
 struct SymbolNotEqual {
   SymbolType type;
-  SymbolComparrison *comparrison;
+  SymbolComparison *comparison;
   SymbolTerm *term;
 };
 

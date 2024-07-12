@@ -48,7 +48,7 @@ ParserState PARSER_STATE = {0};
   SymbolOr *or;
   SymbolCondition *condition;
   SymbolAnd *and;
-  SymbolComparrison *comparrison;
+  SymbolComparison *comparison;
   SymbolLessThan *less_than;
   SymbolGreaterThan *greater_than;
   SymbolEqual *equal;
@@ -81,7 +81,7 @@ ParserState PARSER_STATE = {0};
 %type <or> or;
 %type <condition> condition;
 %type <and> and;
-%type <comparrison> comparrison;
+%type <comparison> comparison;
 %type <less_than> less_than;
 %type <greater_than> greater_than;
 %type <equal> equal;
@@ -280,8 +280,8 @@ or
 ;
 
 condition
-: comparrison {
-  LOG_DEBUG("condition : comparrison");
+: comparison {
+  LOG_DEBUG("condition : comparison");
   $$ = xmalloc(sizeof(SymbolCondition));
   $$->type = SYMBOL_TYPE_CONDITION;
   $$->symbol = (Symbol *)$1;
@@ -295,116 +295,116 @@ condition
 ;
 
 and
-: condition AND_OPER comparrison {
-  LOG_DEBUG("and : condition AND_OPER comparrison");
+: condition AND_OPER comparison {
+  LOG_DEBUG("and : condition AND_OPER comparison");
   $$ = xmalloc(sizeof(SymbolAnd));
   $$->type = SYMBOL_TYPE_AND;
   $$->condition = $1;
-  $$->comparrison = $3;
+  $$->comparison = $3;
 }
 ;
 
-comparrison
+comparison
 : term {
-  LOG_DEBUG("comparrison : term");
-  $$ = xmalloc(sizeof(SymbolComparrison));
-  $$->type = SYMBOL_TYPE_COMPARRISON;
+  LOG_DEBUG("comparison : term");
+  $$ = xmalloc(sizeof(SymbolComparison));
+  $$->type = SYMBOL_TYPE_COMPARISON;
   $$->symbol = (Symbol *)$1;
 }
 | less_than {
-  LOG_DEBUG("comparrison : less_than");
-  $$ = xmalloc(sizeof(SymbolComparrison));
-  $$->type = SYMBOL_TYPE_COMPARRISON;
+  LOG_DEBUG("comparison : less_than");
+  $$ = xmalloc(sizeof(SymbolComparison));
+  $$->type = SYMBOL_TYPE_COMPARISON;
   $$->symbol = (Symbol *)$1;
 }
 | greater_than {
-  LOG_DEBUG("comparrison : greater_than");
-  $$ = xmalloc(sizeof(SymbolComparrison));
-  $$->type = SYMBOL_TYPE_COMPARRISON;
+  LOG_DEBUG("comparison : greater_than");
+  $$ = xmalloc(sizeof(SymbolComparison));
+  $$->type = SYMBOL_TYPE_COMPARISON;
   $$->symbol = (Symbol *)$1;
 }
 | equal {
-  LOG_DEBUG("comparrison : equal");
-  $$ = xmalloc(sizeof(SymbolComparrison));
-  $$->type = SYMBOL_TYPE_COMPARRISON;
+  LOG_DEBUG("comparison : equal");
+  $$ = xmalloc(sizeof(SymbolComparison));
+  $$->type = SYMBOL_TYPE_COMPARISON;
   $$->symbol = (Symbol *)$1;
 }
 | less_equal {
-  LOG_DEBUG("comparrison : less_equal");
-  $$ = xmalloc(sizeof(SymbolComparrison));
-  $$->type = SYMBOL_TYPE_COMPARRISON;
+  LOG_DEBUG("comparison : less_equal");
+  $$ = xmalloc(sizeof(SymbolComparison));
+  $$->type = SYMBOL_TYPE_COMPARISON;
   $$->symbol = (Symbol *)$1;
 }
 | greater_equal {
-  LOG_DEBUG("comparrison : greater_equal");
-  $$ = xmalloc(sizeof(SymbolComparrison));
-  $$->type = SYMBOL_TYPE_COMPARRISON;
+  LOG_DEBUG("comparison : greater_equal");
+  $$ = xmalloc(sizeof(SymbolComparison));
+  $$->type = SYMBOL_TYPE_COMPARISON;
   $$->symbol = (Symbol *)$1;
 }
 | not_equal {
-  LOG_DEBUG("comparrison : not_equal");
-  $$ = xmalloc(sizeof(SymbolComparrison));
-  $$->type = SYMBOL_TYPE_COMPARRISON;
+  LOG_DEBUG("comparison : not_equal");
+  $$ = xmalloc(sizeof(SymbolComparison));
+  $$->type = SYMBOL_TYPE_COMPARISON;
   $$->symbol = (Symbol *)$1;
 }
 ;
 
 less_than
-: comparrison '<' term {
-  LOG_DEBUG("less_than : comparrison '<' term");
+: comparison '<' term {
+  LOG_DEBUG("less_than : comparison '<' term");
   $$ = xmalloc(sizeof(SymbolLessThan));
   $$->type = SYMBOL_TYPE_LESS_THAN;
-  $$->comparrison = $1;
+  $$->comparison = $1;
   $$->term = $3;
 }
 ;
 
 greater_than
-: comparrison '>' term {
-  LOG_DEBUG("greater_than : comparrison '>' term");
+: comparison '>' term {
+  LOG_DEBUG("greater_than : comparison '>' term");
   $$ = xmalloc(sizeof(SymbolGreaterThan));
   $$->type = SYMBOL_TYPE_GREATER_THAN;
-  $$->comparrison = $1;
+  $$->comparison = $1;
   $$->term = $3;
 }
 ;
 
 equal
-: comparrison EQ_OPER term {
-  LOG_DEBUG("equal : comparrison EQ_OPER term");
+: comparison EQ_OPER term {
+  LOG_DEBUG("equal : comparison EQ_OPER term");
   $$ = xmalloc(sizeof(SymbolEqual));
   $$->type = SYMBOL_TYPE_EQUAL;
-  $$->comparrison = $1;
+  $$->comparison = $1;
   $$->term = $3;
 }
 ;
 
 less_equal
-: comparrison LE_OPER term {
-  LOG_DEBUG("less_equal : comparrison LE_OPER term");
+: comparison LE_OPER term {
+  LOG_DEBUG("less_equal : comparison LE_OPER term");
   $$ = xmalloc(sizeof(SymbolLessEqual));
   $$->type = SYMBOL_TYPE_LESS_EQUAL;
-  $$->comparrison = $1;
+  $$->comparison = $1;
   $$->term = $3;
 }
 ;
 
 greater_equal
-: comparrison GE_OPER term {
-  LOG_DEBUG("greater_equal : comparrison GE_OPER term");
+: comparison GE_OPER term {
+  LOG_DEBUG("greater_equal : comparison GE_OPER term");
   $$ = xmalloc(sizeof(SymbolGreaterEqual));
   $$->type = SYMBOL_TYPE_GREATER_EQUAL;
-  $$->comparrison = $1;
+  $$->comparison = $1;
   $$->term = $3;
 }
 ;
 
 not_equal
-: comparrison NE_OPER term {
-  LOG_DEBUG("not_equal : comparrison NE_OPER term");
+: comparison NE_OPER term {
+  LOG_DEBUG("not_equal : comparison NE_OPER term");
   $$ = xmalloc(sizeof(SymbolNotEqual));
   $$->type = SYMBOL_TYPE_NOT_EQUAL;
-  $$->comparrison = $1;
+  $$->comparison = $1;
   $$->term = $3;
 }
 ;
