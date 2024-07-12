@@ -7,7 +7,8 @@
 
 static void WalkSymbolExpression(SymbolExpression *expression, bool print_tree,
                                  int indent);
-static void WalkSymbolCond(SymbolCond *cond, bool print_tree, int indent);
+static void WalkSymbolCondition(SymbolCondition *condition, bool print_tree,
+                                int indent);
 static void WalkSymbolComp(SymbolComp *comp, bool print_tree, int indent);
 static void WalkSymbolTerm(SymbolTerm *term, bool print_tree, int indent);
 static void WalkSymbolFactor(SymbolFactor *factor, bool print_tree, int indent);
@@ -816,7 +817,8 @@ static void WalkSymbolAnd(SymbolAnd *const and, const bool print_tree,
     printf("%*s<and>\n", indent, "");
   }
 
-  WalkSymbolCond(and->cond, print_tree, indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolCondition(and->condition, print_tree,
+                      indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   WalkSymbolComp(and->comp, print_tree, indent + DEFAULT_SYNTAX_TREE_INDENT);
 
@@ -829,29 +831,29 @@ static void WalkSymbolAnd(SymbolAnd *const and, const bool print_tree,
 
 /****************************************************************************/
 
-static void WalkSymbolCond(SymbolCond *const cond, const bool print_tree,
-                           const int indent) {
+static void WalkSymbolCondition(SymbolCondition *const condition,
+                                const bool print_tree, const int indent) {
   if (print_tree) {
-    printf("%*s<cond>\n", indent, "");
+    printf("%*s<condition>\n", indent, "");
   }
 
-  switch (cond->symbol->type) {
+  switch (condition->symbol->type) {
   case SYMBOL_TYPE_COMP:
-    WalkSymbolComp((SymbolComp *)cond->symbol, print_tree,
+    WalkSymbolComp((SymbolComp *)condition->symbol, print_tree,
                    indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_AND:
-    WalkSymbolAnd((SymbolAnd *)cond->symbol, print_tree,
+    WalkSymbolAnd((SymbolAnd *)condition->symbol, print_tree,
                   indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   default:
-    LOG_CRITICAL("Unexpected symbol type %d", cond->symbol->type);
+    LOG_CRITICAL("Unexpected symbol type %d", condition->symbol->type);
   }
 
-  free(cond);
+  free(condition);
 
   if (print_tree) {
-    printf("%*s</cond>\n", indent, "");
+    printf("%*s</condition>\n", indent, "");
   }
 }
 
@@ -866,7 +868,8 @@ static void WalkSymbolOr(SymbolOr *const or, const bool print_tree,
   WalkSymbolExpression(or->expression, print_tree,
                        indent + DEFAULT_SYNTAX_TREE_INDENT);
 
-  WalkSymbolCond(or->cond, print_tree, indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolCondition(or->condition, print_tree,
+                      indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   free(or);
 
@@ -884,9 +887,9 @@ static void WalkSymbolExpression(SymbolExpression *const expression,
   }
 
   switch (expression->symbol->type) {
-  case SYMBOL_TYPE_COND:
-    WalkSymbolCond((SymbolCond *)expression->symbol, print_tree,
-                   indent + DEFAULT_SYNTAX_TREE_INDENT);
+  case SYMBOL_TYPE_CONDITION:
+    WalkSymbolCondition((SymbolCondition *)expression->symbol, print_tree,
+                        indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_OR:
     WalkSymbolOr((SymbolOr *)expression->symbol, print_tree,

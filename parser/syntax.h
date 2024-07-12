@@ -22,7 +22,7 @@ typedef struct SymbolDatatype SymbolDatatype;
 // Expressions
 typedef struct SymbolExpression SymbolExpression;
 typedef struct SymbolOr SymbolOr;
-typedef struct SymbolCond SymbolCond;
+typedef struct SymbolCondition SymbolCondition;
 typedef struct SymbolAnd SymbolAnd;
 typedef struct SymbolComp SymbolComp;
 typedef struct SymbolLessThan SymbolLessThan;
@@ -73,7 +73,7 @@ typedef enum {
   SYMBOL_TYPE_DATATYPE,
   SYMBOL_TYPE_EXPRESSION,
   SYMBOL_TYPE_OR,
-  SYMBOL_TYPE_COND,
+  SYMBOL_TYPE_CONDITION,
   SYMBOL_TYPE_AND,
   SYMBOL_TYPE_COMP,
   SYMBOL_TYPE_LESS_THAN,
@@ -191,12 +191,12 @@ struct SymbolExpression {
 struct SymbolOr {
   SymbolType type;
   SymbolExpression *expression;
-  SymbolCond *cond;
+  SymbolCondition *condition;
 };
 
 /****************************************************************************/
 
-struct SymbolCond {
+struct SymbolCondition {
   SymbolType type;
   Symbol *symbol;
 };
@@ -205,7 +205,7 @@ struct SymbolCond {
 
 struct SymbolAnd {
   SymbolType type;
-  SymbolCond *cond;
+  SymbolCondition *condition;
   SymbolComp *comp;
 };
 

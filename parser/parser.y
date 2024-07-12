@@ -46,7 +46,7 @@ ParserState PARSER_STATE = {0};
 %union {
   SymbolExpression *expression;
   SymbolOr *or;
-  SymbolCond *cond;
+  SymbolCondition *condition;
   SymbolAnd *and;
   SymbolComp *comp;
   SymbolLessThan *less_than;
@@ -79,7 +79,7 @@ ParserState PARSER_STATE = {0};
 
 %type <expression> inner_expression expression;
 %type <or> or;
-%type <cond> cond;
+%type <condition> condition;
 %type <and> and;
 %type <comp> comp;
 %type <less_than> less_than;
@@ -255,8 +255,8 @@ datatype
 ;
 
 expression
-: cond {
-  LOG_DEBUG("expression : cond");
+: condition {
+  LOG_DEBUG("expression : condition");
   $$ = xmalloc(sizeof(SymbolExpression));
   $$->type = SYMBOL_TYPE_EXPRESSION;
   $$->symbol = (Symbol *)$1;
@@ -270,36 +270,36 @@ expression
 ;
 
 or
-: expression OR_OPER cond {
-  LOG_DEBUG("or : expression OR_OPER cond");
+: expression OR_OPER condition {
+  LOG_DEBUG("or : expression OR_OPER condition");
   $$ = xmalloc(sizeof(SymbolOr));
   $$->type = SYMBOL_TYPE_OR;
   $$->expression = $1;
-  $$->cond = $3;
+  $$->condition = $3;
 }
 ;
 
-cond
+condition
 : comp {
-  LOG_DEBUG("cond : comp");
-  $$ = xmalloc(sizeof(SymbolCond));
-  $$->type = SYMBOL_TYPE_COND;
+  LOG_DEBUG("condition : comp");
+  $$ = xmalloc(sizeof(SymbolCondition));
+  $$->type = SYMBOL_TYPE_CONDITION;
   $$->symbol = (Symbol *)$1;
 }
 | and {
-  LOG_DEBUG("cond : and");
-  $$ = xmalloc(sizeof(SymbolCond));
-  $$->type = SYMBOL_TYPE_COND;
+  LOG_DEBUG("condition : and");
+  $$ = xmalloc(sizeof(SymbolCondition));
+  $$->type = SYMBOL_TYPE_CONDITION;
   $$->symbol = (Symbol *)$1;
 }
 ;
 
 and
-: cond AND_OPER comp {
-  LOG_DEBUG("and : cond AND_OPER comp");
+: condition AND_OPER comp {
+  LOG_DEBUG("and : condition AND_OPER comp");
   $$ = xmalloc(sizeof(SymbolAnd));
   $$->type = SYMBOL_TYPE_AND;
-  $$->cond = $1;
+  $$->condition = $1;
   $$->comp = $3;
 }
 ;
