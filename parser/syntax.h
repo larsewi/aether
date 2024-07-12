@@ -11,7 +11,7 @@ typedef struct ParserState ParserState;
 typedef struct Symbol Symbol;
 
 // Statements
-typedef struct SymbolStmt SymbolStmt;
+typedef struct SymbolStatement SymbolStatement;
 typedef struct SymbolAssignment SymbolAssignment;
 typedef struct SymbolVariable SymbolVariable;
 typedef struct SymbolDecl SymbolDecl;
@@ -64,7 +64,7 @@ typedef struct SymbolMutableSpecifier SymbolMutableSpecifier;
 /****************************************************************************/
 
 typedef enum {
-  SYMBOL_TYPE_STMT = 0,
+  SYMBOL_TYPE_STATEMENT = 0,
   SYMBOL_TYPE_ASSIGNMENT,
   SYMBOL_TYPE_VARIABLE,
   SYMBOL_TYPE_DECL,
@@ -124,12 +124,12 @@ struct ParserState {
   const char *filename;
   int line;
   int column;
-  SymbolStmt *stmt;
+  SymbolStatement *statement;
 };
 
 /****************************************************************************/
 
-struct SymbolStmt {
+struct SymbolStatement {
   SymbolType type;
   Symbol *symbol;
 };

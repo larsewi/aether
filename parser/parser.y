@@ -112,7 +112,7 @@ ParserState PARSER_STATE = {0};
 // Statements
 
 %union {
-  SymbolStmt *stmt;
+  SymbolStatement *statement;
   SymbolAssignment *assignment;
   SymbolVariable *variable;
   SymbolDecl *decl;
@@ -121,7 +121,7 @@ ParserState PARSER_STATE = {0};
   SymbolDatatype *datatype;
 }
 
-%type <stmt> stmt;
+%type <statement> statement;
 %type <assignment> assignment;
 %type <variable> variable;
 %type <decl> decl;
@@ -134,31 +134,31 @@ ParserState PARSER_STATE = {0};
 start
 : /* empty */ {
   LOG_DEBUG("start : %%empty");
-  P.stmt = NULL;
+  P.statement = NULL;
 }
-| stmt {
-  LOG_DEBUG("start : stmt");
-  P.stmt = $1;
+| statement {
+  LOG_DEBUG("start : statement");
+  P.statement = $1;
 }
 ;
 
-stmt
+statement
 : assignment ';' {
-  LOG_DEBUG("stmt : assignment ';'");
-  $$ = xmalloc(sizeof(SymbolStmt));
-  $$->type = SYMBOL_TYPE_STMT;
+  LOG_DEBUG("statement : assignment ';'");
+  $$ = xmalloc(sizeof(SymbolStatement));
+  $$->type = SYMBOL_TYPE_STATEMENT;
   $$->symbol = (Symbol *)$1;
 }
 | decl ';' {
-  LOG_DEBUG("stmt : decl ';'");
-  $$ = xmalloc(sizeof(SymbolStmt));
-  $$->type = SYMBOL_TYPE_STMT;
+  LOG_DEBUG("statement : decl ';'");
+  $$ = xmalloc(sizeof(SymbolStatement));
+  $$->type = SYMBOL_TYPE_STATEMENT;
   $$->symbol = (Symbol *)$1;
 }
 | expression ';' {
-  LOG_DEBUG("stmt : expression ';'");
-  $$ = xmalloc(sizeof(SymbolStmt));
-  $$->type = SYMBOL_TYPE_STMT;
+  LOG_DEBUG("statement : expression ';'");
+  $$ = xmalloc(sizeof(SymbolStatement));
+  $$->type = SYMBOL_TYPE_STATEMENT;
   $$->symbol = (Symbol *)$1;
 }
 ;

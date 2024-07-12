@@ -1072,40 +1072,40 @@ static void WalkSymbolAssignment(SymbolAssignment *const assignment,
 
 /****************************************************************************/
 
-static void WalkSymbolStmt(SymbolStmt *const stmt, const bool print_tree,
-                           const int indent) {
+static void WalkSymbolStatement(SymbolStatement *const statement,
+                                const bool print_tree, const int indent) {
   if (print_tree) {
-    printf("%*s<stmt>\n", indent, "");
+    printf("%*s<statement>\n", indent, "");
   }
 
-  switch (stmt->symbol->type) {
+  switch (statement->symbol->type) {
   case SYMBOL_TYPE_ASSIGNMENT:
-    WalkSymbolAssignment((SymbolAssignment *)stmt->symbol, print_tree,
+    WalkSymbolAssignment((SymbolAssignment *)statement->symbol, print_tree,
                          indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_DECL:
-    WalkSymbolDecl((SymbolDecl *)stmt->symbol, print_tree,
+    WalkSymbolDecl((SymbolDecl *)statement->symbol, print_tree,
                    indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_EXPRESSION:
-    WalkSymbolExpression((SymbolExpression *)stmt->symbol, print_tree,
+    WalkSymbolExpression((SymbolExpression *)statement->symbol, print_tree,
                          indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   default:
-    LOG_CRITICAL("Unexpected symbol type %d", stmt->symbol->type);
+    LOG_CRITICAL("Unexpected symbol type %d", statement->symbol->type);
   }
 
-  free(stmt);
+  free(statement);
 
   if (print_tree) {
-    printf("%*s</stmt>\n", indent, "");
+    printf("%*s</statement>\n", indent, "");
   }
 }
 
 /****************************************************************************/
 
-void WalkSyntaxTree(SymbolStmt *const stmt, const bool print_tree) {
-  if (stmt != NULL) {
-    WalkSymbolStmt(stmt, print_tree, 0);
+void WalkSyntaxTree(SymbolStatement *const statement, const bool print_tree) {
+  if (statement != NULL) {
+    WalkSymbolStatement(statement, print_tree, 0);
   }
 }

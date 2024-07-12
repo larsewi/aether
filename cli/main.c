@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  WalkSyntaxTree(PARSER_STATE.stmt, print_syntax_tree);
+  WalkSyntaxTree(PARSER_STATE.statement, print_syntax_tree);
 
   return EXIT_SUCCESS;
 }

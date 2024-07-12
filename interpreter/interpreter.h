@@ -5,6 +5,6 @@
 
 #include "../parser/syntax.h"
 
-void WalkSyntaxTree(SymbolStmt *stmt, bool print_tree);
+void WalkSyntaxTree(SymbolStatement *statement, bool print_tree);
 
 #endif // _AETHER_INTERPRETER_H
