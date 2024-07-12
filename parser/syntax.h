@@ -5,12 +5,21 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "../utils/list.h"
-
 /****************************************************************************/
 
 typedef struct ParserState ParserState;
 typedef struct Symbol Symbol;
+
+// Statements
+typedef struct SymbolStmt SymbolStmt;
+typedef struct SymbolAssignment SymbolAssignment;
+typedef struct SymbolVariable SymbolVariable;
+typedef struct SymbolDecl SymbolDecl;
+typedef struct SymbolReference SymbolReference;
+typedef struct SymbolMutable SymbolMutable;
+typedef struct SymbolDatatype SymbolDatatype;
+
+// Expressions
 typedef struct SymbolExpr SymbolExpr;
 typedef struct SymbolOr SymbolOr;
 typedef struct SymbolCond SymbolCond;
@@ -42,17 +51,27 @@ typedef struct SymbolArguments SymbolArguments;
 typedef struct SymbolSubscription SymbolSubscription;
 typedef struct SymbolSlice SymbolSlice;
 typedef struct SymbolAtom SymbolAtom;
+
+// Terminals
 typedef struct SymbolIdentifier SymbolIdentifier;
 typedef struct SymbolIntegerLiteral SymbolIntegerLiteral;
 typedef struct SymbolFloatLiteral SymbolFloatLiteral;
 typedef struct SymbolStringLiteral SymbolStringLiteral;
 typedef struct SymbolBooleanLiteral SymbolBooleanLiteral;
 typedef struct SymbolNoneLiteral SymbolNoneLiteral;
+typedef struct SymbolMutableSpecifier SymbolMutableSpecifier;
 
 /****************************************************************************/
 
 typedef enum {
-  SYMBOL_TYPE_EXPR = 0,
+  SYMBOL_TYPE_STMT = 0,
+  SYMBOL_TYPE_ASSIGNMENT,
+  SYMBOL_TYPE_VARIABLE,
+  SYMBOL_TYPE_DECL,
+  SYMBOL_TYPE_REFERENCE,
+  SYMBOL_TYPE_MUTABLE,
+  SYMBOL_TYPE_DATATYPE,
+  SYMBOL_TYPE_EXPR,
   SYMBOL_TYPE_OR,
   SYMBOL_TYPE_COND,
   SYMBOL_TYPE_AND,
@@ -90,6 +109,7 @@ typedef enum {
   SYMBOL_TYPE_LIST_DISPLAY,
   SYMBOL_TYPE_LIST_ELEMENTS,
   SYMBOL_TYPE_INNER_EXPR,
+  SYMBOL_TYPE_MUTABLE_SPECIFIER,
 } SymbolType;
 
 /****************************************************************************/
@@ -104,7 +124,59 @@ struct ParserState {
   const char *filename;
   int line;
   int column;
+  SymbolStmt *stmt;
+};
+
+/****************************************************************************/
+
+struct SymbolStmt {
+  SymbolType type;
+  Symbol *symbol;
+};
+
+/****************************************************************************/
+
+struct SymbolAssignment {
+  SymbolType type;
+  Symbol *symbol;
   SymbolExpr *expr;
+};
+
+/****************************************************************************/
+
+struct SymbolVariable {
+  SymbolType type;
+  Symbol *symbol;
+  SymbolExpr *expr;
+};
+
+/****************************************************************************/
+
+struct SymbolDecl {
+  SymbolType type;
+  Symbol *symbol;
+  SymbolIdentifier *identifier;
+};
+
+/****************************************************************************/
+
+struct SymbolReference {
+  SymbolType type;
+  Symbol *symbol;
+};
+
+/****************************************************************************/
+
+struct SymbolMutable {
+  SymbolType type;
+  SymbolDatatype *datatype;
+};
+
+/****************************************************************************/
+
+struct SymbolDatatype {
+  SymbolType type;
+  SymbolIdentifier *identifier;
 };
 
 /****************************************************************************/
@@ -393,6 +465,14 @@ struct SymbolBooleanLiteral {
 /****************************************************************************/
 
 struct SymbolNoneLiteral {
+  SymbolType type;
+  int line;
+  int column;
+};
+
+/****************************************************************************/
+
+struct SymbolMutableSpecifier {
   SymbolType type;
   int line;
   int column;

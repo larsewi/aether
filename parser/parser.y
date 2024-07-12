@@ -19,6 +19,8 @@ void yyerror(char *msg);
 ParserState PARSER_STATE = {0};
 %}
 
+// Terminals
+
 %union {
   SymbolIdentifier *identifier;
   SymbolIntegerLiteral *integer_literal;
@@ -26,6 +28,7 @@ ParserState PARSER_STATE = {0};
   SymbolStringLiteral *string_literal;
   SymbolBooleanLiteral *boolean_literal;
   SymbolNoneLiteral *none_literal;
+  SymbolMutableSpecifier *mutable_specifier;
 }
 
 %token <identifier> IDENTIFIER
@@ -34,8 +37,11 @@ ParserState PARSER_STATE = {0};
 %token <string_literal> STRING_LITERAL
 %token <boolean_literal> BOOLEAN_LITERAL
 %token <none_literal> NONE_LITERAL
+%token <mutable_specifier> MUTABLE_SPECIFIER
 %token EQ_OPER LE_OPER GE_OPER NE_OPER
 %token AND_OPER OR_OPER
+
+// Expression
 
 %union {
   SymbolExpr *expr;
@@ -103,16 +109,148 @@ ParserState PARSER_STATE = {0};
 %type <slice> slice;
 %type <atom> atom;
 
+// Statements
+
+%union {
+  SymbolStmt *stmt;
+  SymbolAssignment *assignment;
+  SymbolVariable *variable;
+  SymbolDecl *decl;
+  SymbolReference *reference;
+  SymbolMutable *mutable;
+  SymbolDatatype *datatype;
+}
+
+%type <stmt> stmt;
+%type <assignment> assignment;
+%type <variable> variable;
+%type <decl> decl;
+%type <reference> reference;
+%type <mutable> mutable;
+%type <datatype> datatype;
+
 %%
 
 start
 : /* empty */ {
   LOG_DEBUG("start : %%empty");
-  P.expr = NULL;
+  P.stmt = NULL;
 }
-| expr {
-  LOG_DEBUG("start : expr");
-  P.expr = $1;
+| stmt {
+  LOG_DEBUG("start : stmt");
+  P.stmt = $1;
+}
+;
+
+stmt
+: assignment ';' {
+  LOG_DEBUG("stmt : assignment ';'");
+  $$ = xmalloc(sizeof(SymbolStmt));
+  $$->type = SYMBOL_TYPE_STMT;
+  $$->symbol = (Symbol *)$1;
+}
+| decl ';' {
+  LOG_DEBUG("stmt : decl ';'");
+  $$ = xmalloc(sizeof(SymbolStmt));
+  $$->type = SYMBOL_TYPE_STMT;
+  $$->symbol = (Symbol *)$1;
+}
+| expr ';' {
+  LOG_DEBUG("stmt : expr ';'");
+  $$ = xmalloc(sizeof(SymbolStmt));
+  $$->type = SYMBOL_TYPE_STMT;
+  $$->symbol = (Symbol *)$1;
+}
+;
+
+assignment
+: variable '=' expr {
+  LOG_DEBUG("assignment : IDENTIFIER '=' expr");
+  $$ = xmalloc(sizeof(SymbolAssignment));
+  $$->type = SYMBOL_TYPE_ASSIGNMENT;
+  $$->symbol = (Symbol *)$1;
+  $$->expr = $3;
+}
+| decl '=' expr {
+  LOG_DEBUG("assignment : decl '=' expr");
+  $$ = xmalloc(sizeof(SymbolAssignment));
+  $$->type = SYMBOL_TYPE_ASSIGNMENT;
+  $$->symbol = (Symbol *)$1;
+  $$->expr = $3;
+}
+;
+
+variable
+: IDENTIFIER {
+  LOG_DEBUG("variable : IDENTIFIER");
+  $$ = xmalloc(sizeof(SymbolVariable));
+  $$->type = SYMBOL_TYPE_VARIABLE;
+  $$->symbol = (Symbol *)$1;
+  $$->expr = NULL;
+}
+| variable '[' expr ']' {
+  LOG_DEBUG("variable : variable '[' expr ']'");
+  $$ = xmalloc(sizeof(SymbolVariable));
+  $$->type = SYMBOL_TYPE_VARIABLE;
+  $$->symbol = (Symbol *)$1;
+  $$->expr = $3;
+}
+;
+
+decl
+: reference IDENTIFIER {
+  LOG_DEBUG("decl : reference IDENTIFIER");
+  $$ = xmalloc(sizeof(SymbolDecl));
+  $$->type = SYMBOL_TYPE_DECL;
+  $$->identifier = $2;
+  $$->symbol = (Symbol *)$1;
+}
+| mutable IDENTIFIER {
+  LOG_DEBUG("decl : mutable IDENTIFIER");
+  $$ = xmalloc(sizeof(SymbolDecl));
+  $$->type = SYMBOL_TYPE_DECL;
+  $$->symbol = (Symbol *)$1;
+  $$->identifier = $2;
+}
+| datatype IDENTIFIER {
+  LOG_DEBUG("decl : datatype IDENTIFIER");
+  $$ = xmalloc(sizeof(SymbolDecl));
+  $$->type = SYMBOL_TYPE_DECL;
+  $$->symbol = (Symbol *)$1;
+  $$->identifier = $2;
+}
+;
+
+reference
+: datatype '&' {
+  LOG_DEBUG("reference : datatype '&'");
+  $$ = xmalloc(sizeof(SymbolReference));
+  $$->type = SYMBOL_TYPE_REFERENCE;
+  $$->symbol = (Symbol *)$1;
+}
+| mutable '&' {
+  LOG_DEBUG("reference : mutable '&'");
+  $$ = xmalloc(sizeof(SymbolReference));
+  $$->type = SYMBOL_TYPE_REFERENCE;
+  $$->symbol = (Symbol *)$1;
+}
+;
+
+mutable
+: MUTABLE_SPECIFIER datatype {
+  LOG_DEBUG("mutable : MUTABLE_SPECIFIER datatype");
+  $$ = xmalloc(sizeof(SymbolMutable));
+  $$->type = SYMBOL_TYPE_MUTABLE;
+  $$->datatype = $2;
+}
+;
+
+datatype
+: IDENTIFIER {
+  LOG_DEBUG("datatype : IDENTIFIER");
+  $$ = xmalloc(sizeof(SymbolDatatype));
+  $$->type = SYMBOL_TYPE_DATATYPE;
+  $$->identifier = $1;
 }
 ;
 

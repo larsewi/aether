@@ -903,8 +903,203 @@ static void WalkSymbolExpr(SymbolExpr *const expr, const bool print_tree,
 
 /****************************************************************************/
 
-void WalkSyntaxTree(SymbolExpr *const expr, const bool print_tree) {
-  if (expr != NULL) {
-    WalkSymbolExpr(expr, print_tree, 0);
+static void WalkSymbolDatatype(SymbolDatatype *const datatype,
+                               const bool print_tree, const int indent) {
+  if (print_tree) {
+    printf("%*s<datatype>\n", indent, "");
+  }
+
+  WalkSymbolIdentifier(datatype->identifier, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
+
+  free(datatype);
+
+  if (print_tree) {
+    printf("%*s</datatype>\n", indent, "");
+  }
+}
+
+/****************************************************************************/
+
+static void WalkSymbolMutable(SymbolMutable *const mutable,
+                              const bool print_tree, const int indent) {
+  if (print_tree) {
+    printf("%*s<mutable>\n", indent, "");
+  }
+
+  WalkSymbolDatatype(mutable->datatype, print_tree,
+                     indent + DEFAULT_SYNTAX_TREE_INDENT);
+
+  free(mutable);
+
+  if (print_tree) {
+    printf("%*s</mutable>\n", indent, "");
+  }
+}
+
+/****************************************************************************/
+
+static void WalkSymbolReference(SymbolReference *const reference,
+                                const bool print_tree, const int indent) {
+  if (print_tree) {
+    printf("%*s<reference>\n", indent, "");
+  }
+
+  switch (reference->symbol->type) {
+  case SYMBOL_TYPE_DATATYPE:
+    WalkSymbolDatatype((SymbolDatatype *)reference->symbol, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
+    break;
+  case SYMBOL_TYPE_MUTABLE:
+    WalkSymbolMutable((SymbolMutable *)reference->symbol, print_tree,
+                      indent + DEFAULT_SYNTAX_TREE_INDENT);
+    break;
+  default:
+    LOG_CRITICAL("Unexpected symbol type %d", reference->symbol->type);
+  }
+
+  free(reference);
+
+  if (print_tree) {
+    printf("%*s</reference>\n", indent, "");
+  }
+}
+
+/****************************************************************************/
+
+static void WalkSymbolDecl(SymbolDecl *const decl, const bool print_tree,
+                           const int indent) {
+  if (print_tree) {
+    printf("%*s<decl>\n", indent, "");
+  }
+
+  switch (decl->symbol->type) {
+  case SYMBOL_TYPE_REFERENCE:
+    WalkSymbolReference((SymbolReference *)decl->symbol, print_tree,
+                        indent + DEFAULT_SYNTAX_TREE_INDENT);
+    break;
+  case SYMBOL_TYPE_MUTABLE:
+    WalkSymbolMutable((SymbolMutable *)decl->symbol, print_tree,
+                      indent + DEFAULT_SYNTAX_TREE_INDENT);
+    break;
+  case SYMBOL_TYPE_DATATYPE:
+    WalkSymbolDatatype((SymbolDatatype *)decl->symbol, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
+    break;
+  default:
+    LOG_CRITICAL("Unexpected symbol type %d", decl->symbol->type);
+  }
+
+  WalkSymbolIdentifier(decl->identifier, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
+
+  free(decl);
+
+  if (print_tree) {
+    printf("%*s</decl>\n", indent, "");
+  }
+}
+
+/****************************************************************************/
+
+static void WalkSymbolVariable(SymbolVariable *const variable,
+                               const bool print_tree, const int indent) {
+  if (print_tree) {
+    printf("%*s<variable>\n", indent, "");
+  }
+
+  switch (variable->symbol->type) {
+  case SYMBOL_TYPE_IDENTIFIER:
+    WalkSymbolIdentifier((SymbolIdentifier *)variable->symbol, print_tree,
+                         indent + DEFAULT_SYNTAX_TREE_INDENT);
+    break;
+  case SYMBOL_TYPE_VARIABLE:
+    WalkSymbolVariable((SymbolVariable *)variable->symbol, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
+    break;
+  default:
+    LOG_CRITICAL("Unexpected symbol type %d", variable->symbol->type);
+  }
+
+  if (variable->expr != NULL) {
+    WalkSymbolExpr(variable->expr, print_tree,
+                   indent + DEFAULT_SYNTAX_TREE_INDENT);
+  }
+
+  free(variable);
+
+  if (print_tree) {
+    printf("%*s</variable>\n", indent, "");
+  }
+}
+
+/****************************************************************************/
+
+static void WalkSymbolAssignment(SymbolAssignment *const assignment,
+                                 const bool print_tree, const int indent) {
+  if (print_tree) {
+    printf("%*s<assignment>\n", indent, "");
+  }
+
+  switch (assignment->symbol->type) {
+  case SYMBOL_TYPE_VARIABLE:
+    WalkSymbolVariable((SymbolVariable *)assignment->symbol, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
+    break;
+  case SYMBOL_TYPE_DECL:
+    WalkSymbolDecl((SymbolDecl *)assignment->symbol, print_tree,
+                   indent + DEFAULT_SYNTAX_TREE_INDENT);
+    break;
+  default:
+    LOG_CRITICAL("Unexpected symbol type %d", assignment->symbol->type);
+  }
+
+  WalkSymbolExpr(assignment->expr, print_tree,
+                 indent + DEFAULT_SYNTAX_TREE_INDENT);
+
+  free(assignment);
+
+  if (print_tree) {
+    printf("%*s</assignment>\n", indent, "");
+  }
+}
+
+/****************************************************************************/
+
+static void WalkSymbolStmt(SymbolStmt *const stmt, const bool print_tree,
+                           const int indent) {
+  if (print_tree) {
+    printf("%*s<stmt>\n", indent, "");
+  }
+
+  switch (stmt->symbol->type) {
+  case SYMBOL_TYPE_ASSIGNMENT:
+    WalkSymbolAssignment((SymbolAssignment *)stmt->symbol, print_tree,
+                         indent + DEFAULT_SYNTAX_TREE_INDENT);
+    break;
+  case SYMBOL_TYPE_DECL:
+    WalkSymbolDecl((SymbolDecl *)stmt->symbol, print_tree,
+                   indent + DEFAULT_SYNTAX_TREE_INDENT);
+    break;
+  case SYMBOL_TYPE_EXPR:
+    WalkSymbolExpr((SymbolExpr *)stmt->symbol, print_tree,
+                   indent + DEFAULT_SYNTAX_TREE_INDENT);
+    break;
+  default:
+    LOG_CRITICAL("Unexpected symbol type %d", stmt->symbol->type);
+  }
+
+  free(stmt);
+
+  if (print_tree) {
+    printf("%*s</stmt>\n", indent, "");
+  }
+}
+
+/****************************************************************************/
+
+void WalkSyntaxTree(SymbolStmt *const stmt, const bool print_tree) {
+  if (stmt != NULL) {
+    WalkSymbolStmt(stmt, print_tree, 0);
   }
 }

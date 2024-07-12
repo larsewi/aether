@@ -37,6 +37,17 @@ extern ParserState PARSER_STATE;
   P.column = 1;
 }
 
+mut {
+  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
+  SymbolMutableSpecifier *mutable_specifier = xmalloc(sizeof(SymbolMutableSpecifier));
+  mutable_specifier->type = SYMBOL_TYPE_MUTABLE_SPECIFIER;
+  mutable_specifier->line = P.line;
+  mutable_specifier->column = P.column;
+  yylval.mutable_specifier = mutable_specifier;
+  P.column += yyleng;
+  return MUTABLE_SPECIFIER;
+}
+
 [_a-zA-Z][_a-zA-Z0-9]* {
   LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
   SymbolIdentifier *identifier = xmalloc(sizeof(SymbolIdentifier));
