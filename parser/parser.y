@@ -68,7 +68,7 @@ ParserState PARSER_STATE = {0};
   SymbolPrimary *primary;
   SymbolFncall *fncall;
   SymbolDict *dict;
-  SymbolKeyValuePairs *key_value_pairs;
+  SymbolPairs *pairs;
   SymbolListDisplay *list_display;
   SymbolListElements *list_elements;
   SymbolArguments *arguments;
@@ -102,7 +102,7 @@ ParserState PARSER_STATE = {0};
 %type <fncall> fncall;
 %type <arguments> arguments;
 %type <dict> dict;
-%type <key_value_pairs> key_value_pairs;
+%type <pairs> pairs;
 %type <list_display> list_display;
 %type <list_elements> list_elements;
 %type <subscription> subscription;
@@ -599,36 +599,36 @@ dict
   LOG_DEBUG("dict : '{' '}'");
   $$ = xmalloc(sizeof(SymbolDict));
   $$->type = SYMBOL_TYPE_DICT;
-  $$->key_value_pairs = NULL;
+  $$->pairs = NULL;
 }
-| '{' key_value_pairs '}' {
-  LOG_DEBUG("dict : '{' key_value_pairs '}'");
+| '{' pairs '}' {
+  LOG_DEBUG("dict : '{' pairs '}'");
   $$ = xmalloc(sizeof(SymbolDict));
   $$->type = SYMBOL_TYPE_DICT;
-  $$->key_value_pairs = $2;
+  $$->pairs = $2;
 }
-| '{' key_value_pairs ',' '}' {
-  LOG_DEBUG("dict : '{' key_value_pairs ',' '}'");
+| '{' pairs ',' '}' {
+  LOG_DEBUG("dict : '{' pairs ',' '}'");
   $$ = xmalloc(sizeof(SymbolDict));
   $$->type = SYMBOL_TYPE_DICT;
-  $$->key_value_pairs = $2;
+  $$->pairs = $2;
 }
 ;
 
-key_value_pairs
+pairs
 : STRING_LITERAL ':' expression {
-  LOG_DEBUG("key_value_pairs : STRING_LITERAL ':' expression");
-  $$ = xmalloc(sizeof(SymbolKeyValuePairs));
-  $$->type = SYMBOL_TYPE_KEY_VALUE_PAIRS;
-  $$->key_value_pairs = NULL;
+  LOG_DEBUG("pairs : STRING_LITERAL ':' expression");
+  $$ = xmalloc(sizeof(SymbolPairs));
+  $$->type = SYMBOL_TYPE_PAIRS;
+  $$->pairs = NULL;
   $$->string_literal = $1;
   $$->expression = $3;
 }
-| key_value_pairs ',' STRING_LITERAL ':' expression {
-  LOG_DEBUG("key_value_pairs : key_value_pairs ',' STRING_LITERAL ':' expression");
-  $$ = xmalloc(sizeof(SymbolKeyValuePairs));
-  $$->type = SYMBOL_TYPE_KEY_VALUE_PAIRS;
-  $$->key_value_pairs = $1;
+| pairs ',' STRING_LITERAL ':' expression {
+  LOG_DEBUG("pairs : pairs ',' STRING_LITERAL ':' expression");
+  $$ = xmalloc(sizeof(SymbolPairs));
+  $$->type = SYMBOL_TYPE_PAIRS;
+  $$->pairs = $1;
   $$->string_literal = $3;
   $$->expression = $5;
 }

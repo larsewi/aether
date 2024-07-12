@@ -16,8 +16,7 @@ static void WalkSymbolFactor(SymbolFactor *factor, bool print_tree, int indent);
 static void WalkSymbolUnary(SymbolUnary *unary, bool print_tree, int indent);
 static void WalkSymbolPrimary(SymbolPrimary *primary, bool print_tree,
                               int indent);
-static void WalkSymbolKeyValuePairs(SymbolKeyValuePairs *key_value_pairs,
-                                    bool print_tree, int indent);
+static void WalkSymbolPairs(SymbolPairs *pairs, bool print_tree, int indent);
 static void WalkSymbolListElements(SymbolListElements *list_elements,
                                    bool print_tree, int indent);
 
@@ -134,8 +133,7 @@ static void WalkSymbolDict(SymbolDict *const dict, const bool print_tree,
     printf("%*s<dict>\n", indent, "");
   }
 
-  WalkSymbolKeyValuePairs(dict->key_value_pairs, print_tree,
-                          indent + DEFAULT_SYNTAX_TREE_INDENT);
+  WalkSymbolPairs(dict->pairs, print_tree, indent + DEFAULT_SYNTAX_TREE_INDENT);
 
   free(dict);
 
@@ -146,27 +144,27 @@ static void WalkSymbolDict(SymbolDict *const dict, const bool print_tree,
 
 /****************************************************************************/
 
-static void WalkSymbolKeyValuePairs(SymbolKeyValuePairs *const key_value_pairs,
-                                    const bool print_tree, const int indent) {
+static void WalkSymbolPairs(SymbolPairs *const pairs, const bool print_tree,
+                            const int indent) {
   if (print_tree) {
-    printf("%*s<key_value_pairs>\n", indent, "");
+    printf("%*s<pairs>\n", indent, "");
   }
 
-  if (key_value_pairs->key_value_pairs != NULL) {
-    WalkSymbolKeyValuePairs(key_value_pairs->key_value_pairs, print_tree,
-                            indent + DEFAULT_SYNTAX_TREE_INDENT);
+  if (pairs->pairs != NULL) {
+    WalkSymbolPairs(pairs->pairs, print_tree,
+                    indent + DEFAULT_SYNTAX_TREE_INDENT);
   }
 
-  WalkSymbolStringLiteral(key_value_pairs->string_literal, print_tree,
+  WalkSymbolStringLiteral(pairs->string_literal, print_tree,
                           indent + DEFAULT_SYNTAX_TREE_INDENT);
 
-  WalkSymbolExpression(key_value_pairs->expression, print_tree,
+  WalkSymbolExpression(pairs->expression, print_tree,
                        indent + DEFAULT_SYNTAX_TREE_INDENT);
 
-  free(key_value_pairs);
+  free(pairs);
 
   if (print_tree) {
-    printf("%*s<key_value_pairs>\n", indent, "");
+    printf("%*s<pairs>\n", indent, "");
   }
 }
 
