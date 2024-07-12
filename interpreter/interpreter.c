@@ -17,8 +17,8 @@ static void WalkSymbolUnary(SymbolUnary *unary, bool print_tree, int indent);
 static void WalkSymbolPrimary(SymbolPrimary *primary, bool print_tree,
                               int indent);
 static void WalkSymbolPairs(SymbolPairs *pairs, bool print_tree, int indent);
-static void WalkSymbolListElements(SymbolListElements *list_elements,
-                                   bool print_tree, int indent);
+static void WalkSymbolElements(SymbolElements *elements, bool print_tree,
+                               int indent);
 
 /****************************************************************************/
 
@@ -176,9 +176,9 @@ static void WalkSymbolList(SymbolList *const list, const bool print_tree,
     printf("%*s<list>\n", indent, "");
   }
 
-  if (list->list_elements != NULL) {
-    WalkSymbolListElements(list->list_elements, print_tree,
-                           indent + DEFAULT_SYNTAX_TREE_INDENT);
+  if (list->elements != NULL) {
+    WalkSymbolElements(list->elements, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
   }
 
   free(list);
@@ -188,24 +188,24 @@ static void WalkSymbolList(SymbolList *const list, const bool print_tree,
   }
 }
 
-static void WalkSymbolListElements(SymbolListElements *const list_elements,
-                                   const bool print_tree, const int indent) {
+static void WalkSymbolElements(SymbolElements *const elements,
+                               const bool print_tree, const int indent) {
   if (print_tree) {
-    printf("%*s<list_elements>\n", indent, "");
+    printf("%*s<elements>\n", indent, "");
   }
 
-  if (list_elements->list_elements != NULL) {
-    WalkSymbolListElements(list_elements->list_elements, print_tree,
-                           indent + DEFAULT_SYNTAX_TREE_INDENT);
+  if (elements->elements != NULL) {
+    WalkSymbolElements(elements->elements, print_tree,
+                       indent + DEFAULT_SYNTAX_TREE_INDENT);
   }
 
-  WalkSymbolExpression(list_elements->expression, print_tree,
+  WalkSymbolExpression(elements->expression, print_tree,
                        indent + DEFAULT_SYNTAX_TREE_INDENT);
 
-  free(list_elements);
+  free(elements);
 
   if (print_tree) {
-    printf("%*s</list_elements>\n", indent, "");
+    printf("%*s</elements>\n", indent, "");
   }
 }
 
