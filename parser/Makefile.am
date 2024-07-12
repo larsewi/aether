@@ -8,3 +8,4 @@ libparser_la_LIBADD = $(top_builddir)/utils/libutils.la
 
 libparser_la_SOURCES = lexer.l parser.y parser.h syntax.h
 
+MOSTLYCLEANFILES = parser.c parser.h lexer.c

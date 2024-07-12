@@ -170,21 +170,21 @@ static void WalkSymbolPairs(SymbolPairs *const pairs, const bool print_tree,
 
 /****************************************************************************/
 
-static void WalkSymbolListDisplay(SymbolListDisplay *const list_display,
-                                  const bool print_tree, const int indent) {
+static void WalkSymbolList(SymbolList *const list, const bool print_tree,
+                           const int indent) {
   if (print_tree) {
-    printf("%*s<list_display>\n", indent, "");
+    printf("%*s<list>\n", indent, "");
   }
 
-  if (list_display->list_elements != NULL) {
-    WalkSymbolListElements(list_display->list_elements, print_tree,
+  if (list->list_elements != NULL) {
+    WalkSymbolListElements(list->list_elements, print_tree,
                            indent + DEFAULT_SYNTAX_TREE_INDENT);
   }
 
-  free(list_display);
+  free(list);
 
   if (print_tree) {
-    printf("%*s</list_display>\n", indent, "");
+    printf("%*s</list>\n", indent, "");
   }
 }
 
@@ -246,9 +246,9 @@ static void WalkSymbolAtom(SymbolAtom *const atom, const bool print_tree,
     WalkSymbolDict((SymbolDict *)atom->symbol, print_tree,
                    indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
-  case SYMBOL_TYPE_LIST_DISPLAY:
-    WalkSymbolListDisplay((SymbolListDisplay *)atom->symbol, print_tree,
-                          indent + DEFAULT_SYNTAX_TREE_INDENT);
+  case SYMBOL_TYPE_LIST:
+    WalkSymbolList((SymbolList *)atom->symbol, print_tree,
+                   indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_EXPRESSION:
     WalkSymbolExpression((SymbolExpression *)atom->symbol, print_tree,

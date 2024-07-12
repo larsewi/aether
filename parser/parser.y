@@ -69,7 +69,7 @@ ParserState PARSER_STATE = {0};
   SymbolFncall *fncall;
   SymbolDict *dict;
   SymbolPairs *pairs;
-  SymbolListDisplay *list_display;
+  SymbolList *list;
   SymbolListElements *list_elements;
   SymbolArguments *arguments;
   SymbolSubscription *subscription;
@@ -103,7 +103,7 @@ ParserState PARSER_STATE = {0};
 %type <arguments> arguments;
 %type <dict> dict;
 %type <pairs> pairs;
-%type <list_display> list_display;
+%type <list> list;
 %type <list_elements> list_elements;
 %type <subscription> subscription;
 %type <slice> slice;
@@ -634,23 +634,23 @@ pairs
 }
 ;
 
-list_display
+list
 : '[' ']' {
-  LOG_DEBUG("list_display : '[' ']'");
-  $$ = xmalloc(sizeof(SymbolListDisplay));
-  $$->type = SYMBOL_TYPE_LIST_DISPLAY;
+  LOG_DEBUG("list : '[' ']'");
+  $$ = xmalloc(sizeof(SymbolList));
+  $$->type = SYMBOL_TYPE_LIST;
   $$->list_elements = NULL;
 }
 | '[' list_elements ']' {
-  LOG_DEBUG("list_display : '[' list_elements ']'");
-  $$ = xmalloc(sizeof(SymbolListDisplay));
-  $$->type = SYMBOL_TYPE_LIST_DISPLAY;
+  LOG_DEBUG("list : '[' list_elements ']'");
+  $$ = xmalloc(sizeof(SymbolList));
+  $$->type = SYMBOL_TYPE_LIST;
   $$->list_elements = $2;
 }
 | '[' list_elements ',' ']' {
-  LOG_DEBUG("list_display : '[' list_elements ',' ']'");
-  $$ = xmalloc(sizeof(SymbolListDisplay));
-  $$->type = SYMBOL_TYPE_LIST_DISPLAY;
+  LOG_DEBUG("list : '[' list_elements ',' ']'");
+  $$ = xmalloc(sizeof(SymbolList));
+  $$->type = SYMBOL_TYPE_LIST;
   $$->list_elements = $2;
 }
 ;
@@ -784,8 +784,8 @@ atom
   $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = (Symbol *)$1;
 }
-| list_display {
-  LOG_DEBUG("atom : list_display");
+| list {
+  LOG_DEBUG("atom : list");
   $$ = xmalloc(sizeof(SymbolAtom));
   $$->type = SYMBOL_TYPE_ATOM;
   $$->symbol = (Symbol *)$1;
