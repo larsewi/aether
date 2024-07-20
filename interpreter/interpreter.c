@@ -1,6 +1,7 @@
 #include "interpreter.h"
 #include "config.h"
 
+#include <assert.h>
 #include <stdio.h>
 
 #include "../utils/logger.h"
@@ -25,9 +26,11 @@ static void WalkSymbolElements(SymbolElements *elements, bool print_tree,
 
 static void WalkSymbolIdentifier(SymbolIdentifier *const identifier,
                                  const bool print_tree, const int indent) {
+  assert(identifier->type == SYMBOL_TYPE_IDENTIFIER);
+
   if (print_tree) {
     printf("%*s<IDENTIFIER ln=\"%d\" col=\"%d\">\n", indent, "",
-           identifier->line, identifier->column);
+           identifier->first.line, identifier->first.column);
     printf("%*s  %s\n", indent, "", identifier->value);
   }
 
@@ -44,9 +47,11 @@ static void WalkSymbolIdentifier(SymbolIdentifier *const identifier,
 static void
 WalkSymbolIntegerLiteral(SymbolIntegerLiteral *const integer_literal,
                          const bool print_tree, const int indent) {
+  assert(integer_literal->type == SYMBOL_TYPE_INTEGER_LITERAL);
+
   if (print_tree) {
     printf("%*s<INTEGER_LITERAL ln=\"%d\" col=\"%d\">\n", indent, "",
-           integer_literal->line, integer_literal->column);
+           integer_literal->first.line, integer_literal->first.line);
     printf("%*s  %lld\n", indent, "", integer_literal->value);
   }
 
@@ -61,9 +66,11 @@ WalkSymbolIntegerLiteral(SymbolIntegerLiteral *const integer_literal,
 
 static void WalkSymbolFloatLiteral(SymbolFloatLiteral *const float_literal,
                                    const bool print_tree, const int indent) {
+  assert(float_literal->type == SYMBOL_TYPE_FLOAT_LITERAL);
+
   if (print_tree) {
     printf("%*s<FLOAT_LITERAL ln=\"%d\" col=\"%d\">\n", indent, "",
-           float_literal->line, float_literal->column);
+           float_literal->first.line, float_literal->first.column);
     printf("%*s  %lf\n", indent, "", float_literal->value);
   }
 
@@ -78,9 +85,11 @@ static void WalkSymbolFloatLiteral(SymbolFloatLiteral *const float_literal,
 
 static void WalkSymbolStringLiteral(SymbolStringLiteral *const string_literal,
                                     const bool print_tree, const int indent) {
+  assert(string_literal->type == SYMBOL_TYPE_STRING_LITERAL);
+
   if (print_tree) {
     printf("%*s<STRING_LITERAL ln=\"%d\" col=\"%d\">\n", indent, "",
-           string_literal->line, string_literal->column);
+           string_literal->first.line, string_literal->first.column);
     printf("%*s  \"%s\"\n", indent, "", string_literal->value);
   }
 
@@ -97,9 +106,11 @@ static void WalkSymbolStringLiteral(SymbolStringLiteral *const string_literal,
 static void
 WalkSymbolBooleanLiteral(SymbolBooleanLiteral *const boolean_literal,
                          const bool print_tree, const int indent) {
+  assert(boolean_literal->type == SYMBOL_TYPE_BOOLEAN_LITERAL);
+
   if (print_tree) {
     printf("%*s<BOOLEAN_LITERAL ln=\"%d\" col=\"%d\">\n", indent, "",
-           boolean_literal->line, boolean_literal->column);
+           boolean_literal->first.line, boolean_literal->first.column);
     printf("%*s  %s\n", indent, "", boolean_literal->value ? "true" : "false");
   }
 
@@ -114,9 +125,11 @@ WalkSymbolBooleanLiteral(SymbolBooleanLiteral *const boolean_literal,
 
 static void WalkSymbolNoneLiteral(SymbolNoneLiteral *const none_literal,
                                   const bool print_tree, const int indent) {
+  assert(none_literal->type == SYMBOL_TYPE_NONE_LITERAL);
+
   if (print_tree) {
     printf("%*s<NONE_LITERAL ln=\"%d\" col=\"%d\">\n", indent, "",
-           none_literal->line, none_literal->column);
+           none_literal->first.line, none_literal->first.column);
   }
 
   free(none_literal);
@@ -130,8 +143,11 @@ static void WalkSymbolNoneLiteral(SymbolNoneLiteral *const none_literal,
 
 static void WalkSymbolDict(SymbolDict *const dict, const bool print_tree,
                            const int indent) {
+  assert(dict->type == SYMBOL_TYPE_DICT);
+
   if (print_tree) {
-    printf("%*s<dict>\n", indent, "");
+    printf("%*s<dict ln=\"%d\" col=\"%d\">\n", indent, "", dict->first.line,
+           dict->first.column);
   }
 
   WalkSymbolEntries(dict->entries, print_tree,
@@ -148,8 +164,11 @@ static void WalkSymbolDict(SymbolDict *const dict, const bool print_tree,
 
 static void WalkSymbolEntries(SymbolEntries *const entries,
                               const bool print_tree, const int indent) {
+  assert(entries->type == SYMBOL_TYPE_ENTRIES);
+
   if (print_tree) {
-    printf("%*s<entries>\n", indent, "");
+    printf("%*s<entries ln=\"%d\" col=\"%d\">\n", indent, "",
+           entries->first.line, entries->first.column);
   }
 
   if (entries->entries != NULL) {
@@ -174,8 +193,11 @@ static void WalkSymbolEntries(SymbolEntries *const entries,
 
 static void WalkSymbolList(SymbolList *const list, const bool print_tree,
                            const int indent) {
+  assert(list->type == SYMBOL_TYPE_LIST);
+
   if (print_tree) {
-    printf("%*s<list>\n", indent, "");
+    printf("%*s<list ln=\"%d\" col=\"%d\">\n", indent, "", list->first.line,
+           list->first.column);
   }
 
   if (list->elements != NULL) {
@@ -192,8 +214,11 @@ static void WalkSymbolList(SymbolList *const list, const bool print_tree,
 
 static void WalkSymbolElements(SymbolElements *const elements,
                                const bool print_tree, const int indent) {
+  assert(elements->type == SYMBOL_TYPE_ELEMENTS);
+
   if (print_tree) {
-    printf("%*s<elements>\n", indent, "");
+    printf("%*s<elements ln=\"%d\" col=\"%d\">\n", indent, "",
+           elements->first.line, elements->first.column);
   }
 
   if (elements->elements != NULL) {
@@ -215,8 +240,11 @@ static void WalkSymbolElements(SymbolElements *const elements,
 
 static void WalkSymbolAtom(SymbolAtom *const atom, const bool print_tree,
                            const int indent) {
+  assert(atom->type == SYMBOL_TYPE_ATOM);
+
   if (print_tree) {
-    printf("%*s<atom>\n", indent, "");
+    printf("%*s<atom ln=\"%d\" col=\"%d\">\n", indent, "", atom->first.line,
+           atom->first.column);
   }
 
   switch (atom->symbol->type) {
@@ -271,8 +299,11 @@ static void WalkSymbolAtom(SymbolAtom *const atom, const bool print_tree,
 
 static void WalkSymbolArguments(SymbolArguments *const arguments,
                                 const bool print_tree, const int indent) {
+  assert(arguments->type == SYMBOL_TYPE_ARGUMENTS);
+
   if (print_tree) {
-    printf("%*s<arguments>\n", indent, "");
+    printf("%*s<arguments ln=\"%d\" col=\"%d\">\n", indent, "",
+           arguments->first.line, arguments->first.column);
   }
 
   if (arguments->arguments != NULL) {
@@ -294,8 +325,11 @@ static void WalkSymbolArguments(SymbolArguments *const arguments,
 
 static void WalkSymbolFncall(SymbolFncall *const fncall, const bool print_tree,
                              const int indent) {
+  assert(fncall->type == SYMBOL_TYPE_FNCALL);
+
   if (print_tree) {
-    printf("%*s<fncall>\n", indent, "");
+    printf("%*s<fncall ln=\"%d\" col=\"%d\">\n", indent, "", fncall->first.line,
+           fncall->first.column);
   }
 
   WalkSymbolPrimary(fncall->primary, print_tree,
@@ -317,8 +351,11 @@ static void WalkSymbolFncall(SymbolFncall *const fncall, const bool print_tree,
 
 static void WalkSymbolSubscription(SymbolSubscription *const subscription,
                                    const bool print_tree, const int indent) {
+  assert(subscription->type == SYMBOL_TYPE_SUBSCRIPTION);
+
   if (print_tree) {
-    printf("%*s<subscription>\n", indent, "");
+    printf("%*s<subscription ln=\"%d\" col=\"%d\">\n", indent, "",
+           subscription->first.line, subscription->first.column);
   }
 
   WalkSymbolPrimary(subscription->primary, print_tree,
@@ -338,9 +375,13 @@ static void WalkSymbolSubscription(SymbolSubscription *const subscription,
 
 static void WalkSymbolSlice(SymbolSlice *const slice, const bool print_tree,
                             const int indent) {
+  assert(slice->type == SYMBOL_TYPE_SLICE);
+
   if (print_tree) {
-    printf("%*s<slice left_expression=\"%s\" right_expression=\"%s\">\n",
-           indent, "", (slice->left_expression != NULL) ? "true" : "false",
+    printf("%*s<slice ln=\"%d\" col=\"%d\" left_expression=\"%s\" "
+           "right_expression=\"%s\">\n",
+           indent, "", slice->first.line, slice->first.column,
+           (slice->left_expression != NULL) ? "true" : "false",
            (slice->right_expression != NULL) ? "true" : "false");
   }
 
@@ -368,8 +409,11 @@ static void WalkSymbolSlice(SymbolSlice *const slice, const bool print_tree,
 
 static void WalkSymbolPrimary(SymbolPrimary *const primary,
                               const bool print_tree, const int indent) {
+  assert(primary->type == SYMBOL_TYPE_PRIMARY);
+
   if (print_tree) {
-    printf("%*s<primary>\n", indent, "");
+    printf("%*s<primary ln=\"%d\" col=\"%d\">\n", indent, "",
+           primary->first.line, primary->first.column);
   }
 
   switch (primary->symbol->type) {
@@ -404,8 +448,11 @@ static void WalkSymbolPrimary(SymbolPrimary *const primary,
 
 static void WalkSymbolMinus(SymbolMinus *const minus, const bool print_tree,
                             const int indent) {
+  assert(minus->type == SYMBOL_TYPE_MINUS);
+
   if (print_tree) {
-    printf("%*s<minus>\n", indent, "");
+    printf("%*s<minus ln=\"%d\" col=\"%d\">\n", indent, "", minus->first.line,
+           minus->first.column);
   }
 
   WalkSymbolUnary(minus->unary, print_tree,
@@ -422,8 +469,11 @@ static void WalkSymbolMinus(SymbolMinus *const minus, const bool print_tree,
 
 static void WalkSymbolNegate(SymbolNegate *const negate, const bool print_tree,
                              const int indent) {
+  assert(negate->type == SYMBOL_TYPE_NEGATE);
+
   if (print_tree) {
-    printf("%*s<negate>\n", indent, "");
+    printf("%*s<negate ln=\"%d\" col=\"%d\">\n", indent, "", negate->first.line,
+           negate->first.column);
   }
 
   WalkSymbolUnary(negate->unary, print_tree,
@@ -440,8 +490,11 @@ static void WalkSymbolNegate(SymbolNegate *const negate, const bool print_tree,
 
 static void WalkSymbolUnary(SymbolUnary *const unary, const bool print_tree,
                             const int indent) {
+  assert(unary->type == SYMBOL_TYPE_UNARY);
+
   if (print_tree) {
-    printf("%*s<unary>\n", indent, "");
+    printf("%*s<unary ln=\"%d\" col=\"%d\">\n", indent, "", unary->first.line,
+           unary->first.column);
   }
 
   switch (unary->symbol->type) {
@@ -472,8 +525,11 @@ static void WalkSymbolUnary(SymbolUnary *const unary, const bool print_tree,
 
 static void WalkSymbolMultiply(SymbolMultiply *const multiply,
                                const bool print_tree, const int indent) {
+  assert(multiply->type == SYMBOL_TYPE_MULTIPLY);
+
   if (print_tree) {
-    printf("%*s<multiply>\n", indent, "");
+    printf("%*s<multiply ln=\"%d\" col=\"%d\">\n", indent, "",
+           multiply->first.line, multiply->first.column);
   }
 
   WalkSymbolFactor(multiply->factor, print_tree,
@@ -493,8 +549,11 @@ static void WalkSymbolMultiply(SymbolMultiply *const multiply,
 
 static void WalkSymbolDivide(SymbolDivide *const divide, const bool print_tree,
                              const int indent) {
+  assert(divide->type == SYMBOL_TYPE_DIVIDE);
+
   if (print_tree) {
-    printf("%*s<divide>\n", indent, "");
+    printf("%*s<divide ln=\"%d\" col=\"%d\">\n", indent, "", divide->first.line,
+           divide->first.column);
   }
 
   WalkSymbolFactor(divide->factor, print_tree,
@@ -514,8 +573,11 @@ static void WalkSymbolDivide(SymbolDivide *const divide, const bool print_tree,
 
 static void WalkSymbolModulo(SymbolModulo *const modulo, const bool print_tree,
                              const int indent) {
+  assert(modulo->type == SYMBOL_TYPE_MODULO);
+
   if (print_tree) {
-    printf("%*s<modulo>\n", indent, "");
+    printf("%*s<modulo ln=\"%d\" col=\"%d\">\n", indent, "", modulo->first.line,
+           modulo->first.column);
   }
 
   WalkSymbolFactor(modulo->factor, print_tree,
@@ -535,8 +597,11 @@ static void WalkSymbolModulo(SymbolModulo *const modulo, const bool print_tree,
 
 static void WalkSymbolFactor(SymbolFactor *const factor, const bool print_tree,
                              const int indent) {
+  assert(factor->type == SYMBOL_TYPE_FACTOR);
+
   if (print_tree) {
-    printf("%*s<factor>\n", indent, "");
+    printf("%*s<factor ln=\"%d\" col=\"%d\">\n", indent, "", factor->first.line,
+           factor->first.column);
   }
 
   switch (factor->symbol->type) {
@@ -571,8 +636,11 @@ static void WalkSymbolFactor(SymbolFactor *const factor, const bool print_tree,
 
 static void WalkSymbolAdd(SymbolAdd *const add, const bool print_tree,
                           const int indent) {
+  assert(add->type == SYMBOL_TYPE_ADD);
+
   if (print_tree) {
-    printf("%*s<add>\n", indent, "");
+    printf("%*s<add ln=\"%d\" col=\"%d\">\n", indent, "", add->first.line,
+           add->first.column);
   }
 
   WalkSymbolTerm(add->term, print_tree, indent + DEFAULT_SYNTAX_TREE_INDENT);
@@ -591,8 +659,11 @@ static void WalkSymbolAdd(SymbolAdd *const add, const bool print_tree,
 
 static void WalkSymbolSubtract(SymbolSubtract *const subtract,
                                const bool print_tree, const int indent) {
+  assert(subtract->type == SYMBOL_TYPE_SUBTRACT);
+
   if (print_tree) {
-    printf("%*s<subtract>\n", indent, "");
+    printf("%*s<subtract ln=\"%d\" col=\"%d\">\n", indent, "",
+           subtract->first.line, subtract->first.column);
   }
 
   WalkSymbolTerm(subtract->term, print_tree,
@@ -610,8 +681,11 @@ static void WalkSymbolSubtract(SymbolSubtract *const subtract,
 
 static void WalkSymbolTerm(SymbolTerm *const term, const bool print_tree,
                            const int indent) {
+  assert(term->type == SYMBOL_TYPE_TERM);
+
   if (print_tree) {
-    printf("%*s<term>\n", indent, "");
+    printf("%*s<term ln=\"%d\" col=\"%d\">\n", indent, "", term->first.line,
+           term->first.column);
   }
 
   switch (term->symbol->type) {
@@ -642,8 +716,11 @@ static void WalkSymbolTerm(SymbolTerm *const term, const bool print_tree,
 
 static void WalkSymbolLessThan(SymbolLessThan *const less_than,
                                const bool print_tree, const int indent) {
+  assert(less_than->type == SYMBOL_TYPE_LESS_THAN);
+
   if (print_tree) {
-    printf("%*s<less_than>\n", indent, "");
+    printf("%*s<less_than ln=\"%d\" col=\"%d\">\n", indent, "",
+           less_than->first.line, less_than->first.column);
   }
 
   WalkSymbolComparison(less_than->comparison, print_tree,
@@ -663,8 +740,11 @@ static void WalkSymbolLessThan(SymbolLessThan *const less_than,
 
 static void WalkSymbolGreaterThan(SymbolGreaterThan *const greater_than,
                                   const bool print_tree, const int indent) {
+  assert(greater_than->type == SYMBOL_TYPE_GREATER_THAN);
+
   if (print_tree) {
-    printf("%*s<greater_than>\n", indent, "");
+    printf("%*s<greater_than ln=\"%d\" col=\"%d\">\n", indent, "",
+           greater_than->first.line, greater_than->first.column);
   }
 
   WalkSymbolComparison(greater_than->comparison, print_tree,
@@ -684,8 +764,11 @@ static void WalkSymbolGreaterThan(SymbolGreaterThan *const greater_than,
 
 static void WalkSymbolEqual(SymbolEqual *const equal, const int indent,
                             const bool print_tree) {
+  assert(equal->type == SYMBOL_TYPE_EQUAL);
+
   if (print_tree) {
-    printf("%*s<equal>\n", indent, "");
+    printf("%*s<equal ln=\"%d\" col=\"%d\">\n", indent, "", equal->first.line,
+           equal->first.column);
   }
 
   WalkSymbolComparison(equal->comparison, print_tree,
@@ -704,8 +787,11 @@ static void WalkSymbolEqual(SymbolEqual *const equal, const int indent,
 
 static void WalkSymbolLessEqual(SymbolLessEqual *const less_equal,
                                 const bool print_tree, const int indent) {
+  assert(less_equal->type == SYMBOL_TYPE_LESS_EQUAL);
+
   if (print_tree) {
-    printf("%*s<less_equal>\n", indent, "");
+    printf("%*s<less_equal ln=\"%d\" col=\"%d\">\n", indent, "",
+           less_equal->first.line, less_equal->first.column);
   }
 
   WalkSymbolComparison(less_equal->comparison, print_tree,
@@ -725,8 +811,11 @@ static void WalkSymbolLessEqual(SymbolLessEqual *const less_equal,
 
 static void WalkSymbolGreaterEqual(SymbolGreaterEqual *const greater_equal,
                                    const bool print_tree, const int indent) {
+  assert(greater_equal->type == SYMBOL_TYPE_GREATER_EQUAL);
+
   if (print_tree) {
-    printf("%*s<greater_equal>\n", indent, "");
+    printf("%*s<greater_equal ln=\"%d\" col=\"%d\">\n", indent, "",
+           greater_equal->first.line, greater_equal->first.column);
   }
 
   WalkSymbolComparison(greater_equal->comparison, print_tree,
@@ -746,8 +835,11 @@ static void WalkSymbolGreaterEqual(SymbolGreaterEqual *const greater_equal,
 
 static void WalkSymbolNotEqual(SymbolNotEqual *const not_equal,
                                const bool print_tree, const int indent) {
+  assert(not_equal->type == SYMBOL_TYPE_NOT_EQUAL);
+
   if (print_tree) {
-    printf("%*s<not_equal>\n", indent, "");
+    printf("%*s<not_equal ln=\"%d\" col=\"%d\">\n", indent, "",
+           not_equal->first.line, not_equal->first.column);
   }
 
   WalkSymbolComparison(not_equal->comparison, print_tree,
@@ -767,8 +859,11 @@ static void WalkSymbolNotEqual(SymbolNotEqual *const not_equal,
 
 static void WalkSymbolComparison(SymbolComparison *const comparison,
                                  const bool print_tree, const int indent) {
+  assert(comparison->type == SYMBOL_TYPE_COMPARISON);
+
   if (print_tree) {
-    printf("%*s<comparison>\n", indent, "");
+    printf("%*s<comparison ln=\"%d\" col=\"%d\">\n", indent, "",
+           comparison->first.line, comparison->first.column);
   }
 
   switch (comparison->symbol->type) {
@@ -815,8 +910,11 @@ static void WalkSymbolComparison(SymbolComparison *const comparison,
 
 static void WalkSymbolAnd(SymbolAnd *const and, const bool print_tree,
                           const int indent) {
+  assert(and->type == SYMBOL_TYPE_AND);
+
   if (print_tree) {
-    printf("%*s<and>\n", indent, "");
+    printf("%*s<and ln=\"%d\" col=\"%d\">\n", indent,
+           "", and->first.line, and->first.column);
   }
 
   WalkSymbolCondition(and->condition, print_tree,
@@ -836,8 +934,11 @@ static void WalkSymbolAnd(SymbolAnd *const and, const bool print_tree,
 
 static void WalkSymbolCondition(SymbolCondition *const condition,
                                 const bool print_tree, const int indent) {
+  assert(condition->type == SYMBOL_TYPE_CONDITION);
+
   if (print_tree) {
-    printf("%*s<condition>\n", indent, "");
+    printf("%*s<condition ln=\"%d\" col=\"%d\">\n", indent, "",
+           condition->first.line, condition->first.column);
   }
 
   switch (condition->symbol->type) {
@@ -864,8 +965,11 @@ static void WalkSymbolCondition(SymbolCondition *const condition,
 
 static void WalkSymbolOr(SymbolOr *const or, const bool print_tree,
                          const int indent) {
+  assert(or->type == SYMBOL_TYPE_OR);
+
   if (print_tree) {
-    printf("%*s</or>\n", indent, "");
+    printf("%*s</or ln=\"%d\" col=\"%d\">\n", indent, "", or->first.line,
+           or->first.column);
   }
 
   WalkSymbolExpression(or->expression, print_tree,
@@ -885,8 +989,11 @@ static void WalkSymbolOr(SymbolOr *const or, const bool print_tree,
 
 static void WalkSymbolExpression(SymbolExpression *const expression,
                                  const bool print_tree, const int indent) {
+  assert(expression->type == SYMBOL_TYPE_EXPRESSION);
+
   if (print_tree) {
-    printf("%*s<expression>\n", indent, "");
+    printf("%*s<expression ln=\"%d\" col=\"%d\">\n", indent, "",
+           expression->first.line, expression->first.column);
   }
 
   switch (expression->symbol->type) {
@@ -913,8 +1020,11 @@ static void WalkSymbolExpression(SymbolExpression *const expression,
 
 static void WalkSymbolDatatype(SymbolDatatype *const datatype,
                                const bool print_tree, const int indent) {
+  assert(datatype->type == SYMBOL_TYPE_DATATYPE);
+
   if (print_tree) {
-    printf("%*s<datatype>\n", indent, "");
+    printf("%*s<datatype ln=\"%d\" col=\"%d\">\n", indent, "",
+           datatype->first.line, datatype->first.column);
   }
 
   WalkSymbolIdentifier(datatype->identifier, print_tree,
@@ -931,8 +1041,11 @@ static void WalkSymbolDatatype(SymbolDatatype *const datatype,
 
 static void WalkSymbolMutable(SymbolMutable *const mutable,
                               const bool print_tree, const int indent) {
+  assert(mutable->type == SYMBOL_TYPE_MUTABLE);
+
   if (print_tree) {
-    printf("%*s<mutable>\n", indent, "");
+    printf("%*s<mutable ln=\"%d\" col=\"%d\">\n", indent, "",
+           mutable->first.line, mutable->first.column);
   }
 
   WalkSymbolDatatype(mutable->datatype, print_tree,
@@ -949,8 +1062,11 @@ static void WalkSymbolMutable(SymbolMutable *const mutable,
 
 static void WalkSymbolReference(SymbolReference *const reference,
                                 const bool print_tree, const int indent) {
+  assert(reference->type == SYMBOL_TYPE_REFERENCE);
+
   if (print_tree) {
-    printf("%*s<reference>\n", indent, "");
+    printf("%*s<reference ln=\"%d\" col=\"%d\">\n", indent, "",
+           reference->first.line, reference->first.column);
   }
 
   switch (reference->symbol->type) {
@@ -977,8 +1093,11 @@ static void WalkSymbolReference(SymbolReference *const reference,
 
 static void WalkSymbolDeclaration(SymbolDeclaration *const declaration,
                                   const bool print_tree, const int indent) {
+  assert(declaration->type == SYMBOL_TYPE_DECLARATION);
+
   if (print_tree) {
-    printf("%*s<declaration>\n", indent, "");
+    printf("%*s<declaration ln=\"%d\" col=\"%d\">\n", indent, "",
+           declaration->first.line, declaration->first.column);
   }
 
   switch (declaration->symbol->type) {
@@ -1010,49 +1129,19 @@ static void WalkSymbolDeclaration(SymbolDeclaration *const declaration,
 
 /****************************************************************************/
 
-static void WalkSymbolVariable(SymbolVariable *const variable,
-                               const bool print_tree, const int indent) {
-  if (print_tree) {
-    printf("%*s<variable>\n", indent, "");
-  }
-
-  switch (variable->symbol->type) {
-  case SYMBOL_TYPE_IDENTIFIER:
-    WalkSymbolIdentifier((SymbolIdentifier *)variable->symbol, print_tree,
-                         indent + DEFAULT_SYNTAX_TREE_INDENT);
-    break;
-  case SYMBOL_TYPE_VARIABLE:
-    WalkSymbolVariable((SymbolVariable *)variable->symbol, print_tree,
-                       indent + DEFAULT_SYNTAX_TREE_INDENT);
-    break;
-  default:
-    LOG_CRITICAL("Unexpected symbol type %d", variable->symbol->type);
-  }
-
-  if (variable->expression != NULL) {
-    WalkSymbolExpression(variable->expression, print_tree,
-                         indent + DEFAULT_SYNTAX_TREE_INDENT);
-  }
-
-  free(variable);
-
-  if (print_tree) {
-    printf("%*s</variable>\n", indent, "");
-  }
-}
-
-/****************************************************************************/
-
 static void WalkSymbolAssignment(SymbolAssignment *const assignment,
                                  const bool print_tree, const int indent) {
+  assert(assignment->type == SYMBOL_TYPE_ASSIGNMENT);
+
   if (print_tree) {
-    printf("%*s<assignment>\n", indent, "");
+    printf("%*s<assignment ln=\"%d\" col=\"%d\">\n", indent, "",
+           assignment->first.line, assignment->first.column);
   }
 
   switch (assignment->symbol->type) {
-  case SYMBOL_TYPE_VARIABLE:
-    WalkSymbolVariable((SymbolVariable *)assignment->symbol, print_tree,
-                       indent + DEFAULT_SYNTAX_TREE_INDENT);
+  case SYMBOL_TYPE_EXPRESSION:
+    WalkSymbolExpression((SymbolExpression *)assignment->symbol, print_tree,
+                         indent + DEFAULT_SYNTAX_TREE_INDENT);
     break;
   case SYMBOL_TYPE_DECLARATION:
     WalkSymbolDeclaration((SymbolDeclaration *)assignment->symbol, print_tree,
@@ -1076,8 +1165,11 @@ static void WalkSymbolAssignment(SymbolAssignment *const assignment,
 
 static void WalkSymbolStatement(SymbolStatement *const statement,
                                 const bool print_tree, const int indent) {
+  assert(statement->type == SYMBOL_TYPE_STATEMENT);
+
   if (print_tree) {
-    printf("%*s<statement>\n", indent, "");
+    printf("%*s<statement ln=\"%d\" col=\"%d\">\n", indent, "",
+           statement->first.line, statement->first.column);
   }
 
   switch (statement->symbol->type) {

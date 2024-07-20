@@ -6,12 +6,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <ctype.h>
 
 #include "../utils/alloc.h"
 #include "../utils/logger.h"
 #include "../utils/string_lib.h"
 
 #define P PARSER_STATE
+#define YY_USER_ACTION \
+    yylloc.first_column = yylloc.last_column; \
+    yylloc.last_column += yyleng; \
+    if (!isspace(yytext[0])) { \
+      LOG_DEBUG("Found token '%s' at Ln %d, Col %d", yytext, \
+          yylloc.first_line, yylloc.first_column); \
+    }
+
 
 extern ParserState PARSER_STATE;
 %}
@@ -29,143 +38,124 @@ extern ParserState PARSER_STATE;
   // Ignore newlines
   P.line += 1;
   P.column = 1;
+  yylloc.first_line += 1;
+  yylloc.first_column = 1;
+  yylloc.last_line += 1;
+  yylloc.last_column = 1;
 }
 
 #[^\n]* {
   // Ignore comments
-  P.line += 1;
-  P.column = 1;
 }
 
 mut {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  SymbolMutableSpecifier *mutable_specifier = xmalloc(sizeof(SymbolMutableSpecifier));
-  mutable_specifier->type = SYMBOL_TYPE_MUTABLE_SPECIFIER;
-  mutable_specifier->line = P.line;
-  mutable_specifier->column = P.column;
-  yylval.mutable_specifier = mutable_specifier;
-  P.column += yyleng;
-  return MUTABLE_SPECIFIER;
-}
-
-[_a-zA-Z][_a-zA-Z0-9]* {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  SymbolIdentifier *identifier = xmalloc(sizeof(SymbolIdentifier));
-  identifier->type = SYMBOL_TYPE_IDENTIFIER;
-  identifier->line = P.line;
-  identifier->column = P.column;
-  identifier->value = StringDuplicate(yytext);
-  yylval.identifier = identifier;
-  P.column += yyleng;
-  return IDENTIFIER;
+  return MUTABLE_KEYWORD;
 }
 
 none {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
   SymbolNoneLiteral *none_literal = xmalloc(sizeof(SymbolNoneLiteral));
   none_literal->type = SYMBOL_TYPE_NONE_LITERAL;
-  none_literal->line = P.line;
-  none_literal->column = P.column;
+  none_literal->first.line = yylloc.first_line;
+  none_literal->first.column = yylloc.first_column;
+  none_literal->last.line = yylloc.last_line;
+  none_literal->last.column = yylloc.last_column;
   yylval.none_literal = none_literal;
-  P.column += yyleng;
   return NONE_LITERAL;
 }
 
 (true|false) {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
   SymbolBooleanLiteral *boolean_literal = xmalloc(sizeof(SymbolBooleanLiteral));
   boolean_literal->type = SYMBOL_TYPE_BOOLEAN_LITERAL;
-  boolean_literal->line = P.line;
-  boolean_literal->column = P.column;
+  boolean_literal->first.line = yylloc.first_line;
+  boolean_literal->first.column = yylloc.first_column;
+  boolean_literal->last.line = yylloc.last_line;
+  boolean_literal->last.column = yylloc.last_column;
   boolean_literal->value = StringEqual(yytext, "true");
   yylval.boolean_literal = boolean_literal;
-  P.column += yyleng;
   return BOOLEAN_LITERAL;
 }
 
 \"(\\.|[^"\\])*\" {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
   SymbolStringLiteral *string_literal = xmalloc(sizeof(SymbolStringLiteral));
   string_literal->type = SYMBOL_TYPE_STRING_LITERAL;
-  string_literal->line = P.line;
-  string_literal->column = P.column;
+  string_literal->first.line = yylloc.first_line;
+  string_literal->first.column = yylloc.first_column;
+  string_literal->last.line = yylloc.last_line;
+  string_literal->last.column = yylloc.last_column;
   assert(yyleng >= 2);
   string_literal->value = StringDuplicateN(yytext + 1, (size_t)(yyleng - 2));
   yylval.string_literal = string_literal;
-  P.column += yyleng;
   return STRING_LITERAL;
 }
 
 (0|[1-9][0-9]*)\.[0-9]* {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
   SymbolFloatLiteral *float_literal = xmalloc(sizeof(SymbolFloatLiteral));
   float_literal->type = SYMBOL_TYPE_FLOAT_LITERAL;
-  float_literal->line = P.line;
-  float_literal->column = P.column;
+  float_literal->first.line = yylloc.first_line;
+  float_literal->first.column = yylloc.first_column;
+  float_literal->last.line = yylloc.last_line;
+  float_literal->last.column = yylloc.last_column;
   int ret = sscanf(yytext, "%lf", &float_literal->value);
   if (ret != 1) {
     LOG_CRITICAL("sscanf(3): Failed to scan float from string '%s': %s", yytext, strerror(errno));
   }
   yylval.float_literal = float_literal;
-  P.column += yyleng;
   return FLOAT_LITERAL;
 }
 
 (0|[1-9][0-9]*) {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
   SymbolIntegerLiteral *integer_literal = xmalloc(sizeof(SymbolIntegerLiteral));
   integer_literal->type = SYMBOL_TYPE_INTEGER_LITERAL;
-  integer_literal->line = P.line;
-  integer_literal->column = P.column;
+  integer_literal->first.line = yylloc.first_line;
+  integer_literal->first.column = yylloc.first_column;
+  integer_literal->last.line = yylloc.last_line;
+  integer_literal->last.column = yylloc.last_column;
   int ret = sscanf(yytext, "%llu", &integer_literal->value);
   if (ret != 1) {
     LOG_CRITICAL("sscanf(3): Failed to scan float from string '%s': %s", yytext, ret, strerror(errno));
   }
   yylval.integer_literal = integer_literal;
-  P.column += yyleng;
   return INTEGER_LITERAL;
 }
 
 \|\| {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  P.column += yyleng;
   return OR_OPER;
 }
 
 && {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  P.column += yyleng;
   return AND_OPER;
 }
 
 == {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  P.column += yyleng;
   return EQ_OPER;
 }
 
 \<= {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  P.column += yyleng;
   return LE_OPER;
 }
 
 >= {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  P.column += yyleng;
   return GE_OPER;
 }
 
 != {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  P.column += yyleng;
   return NE_OPER;
 }
 
 . {
-  LOG_DEBUG("Token '%s': Ln %d, Col %d", yytext, P.line, P.column);
-  P.column += yyleng;
   return yytext[0];
+}
+
+[_a-zA-Z][_a-zA-Z0-9]* {
+  SymbolIdentifier *identifier = xmalloc(sizeof(SymbolIdentifier));
+  identifier->type = SYMBOL_TYPE_IDENTIFIER;
+  identifier->first.line = yylloc.first_line;
+  identifier->first.column = yylloc.first_column;
+  identifier->last.line = yylloc.last_line;
+  identifier->last.column = yylloc.last_column;
+  identifier->value = StringDuplicate(yytext);
+  yylval.identifier = identifier;
+  return IDENTIFIER;
 }
 
 %%

@@ -8,12 +8,10 @@
 /****************************************************************************/
 
 typedef struct ParserState ParserState;
-typedef struct Symbol Symbol;
 
 // Statements
 typedef struct SymbolStatement SymbolStatement;
 typedef struct SymbolAssignment SymbolAssignment;
-typedef struct SymbolVariable SymbolVariable;
 typedef struct SymbolDeclaration SymbolDeclaration;
 typedef struct SymbolReference SymbolReference;
 typedef struct SymbolMutable SymbolMutable;
@@ -59,11 +57,11 @@ typedef struct SymbolFloatLiteral SymbolFloatLiteral;
 typedef struct SymbolStringLiteral SymbolStringLiteral;
 typedef struct SymbolBooleanLiteral SymbolBooleanLiteral;
 typedef struct SymbolNoneLiteral SymbolNoneLiteral;
-typedef struct SymbolMutableSpecifier SymbolMutableSpecifier;
 
 /****************************************************************************/
 
 typedef enum {
+  // Statements
   SYMBOL_TYPE_STATEMENT = 0,
   SYMBOL_TYPE_ASSIGNMENT,
   SYMBOL_TYPE_VARIABLE,
@@ -71,6 +69,7 @@ typedef enum {
   SYMBOL_TYPE_REFERENCE,
   SYMBOL_TYPE_MUTABLE,
   SYMBOL_TYPE_DATATYPE,
+  // Expressions
   SYMBOL_TYPE_EXPRESSION,
   SYMBOL_TYPE_OR,
   SYMBOL_TYPE_CONDITION,
@@ -97,6 +96,7 @@ typedef enum {
   SYMBOL_TYPE_ARGUMENTS,
   SYMBOL_TYPE_SUBSCRIPTION,
   SYMBOL_TYPE_SLICE,
+  // Atoms
   SYMBOL_TYPE_ATOM,
   SYMBOL_TYPE_IDENTIFIER,
   SYMBOL_TYPE_INTEGER_LITERAL,
@@ -109,16 +109,7 @@ typedef enum {
   SYMBOL_TYPE_LIST,
   SYMBOL_TYPE_ELEMENTS,
   SYMBOL_TYPE_INNER_EXPRESSION,
-  SYMBOL_TYPE_MUTABLE_SPECIFIER,
 } SymbolType;
-
-/****************************************************************************/
-
-struct Symbol {
-  SymbolType type;
-};
-
-/****************************************************************************/
 
 struct ParserState {
   const char *filename;
@@ -127,10 +118,25 @@ struct ParserState {
   SymbolStatement *statement;
 };
 
+typedef struct {
+  int line;
+  int column;
+} SymbolLocation;
+
+/****************************************************************************/
+
+typedef struct {
+  SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
+} Symbol;
+
 /****************************************************************************/
 
 struct SymbolStatement {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   Symbol *symbol;
 };
 
@@ -138,14 +144,8 @@ struct SymbolStatement {
 
 struct SymbolAssignment {
   SymbolType type;
-  Symbol *symbol;
-  SymbolExpression *expression;
-};
-
-/****************************************************************************/
-
-struct SymbolVariable {
-  SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   Symbol *symbol;
   SymbolExpression *expression;
 };
@@ -154,6 +154,8 @@ struct SymbolVariable {
 
 struct SymbolDeclaration {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   Symbol *symbol;
   SymbolIdentifier *identifier;
 };
@@ -162,6 +164,8 @@ struct SymbolDeclaration {
 
 struct SymbolReference {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   Symbol *symbol;
 };
 
@@ -169,6 +173,8 @@ struct SymbolReference {
 
 struct SymbolMutable {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolDatatype *datatype;
 };
 
@@ -176,6 +182,8 @@ struct SymbolMutable {
 
 struct SymbolDatatype {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolIdentifier *identifier;
 };
 
@@ -183,6 +191,8 @@ struct SymbolDatatype {
 
 struct SymbolExpression {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   Symbol *symbol;
 };
 
@@ -190,6 +200,8 @@ struct SymbolExpression {
 
 struct SymbolOr {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolExpression *expression;
   SymbolCondition *condition;
 };
@@ -198,6 +210,8 @@ struct SymbolOr {
 
 struct SymbolCondition {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   Symbol *symbol;
 };
 
@@ -205,6 +219,8 @@ struct SymbolCondition {
 
 struct SymbolAnd {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolCondition *condition;
   SymbolComparison *comparison;
 };
@@ -213,6 +229,8 @@ struct SymbolAnd {
 
 struct SymbolComparison {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   Symbol *symbol;
 };
 
@@ -220,6 +238,8 @@ struct SymbolComparison {
 
 struct SymbolLessThan {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolComparison *comparison;
   SymbolTerm *term;
 };
@@ -228,6 +248,8 @@ struct SymbolLessThan {
 
 struct SymbolGreaterThan {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolComparison *comparison;
   SymbolTerm *term;
 };
@@ -236,6 +258,8 @@ struct SymbolGreaterThan {
 
 struct SymbolEqual {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolComparison *comparison;
   SymbolTerm *term;
 };
@@ -244,6 +268,8 @@ struct SymbolEqual {
 
 struct SymbolLessEqual {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolComparison *comparison;
   SymbolTerm *term;
 };
@@ -252,6 +278,8 @@ struct SymbolLessEqual {
 
 struct SymbolGreaterEqual {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolComparison *comparison;
   SymbolTerm *term;
 };
@@ -260,6 +288,8 @@ struct SymbolGreaterEqual {
 
 struct SymbolNotEqual {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolComparison *comparison;
   SymbolTerm *term;
 };
@@ -268,6 +298,8 @@ struct SymbolNotEqual {
 
 struct SymbolTerm {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   Symbol *symbol;
 };
 
@@ -275,6 +307,8 @@ struct SymbolTerm {
 
 struct SymbolAdd {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolTerm *term;
   SymbolFactor *factor;
 };
@@ -283,6 +317,8 @@ struct SymbolAdd {
 
 struct SymbolSubtract {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolTerm *term;
   SymbolFactor *factor;
 };
@@ -291,6 +327,8 @@ struct SymbolSubtract {
 
 struct SymbolFactor {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   Symbol *symbol;
 };
 
@@ -298,6 +336,8 @@ struct SymbolFactor {
 
 struct SymbolMultiply {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolFactor *factor;
   SymbolUnary *unary;
 };
@@ -306,6 +346,8 @@ struct SymbolMultiply {
 
 struct SymbolDivide {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolFactor *factor;
   SymbolUnary *unary;
 };
@@ -314,6 +356,8 @@ struct SymbolDivide {
 
 struct SymbolModulo {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolFactor *factor;
   SymbolUnary *unary;
 };
@@ -322,6 +366,8 @@ struct SymbolModulo {
 
 struct SymbolUnary {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   Symbol *symbol;
 };
 
@@ -329,6 +375,8 @@ struct SymbolUnary {
 
 struct SymbolMinus {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolUnary *unary;
 };
 
@@ -336,6 +384,8 @@ struct SymbolMinus {
 
 struct SymbolNegate {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolUnary *unary;
 };
 
@@ -343,6 +393,8 @@ struct SymbolNegate {
 
 struct SymbolPrimary {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   Symbol *symbol;
 };
 
@@ -350,6 +402,8 @@ struct SymbolPrimary {
 
 struct SymbolFncall {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolPrimary *primary;
   SymbolArguments *arguments;
 };
@@ -358,6 +412,8 @@ struct SymbolFncall {
 
 struct SymbolDict {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolEntries *entries;
 };
 
@@ -365,6 +421,8 @@ struct SymbolDict {
 
 struct SymbolEntries {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolEntries *entries;
   SymbolStringLiteral *string_literal;
   SymbolExpression *expression;
@@ -374,6 +432,8 @@ struct SymbolEntries {
 
 struct SymbolList {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolElements *elements;
 };
 
@@ -381,6 +441,8 @@ struct SymbolList {
 
 struct SymbolElements {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolElements *elements;
   SymbolExpression *expression;
 };
@@ -389,7 +451,9 @@ struct SymbolElements {
 
 struct SymbolArguments {
   SymbolType type;
-  struct SymbolArguments *arguments;
+  SymbolLocation first;
+  SymbolLocation last;
+  SymbolArguments *arguments;
   SymbolExpression *expression;
 };
 
@@ -397,6 +461,8 @@ struct SymbolArguments {
 
 struct SymbolSubscription {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolPrimary *primary;
   SymbolExpression *expression;
 };
@@ -405,6 +471,8 @@ struct SymbolSubscription {
 
 struct SymbolSlice {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   SymbolPrimary *primary;
   SymbolExpression *left_expression;
   SymbolExpression *right_expression;
@@ -414,6 +482,8 @@ struct SymbolSlice {
 
 struct SymbolAtom {
   SymbolType type;
+  SymbolLocation first;
+  SymbolLocation last;
   Symbol *symbol;
 };
 
@@ -421,8 +491,8 @@ struct SymbolAtom {
 
 struct SymbolIdentifier {
   SymbolType type;
-  int line;
-  int column;
+  SymbolLocation first;
+  SymbolLocation last;
   char *value;
 };
 
@@ -430,8 +500,8 @@ struct SymbolIdentifier {
 
 struct SymbolIntegerLiteral {
   SymbolType type;
-  int line;
-  int column;
+  SymbolLocation first;
+  SymbolLocation last;
   unsigned long long value;
 };
 
@@ -439,8 +509,8 @@ struct SymbolIntegerLiteral {
 
 struct SymbolFloatLiteral {
   SymbolType type;
-  int line;
-  int column;
+  SymbolLocation first;
+  SymbolLocation last;
   double value;
 };
 
@@ -448,8 +518,8 @@ struct SymbolFloatLiteral {
 
 struct SymbolStringLiteral {
   SymbolType type;
-  int line;
-  int column;
+  SymbolLocation first;
+  SymbolLocation last;
   char *value;
 };
 
@@ -457,8 +527,8 @@ struct SymbolStringLiteral {
 
 struct SymbolBooleanLiteral {
   SymbolType type;
-  int line;
-  int column;
+  SymbolLocation first;
+  SymbolLocation last;
   bool value;
 };
 
@@ -466,16 +536,8 @@ struct SymbolBooleanLiteral {
 
 struct SymbolNoneLiteral {
   SymbolType type;
-  int line;
-  int column;
-};
-
-/****************************************************************************/
-
-struct SymbolMutableSpecifier {
-  SymbolType type;
-  int line;
-  int column;
+  SymbolLocation first;
+  SymbolLocation last;
 };
 
 #endif // _AETHER_SYNTAX_H
