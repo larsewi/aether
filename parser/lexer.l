@@ -16,7 +16,7 @@
 #define YY_USER_ACTION \
     yylloc.first_column = yylloc.last_column; \
     yylloc.last_column += yyleng; \
-    if (!isspace(yytext[0])) { \
+    if (!isspace(yytext[0]) && yytext[0] != '#') { \
       LOG_DEBUG("Found token '%s' at Ln %d, Col %d", yytext, \
           yylloc.first_line, yylloc.first_column); \
     }
