@@ -624,7 +624,7 @@ factor
 multiply
 : factor '*' unary {
   LOG_DEBUG("multiply : factor '*' unary");
-  $$ = xmalloc(sizeof(SymbolFactor));
+  $$ = xmalloc(sizeof(SymbolMultiply));
   $$->type = SYMBOL_TYPE_MULTIPLY;
   $$->first.line = @1.first_line;
   $$->first.column = @1.first_column;
@@ -638,7 +638,7 @@ multiply
 divide
 : factor '/' unary {
   LOG_DEBUG("divide : factor '/' unary");
-  $$ = xmalloc(sizeof(SymbolFactor));
+  $$ = xmalloc(sizeof(SymbolDivide));
   $$->type = SYMBOL_TYPE_DIVIDE;
   $$->first.line = @1.first_line;
   $$->first.column = @1.first_column;
@@ -652,7 +652,7 @@ divide
 modulo
 : factor '%' unary {
   LOG_DEBUG("divide : factor '%' unary");
-  $$ = xmalloc(sizeof(SymbolFactor));
+  $$ = xmalloc(sizeof(SymbolModulo));
   $$->type = SYMBOL_TYPE_MODULO;
   $$->first.line = @1.first_line;
   $$->first.column = @1.first_column;
