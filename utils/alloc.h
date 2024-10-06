@@ -7,7 +7,7 @@
 
 #include "logger.h"
 
-inline void *xmalloc(size_t size) {
+inline void *xmalloc(const size_t size) {
   void *ptr = malloc(size);
   if (ptr == NULL) {
     LOG_CRITICAL("Failed to allocate memory: %s", strerror(errno));

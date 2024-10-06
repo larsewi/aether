@@ -25,7 +25,9 @@ void _assert_failed(const char *const file, const int line,
 #define CHECK_ADD(name, func) {name, func},
 
 #define CHECK_END                                                              \
-  { NULL, NULL }                                                               \
+  {                                                                            \
+    NULL, NULL                                                                 \
+  }                                                                            \
   }                                                                            \
   ;                                                                            \
   for (size_t i = 0; argc >= 2 && t[i].name != NULL; i++) {                    \

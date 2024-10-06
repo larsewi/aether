@@ -22,7 +22,7 @@
     }
 
 
-extern ParserState PARSER_STATE;
+extern Context CONTEXT;
 %}
 
 %option nounput
@@ -139,6 +139,7 @@ none {
 }
 
 != {
+  yylval.symbol = SymbolNotEqual(&context, yylloc.first_line, yylloc.first_column, yylloc.last_line, yylloc.last_column, yytext);
   return NE_OPER;
 }
 
@@ -147,14 +148,7 @@ none {
 }
 
 [_a-zA-Z][_a-zA-Z0-9]* {
-  SymbolIdentifier *identifier = xmalloc(sizeof(SymbolIdentifier));
-  identifier->type = SYMBOL_TYPE_IDENTIFIER;
-  identifier->first.line = yylloc.first_line;
-  identifier->first.column = yylloc.first_column;
-  identifier->last.line = yylloc.last_line;
-  identifier->last.column = yylloc.last_column;
-  identifier->value = StringDuplicate(yytext);
-  yylval.identifier = identifier;
+  yylval.symbol = SymbolIdentifier(&context, yylloc.first_line, yylloc.first_column, yylloc.last_line, yylloc.last_column, yytext);
   return IDENTIFIER;
 }
 

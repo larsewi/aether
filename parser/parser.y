@@ -1,10 +1,9 @@
 %{
-#include "syntax.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "../interpreter/interpreter.h"
 #include "../utils/logger.h"
 #include "../utils/alloc.h"
 
@@ -16,119 +15,68 @@ extern int yylex();
 
 void yyerror(char *msg);
 
-ParserState PARSER_STATE = {0};
+Context CONTEXT = {0};;
 
 int yydebug = 1;
 %}
 
 %locations
 
-// Terminals
-
 %union {
-  SymbolIdentifier *identifier;
-  SymbolIntegerLiteral *integer_literal;
-  SymbolFloatLiteral *float_literal;
-  SymbolStringLiteral *string_literal;
-  SymbolBooleanLiteral *boolean_literal;
-  SymbolNoneLiteral *none_literal;
+  Symbol *symbol;
 }
 
-%token <identifier> IDENTIFIER
-%token <integer_literal> INTEGER_LITERAL
-%token <float_literal> FLOAT_LITERAL
-%token <string_literal> STRING_LITERAL
-%token <boolean_literal> BOOLEAN_LITERAL
-%token <none_literal> NONE_LITERAL
-%token MUTABLE_KEYWORD
-%token EQ_OPER LE_OPER GE_OPER NE_OPER
-%token AND_OPER OR_OPER
+// Terminals
+%token <symbol> IDENTIFIER
+%token <symbol> INTEGER_LITERAL
+%token <symbol> FLOAT_LITERAL
+%token <symbol> STRING_LITERAL
+%token <symbol> BOOLEAN_LITERAL
+%token <symbol> NONE_LITERAL
+%token <symbol> MUTABLE_KEYWORD
+%token <symbol> EQ_OPER LE_OPER GE_OPER NE_OPER
+%token <symbol> AND_OPER OR_OPER
 
 // Expression
-
-%union {
-  SymbolExpression *expression;
-  SymbolOr *or;
-  SymbolCondition *condition;
-  SymbolAnd *and;
-  SymbolComparison *comparison;
-  SymbolLessThan *less_than;
-  SymbolGreaterThan *greater_than;
-  SymbolEqual *equal;
-  SymbolLessEqual *less_equal;
-  SymbolGreaterEqual *greater_equal;
-  SymbolNotEqual *not_equal;
-  SymbolTerm *term;
-  SymbolAdd *add;
-  SymbolSubtract *subtract;
-  SymbolFactor *factor;
-  SymbolMultiply *multiply;
-  SymbolDivide *divide;
-  SymbolModulo *modulo;
-  SymbolUnary *unary;
-  SymbolMinus *minus;
-  SymbolNegate *negate;
-  SymbolPrimary *primary;
-  SymbolFncall *fncall;
-  SymbolDict *dict;
-  SymbolEntries *entries;
-  SymbolList *list;
-  SymbolElements *elements;
-  SymbolArguments *arguments;
-  SymbolSubscription *subscription;
-  SymbolSlice *slice;
-  SymbolAtom *atom;
-}
-
-%type <expression> inner_expression expression;
-%type <or> or;
-%type <condition> condition;
-%type <and> and;
-%type <comparison> comparison;
-%type <less_than> less_than;
-%type <greater_than> greater_than;
-%type <equal> equal;
-%type <less_equal> less_equal;
-%type <greater_equal> greater_equal;
-%type <not_equal> not_equal;
-%type <term> term;
-%type <add> add;
-%type <subtract> subtract;
-%type <factor> factor;
-%type <multiply> multiply;
-%type <divide> divide;
-%type <modulo> modulo;
-%type <unary> unary;
-%type <minus> minus;
-%type <negate> negate;
-%type <primary> primary;
-%type <fncall> fncall;
-%type <arguments> arguments;
-%type <dict> dict;
-%type <entries> entries;
-%type <list> list;
-%type <elements> elements;
-%type <subscription> subscription;
-%type <slice> slice;
-%type <atom> atom;
+%type <symbol> inner_expression expression;
+%type <symbol> or;
+%type <symbol> condition;
+%type <symbol> and;
+%type <symbol> comparison;
+%type <symbol> less_than;
+%type <symbol> greater_than;
+%type <symbol> equal;
+%type <symbol> less_equal;
+%type <symbol> greater_equal;
+%type <symbol> not_equal;
+%type <symbol> term;
+%type <symbol> add;
+%type <symbol> subtract;
+%type <symbol> factor;
+%type <symbol> multiply;
+%type <symbol> divide;
+%type <symbol> modulo;
+%type <symbol> unary;
+%type <symbol> minus;
+%type <symbol> negate;
+%type <symbol> primary;
+%type <symbol> fncall;
+%type <symbol> arguments;
+%type <symbol> dict;
+%type <symbol> entries;
+%type <symbol> list;
+%type <symbol> elements;
+%type <symbol> subscription;
+%type <symbol> slice;
+%type <symbol> atom;
 
 // Statements
-
-%union {
-  SymbolStatement *statement;
-  SymbolAssignment *assignment;
-  SymbolDeclaration *declaration;
-  SymbolReference *reference;
-  SymbolMutable *mutable;
-  SymbolDatatype *datatype;
-}
-
-%type <statement> statement;
-%type <assignment> assignment;
-%type <declaration> declaration;
-%type <reference> reference;
-%type <mutable> mutable;
-%type <datatype> datatype;
+%type <symbol> statement;
+%type <symbol> assignment;
+%type <symbol> declaration;
+%type <symbol> reference;
+%type <symbol> mutable;
+%type <symbol> datatype;
 
 %%
 
